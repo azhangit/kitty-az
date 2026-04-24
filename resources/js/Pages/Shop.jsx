@@ -12,7 +12,7 @@ export default function Shop() {
                 {/* Left Peeking Cat */}
                 <div className="absolute -left-10 md:left-0 bottom-0 w-[250px] md:w-[450px] pointer-events-none z-10 transition-transform duration-500 hover:scale-105">
                     <img 
-                        src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=1000&q=80" 
+                        src="images/left-cat-peek.png" 
                         alt="Cat left" 
                         className="w-full object-contain"
                         style={{ maskImage: 'linear-gradient(to top, transparent 5%, black 20%)', WebkitMaskImage: 'linear-gradient(to top, transparent 5%, black 20%)' }}
@@ -22,7 +22,7 @@ export default function Shop() {
                 {/* Right Peeking Cat */}
                 <div className="absolute -right-10 md:right-0 bottom-0 w-[250px] md:w-[450px] pointer-events-none z-10 transition-transform duration-500 hover:scale-105">
                     <img 
-                        src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1000&q=80" 
+                        src="images/Funny-Cat.png" 
                         alt="Cat right" 
                         className="w-full object-contain"
                         style={{ maskImage: 'linear-gradient(to top, transparent 5%, black 20%)', WebkitMaskImage: 'linear-gradient(to top, transparent 5%, black 20%)' }}
@@ -49,7 +49,7 @@ export default function Shop() {
 
             {/* JOIN OUR MISSION */}
             <section className="py-24 bg-white text-center px-6 border-t border-gray-50">
-                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><svg className="w-full h-full"></svg></div>
+                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><img src="images/Message.svg" alt="paw print" className="w-full h-full" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
                 <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed text-sm md:text-base">
                     Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.

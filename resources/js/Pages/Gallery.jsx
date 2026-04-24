@@ -54,9 +54,9 @@ export default function Gallery() {
                         <div className="absolute -top-6 -left-6 w-16 h-16"><svg></svg></div>
                         
                         <img 
-                            src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=1000&q=80" 
+                            src="images/gallery-cat.png" 
                             alt="Featured Cat" 
-                            className="w-[85%] rounded-[100px] object-cover shadow-sm aspect-[4/5]"
+                            className="w-[85%] rounded-[100px] object-cover "
                         />
                     </div>
                     <div className="w-full md:w-1/2">
