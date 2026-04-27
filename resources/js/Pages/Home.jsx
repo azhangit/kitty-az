@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 
 const stats = [
@@ -52,21 +52,6 @@ const stats = [
     },
 ];
 
-const cats = [
-    {
-        name: 'Luna', age: '7 years', gender: 'Female', breed: 'Domestic Short Hair', traits: ['Affectionate', 'Playful'], 
-        image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=900&q=80'
-    },
-    {
-        name: 'Simba', age: '3 years', gender: 'Female', breed: 'Domestic Short Hair', traits: ['Affectionate', 'Playful'], 
-        image: 'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=900&q=80'
-    },
-    {
-        name: 'Cleo', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', traits: ['Affectionate', 'Playful'], 
-        image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=900&q=80'
-    },
-];
-
 const supportPoints = [
     {
         icon: (
@@ -97,7 +82,7 @@ const supportPoints = [
     },
 ];
 
-export default function Home() {
+export default function Home({ availableCats = [] }) {
     return (
         <AppLayout currentPath="/">
             <Head title="Dubai Street Kitties" />
@@ -123,12 +108,12 @@ export default function Home() {
                             Rescuing, rehabilitating, and rehoming Dubai's street cats with compassion and care.
                         </p>
                         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                            <a
-                                href="#"
+                            <Link
+                                href={route('cats.available')}
                                 className="inline-flex justify-center items-center rounded-full bg-[#fac2ac] px-7 py-3.5 text-[14px] font-semibold text-[#30160d] transition hover:bg-[#efa68a]"
                             >
                                 View Cats for Adoption
-                            </a>
+                            </Link>
                             <a
                                 href="#"
                                 className="inline-flex justify-center items-center rounded-full bg-white px-7 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100"
@@ -171,8 +156,8 @@ export default function Home() {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {cats.map((cat) => (
-                            <article key={cat.name} className="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col">
+                        {availableCats.map((cat) => (
+                            <article key={cat.id} className="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col">
                                 <div className="h-[280px] w-full relative">
                                     <img src={cat.image} alt={cat.name} className="h-full w-full object-cover" />
                                 </div>
@@ -188,7 +173,7 @@ export default function Home() {
                                     </div>
                                     
                                     <div className="mt-5 flex flex-wrap justify-center gap-2.5">
-                                        {cat.traits.map((trait) => (
+                                        {(cat.traits || []).map((trait) => (
                                             <span key={trait} className="rounded-full bg-[#ffefe9] px-4 py-1.5 text-[12px] md:text-[13px] font-medium text-[#f08063]">
                                                 {trait}
                                             </span>
@@ -196,19 +181,24 @@ export default function Home() {
                                     </div>
                                     
                                     <div className="mt-auto pt-8">
-                                        <a href="#" className="block w-full rounded-full border border-gray-100 bg-[#f8f9fa] px-6 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100">
+                                        <Link href={route('cat-profile.show', cat.id)} className="block w-full rounded-full border border-gray-100 bg-[#f8f9fa] px-6 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100">
                                             View Profile
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                             </article>
                         ))}
+                        {availableCats.length === 0 && (
+                            <article className="md:col-span-2 lg:col-span-3 bg-white rounded-3xl border border-gray-100 p-10 text-center text-gray-500">
+                                No available cats right now. Please check back soon.
+                            </article>
+                        )}
                     </div>
                     
                     <div className="mt-14 md:mt-16 text-center">
-                        <a href="#" className="inline-flex items-center justify-center rounded-full bg-[#8bcbbd] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#1f453c] transition hover:bg-[#7abeaf]">
+                        <Link href={route('cats.available')} className="inline-flex items-center justify-center rounded-full bg-[#8bcbbd] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#1f453c] transition hover:bg-[#7abeaf]">
                             See All Available Cats
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -260,5 +250,3 @@ export default function Home() {
         </AppLayout>
     );
 }
-
-

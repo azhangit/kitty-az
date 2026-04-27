@@ -10,19 +10,7 @@ const filters = [
     { title: 'Vaccinated', options: ['Yes', 'No'] },
 ];
 
-const cats = [
-    { id: 1, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=600&q=80' },
-    { id: 2, name: 'Simba', age: '3 years', gender: 'Male', breed: 'Persian Mix', tags: ['Affectionate', 'Independent'], image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80' },
-    { id: 3, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80' },
-    { id: 4, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=600&q=80' },
-    { id: 5, name: 'Simba', age: '3 years', gender: 'Male', breed: 'Persian Mix', tags: ['Affectionate', 'Independent'], image: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=600&q=80' },
-    { id: 6, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=600&q=80' },
-    { id: 7, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=600&q=80' },
-    { id: 8, name: 'Simba', age: '3 years', gender: 'Male', breed: 'Persian Mix', tags: ['Affectionate', 'Independent'], image: 'https://images.unsplash.com/photo-1548247416-ec66f4900b2e?auto=format&fit=crop&w=600&q=80', badge: 'Special Need' },
-    { id: 9, name: 'Luna', age: '2 years', gender: 'Female', breed: 'Domestic Short Hair', tags: ['Affectionate', 'Playful'], image: 'https://images.unsplash.com/photo-1517331156671-55db07038e83?auto=format&fit=crop&w=600&q=80' },
-];
-
-export default function AvailableCats() {
+export default function AvailableCats({ availableCats = [] }) {
     return (
         <AppLayout currentPath="/adopt">
             <Head title="Available Cats - Dubai Street Kitties" />
@@ -73,17 +61,17 @@ export default function AvailableCats() {
                     {/* CAT LISTING GRID */}
                     <div className="flex-grow">
                         <div className="mb-8 flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-gray-900">Showing {cats.length} cats</h3>
+                            <h3 className="text-xl font-bold text-gray-900">Showing {availableCats.length} cats</h3>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {cats.map((cat) => (
+                            {availableCats.map((cat) => (
                                 <div key={cat.id} className="bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition group border border-gray-50">
                                     <div className="relative aspect-[4/3] overflow-hidden">
                                         <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
-                                        {cat.badge && (
+                                        {cat.tags?.[0] && (
                                             <div className="absolute top-4 right-4 bg-[#8bcbbd] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
-                                                {cat.badge}
+                                                {cat.tags[0]}
                                             </div>
                                         )}
                                     </div>
@@ -95,14 +83,14 @@ export default function AvailableCats() {
                                             <span className="bg-[#f3f6f5] text-gray-500 text-[11px] font-bold px-3 py-1 rounded-full">{cat.breed}</span>
                                         </div>
                                         <div className="flex flex-wrap gap-2 mb-6">
-                                            {cat.tags.map(tag => (
+                                            {(cat.tags || []).map(tag => (
                                                 <span key={tag} className="text-[#f08063] text-[10px] font-bold px-3 py-1 rounded-full bg-[#fdf3f0]">
                                                     {tag}
                                                 </span>
                                             ))}
                                         </div>
                                         <Link 
-                                            href="/cat-profile"
+                                            href={route('cat-profile.show', cat.id)}
                                             className="inline-block w-full text-center bg-[#fcfcfc] border border-gray-100 text-gray-600 font-bold py-3 rounded-full text-sm hover:bg-[#f08063] hover:text-white hover:border-[#f08063] transition-all"
                                         >
                                             View Profile
@@ -110,6 +98,11 @@ export default function AvailableCats() {
                                     </div>
                                 </div>
                             ))}
+                            {availableCats.length === 0 && (
+                                <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-gray-100 bg-white p-8 text-center text-gray-500">
+                                    No cats available right now.
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -1,156 +1,162 @@
-import { Head, Link } from '@inertiajs/react';
+﻿import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 
-export default function CatProfile() {
-    const cat = {
-        name: 'Luna',
-        age: '2 years',
-        gender: 'Female',
-        breed: 'Domestic Short Hair',
-        color: 'Black & White',
-        fee: 'Free',
-        personality: ['Affectionate', 'Playful'],
-        story: 'Luna was found as a tiny kitten in a parking lot in Dubai Marina. She was timid at first but has blossomed into a loving, playful companion who adores cuddles and playtime.',
-        healthNotes: 'Healthy, no known issues',
-        goodWith: ['Kids', 'Cats'],
-        images: [
-            'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=400&q=80',
-        ]
-    };
+function SocialIcon({ label }) {
+    return (
+        <button
+            type="button"
+            className="flex h-6 w-6 items-center justify-center rounded-full border border-[#f2d9ce] text-[10px] font-semibold text-[#f0a78d]"
+            aria-label={label}
+        >
+            {label}
+        </button>
+    );
+}
+
+export default function CatProfile({ cat }) {
+    const personality = (cat?.personality || []).slice(0, 4);
+    const tags = cat?.tags || [];
+    const goodWith = cat?.goodWith || {};
+    const galleryImages = cat?.images?.length ? cat.images : [cat?.image, cat?.image, cat?.image].filter(Boolean);
+    const mainImage = galleryImages[0] || '/images/gallery-cat.png';
 
     return (
         <AppLayout currentPath="/adopt">
-            <Head title={`${cat.name}'s Profile - Dubai Street Kitties`} />
+            <Head title={`${cat?.name || 'Cat'} Profile - Dubai Street Kitties`} />
 
-            <section className="py-12 bg-[#faf7f3]">
-                <div className="max-w-[1240px] mx-auto px-6">
-                    {/* Back Link */}
-                    <Link 
-                        href="/available-cats" 
-                        className="inline-flex items-center gap-2 text-gray-600 hover:text-black mb-10 font-medium transition-colors"
+            <section className="bg-[#f5efea] py-10">
+                <div className="mx-auto max-w-[1160px] px-6">
+                    <Link
+                        href={route('cats.available')}
+                        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[#5f5855] transition-colors hover:text-black"
                     >
-                        <span className="text-xl">←</span> Back to All Cats
+                        <span>&larr;</span> Back to All Cats
                     </Link>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-                        {/* LEFT COLUMN: IMAGES */}
-                        <div className="lg:col-span-5 space-y-6">
-                            <div className="rounded-[40px] overflow-hidden shadow-sm aspect-square">
-                                <img src={cat.images[0]} alt={cat.name} className="w-full h-full object-cover" />
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[440px_minmax(0,1fr)]">
+                        <div>
+                            <div className="aspect-[4/4.1] overflow-hidden rounded-2xl">
+                                <img
+                                    src={mainImage}
+                                    alt={cat?.name || 'Cat'}
+                                    className="h-full w-full object-cover"
+                                />
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                {cat.images.slice(1).map((img, idx) => (
-                                    <div key={idx} className="rounded-3xl overflow-hidden aspect-square border border-white shadow-sm">
-                                        <img src={img} alt={`${cat.name} ${idx + 2}`} className="w-full h-full object-cover" />
+                            <div className="mt-3 grid grid-cols-3 gap-2">
+                                {galleryImages.slice(0, 3).map((imagePath, index) => (
+                                    <div key={`${imagePath}-${index}`} className="aspect-square overflow-hidden rounded-xl">
+                                        <img
+                                            src={imagePath}
+                                            alt={`${cat?.name || 'Cat'} thumbnail ${index + 1}`}
+                                            className="h-full w-full object-cover"
+                                        />
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {/* RIGHT COLUMN: DETAILS */}
-                        <div className="lg:col-span-7">
-                            <h1 className="text-5xl md:text-[64px] font-bold text-gray-900 mb-8">{cat.name}</h1>
-                            
-                            {/* Primary Badges */}
-                            <div className="flex flex-wrap gap-3 mb-10">
-                                <span className="bg-[#ffefe9] text-[#f08063] font-bold px-6 py-2.5 rounded-full text-sm">{cat.age}</span>
-                                <span className="bg-[#f3f6f5] text-[#8bcbbd] font-bold px-6 py-2.5 rounded-full text-sm">{cat.gender}</span>
-                                <span className="bg-[#ffefe9] text-[#f08063] font-bold px-6 py-2.5 rounded-full text-sm">{cat.breed}</span>
+                        <div className="pt-1">
+                            <h1 className="text-[42px] font-semibold leading-tight text-[#1f1c1a]">{cat?.name || 'Cat'}</h1>
+
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                <span className="rounded-full bg-[#f4dccc] px-4 py-1 text-xs text-[#7b5f50]">{cat?.age}</span>
+                                <span className="rounded-full bg-[#cfe4e1] px-4 py-1 text-xs text-[#4d6f69]">{cat?.gender}</span>
+                                <span className="rounded-full bg-[#f4dccc] px-4 py-1 text-xs text-[#7b5f50]">{cat?.breed}</span>
                             </div>
 
-                            {/* Info Box */}
-                            <div className="grid grid-cols-2 bg-[#f3f6f5]/50 border border-white rounded-[32px] p-8 mb-10">
+                            <div className="mt-4 grid grid-cols-2 rounded-xl bg-[#dadad6] px-4 py-3 text-sm text-[#1f1c1a]">
                                 <div>
-                                    <p className="text-sm text-gray-400 mb-2">Color</p>
-                                    <p className="font-bold text-gray-900">{cat.color}</p>
+                                    <p className="text-[11px] text-[#7a7470]">Color</p>
+                                    <p className="mt-1 font-medium">{cat?.color || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-400 mb-2">Adoption Fee</p>
-                                    <p className="font-bold text-gray-900">{cat.fee}</p>
+                                    <p className="text-[11px] text-[#7a7470]">Adoption Fee</p>
+                                    <p className="mt-1 font-medium">{cat?.adoptionFee || 'Free'}</p>
                                 </div>
                             </div>
 
-                            {/* Personality */}
-                            <div className="mb-10">
-                                <h4 className="text-sm font-bold text-[#f08063] uppercase tracking-wider mb-4">Personality</h4>
-                                <div className="flex flex-wrap gap-3">
-                                    {cat.personality.map(trait => (
-                                        <span key={trait} className="bg-[#ffefe9] text-[#f08063] font-bold px-6 py-2 rounded-full text-xs">
+                            <div className="mt-5">
+                                <h3 className="text-sm font-semibold text-[#2f2b28]">Personality</h3>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    {personality.map((trait) => (
+                                        <span key={trait} className="rounded-full bg-[#f3ddcf] px-4 py-1 text-xs text-[#7b5f50]">
                                             {trait}
                                         </span>
                                     ))}
+                                    {personality.length === 0 && (
+                                        <span className="rounded-full bg-[#ece2dc] px-4 py-1 text-xs text-[#7b5f50]">No personality tags</span>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Story */}
-                            <div className="mb-10">
-                                <h4 className="text-sm font-bold text-[#f08063] uppercase tracking-wider mb-4">Story</h4>
-                                <p className="text-gray-500 leading-relaxed text-sm">{cat.story}</p>
+                            <div className="mt-5">
+                                <h3 className="text-sm font-semibold text-[#2f2b28]">Story</h3>
+                                <p className="mt-1 text-xs leading-relaxed text-[#6e6561]">{cat?.story}</p>
                             </div>
 
-                            {/* Medical Summary */}
-                            <div className="mb-10">
-                                <h4 className="text-sm font-bold text-[#f08063] uppercase tracking-wider mb-6">Medical summary</h4>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                                    {['Vaccinated', 'Sterilized', 'Microchipped'].map(item => (
-                                        <div key={item} className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#8bcbbd]/20 flex items-center justify-center text-[#8bcbbd]"><svg className="w-5 h-5"></svg></div>
-                                            <span className="text-xs text-gray-500 font-medium">{item}</span>
-                                        </div>
-                                    ))}
+                            <div className="mt-5">
+                                <h3 className="text-sm font-semibold text-[#2f2b28]">Medical summary</h3>
+                                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                    <div className="flex items-center gap-2 text-xs text-[#6e6561]">
+                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#8ec8bf] text-white">✓</span>
+                                        <span>{cat?.medicalSummary?.['Vaccination Status'] || 'Vaccination N/A'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-[#6e6561]">
+                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#8ec8bf] text-white">✓</span>
+                                        <span>{cat?.medicalSummary?.['Spayed / Neutered'] || 'Spay/Neuter N/A'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-[#6e6561]">
+                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#8ec8bf] text-white">✓</span>
+                                        <span>{cat?.medicalSummary?.Microchipped || 'Microchip N/A'}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Health Notes */}
-                            <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                                <div className="flex-grow bg-white border border-gray-100 rounded-full px-8 py-4 flex items-center">
-                                    <p className="text-xs text-gray-400"><span className="font-bold text-gray-600">Health Notes:</span> {cat.healthNotes}</p>
+                            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                                <div className="flex-1 rounded-full bg-[#ece2dc] px-4 py-2 text-xs text-[#6e6561]">
+                                    Health Notes: {cat?.medicalSummary?.['Current Medication'] || 'Healthy, no known issues'}
                                 </div>
-                                <button className="bg-white border border-gray-100 text-gray-900 font-bold px-8 py-4 rounded-full text-xs shadow-sm hover:shadow-md transition">
+                                <a
+                                    href={route('cat-profile.report', cat?.id)}
+                                    className="rounded-full bg-white px-5 py-2 text-xs font-semibold text-[#544c47] shadow-sm"
+                                >
                                     Download Report
-                                </button>
+                                </a>
                             </div>
 
-                            {/* Good With */}
-                            <div className="mb-12">
-                                <h4 className="text-sm font-bold text-[#f08063] uppercase tracking-wider mb-4">Good With</h4>
-                                <div className="flex flex-wrap gap-3">
-                                    {cat.goodWith.map(trait => (
-                                        <span key={trait} className="bg-[#ffefe9] text-[#f08063] font-bold px-8 py-2.5 rounded-full text-xs">
-                                            {trait}
+                            <div className="mt-5">
+                                <h3 className="text-sm font-semibold text-[#2f2b28]">Good With</h3>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    {Object.entries(goodWith).map(([label, value]) => (
+                                        <span key={label} className="rounded-full bg-[#f3ddcf] px-6 py-1 text-xs text-[#7b5f50]">
+                                            {label}: {value}
+                                        </span>
+                                    ))}
+                                    {tags.map((tag) => (
+                                        <span key={tag} className="rounded-full bg-[#d8ebe7] px-4 py-1 text-xs text-[#4d6f69]">
+                                            {tag}
                                         </span>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Action Button */}
-                            <button className="w-full bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] text-gray-800 font-bold py-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-[1.01] mb-6">
-                                Apply to Adopt {cat.name}
+                            <button className="mt-6 w-full rounded-md bg-gradient-to-r from-[#f6b29b] to-[#8ec8bf] py-3 text-sm font-semibold text-[#2f2b28]">
+                                Apply to Adopt {cat?.name}
                             </button>
-                            <p className="text-center text-[10px] text-gray-400 italic">All adoptions include full medical care and Lifetime support</p>
 
-                            {/* Social Share Placeholder */}
-                            <div className="flex justify-center gap-4 mt-8 text-gray-400">
-                                <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center"><svg className="w-4 h-4"></svg></div>
-                                <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center"><svg className="w-4 h-4"></svg></div>
-                                <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center"><svg className="w-4 h-4"></svg></div>
-                                <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center"><svg className="w-4 h-4"></svg></div>
+                            <p className="mt-3 text-center text-[10px] text-[#908784]">
+                                All adoptions include full medical care and lifetime support
+                            </p>
+
+                            <div className="mt-4 flex justify-center gap-2">
+                                <SocialIcon label="X" />
+                                <SocialIcon label="f" />
+                                <SocialIcon label="ig" />
+                                <SocialIcon label="in" />
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            {/* JOIN OUR MISSION */}
-            <section className="py-24 bg-white text-center px-6">
-                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><svg className="w-full h-full"></svg></div>
-                <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed text-sm md:text-base">
-                    Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.
-                </p>
             </section>
         </AppLayout>
     );
