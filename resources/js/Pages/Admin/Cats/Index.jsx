@@ -1,6 +1,6 @@
-﻿import AdminLayout from '@/Layouts/AdminLayout';
-import { Link, router, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import AdminLayout from '@/Layouts/AdminLayout';
+import { Link, router, useForm, usePage, useRemember } from '@inertiajs/react';
+import { useEffect, useMemo, useState } from 'react';
 
 const statusTabs = [
     { label: 'All', value: 'all' },
@@ -16,6 +16,17 @@ const statusPillClass = {
     fostered: 'bg-[#f7c7ad] text-[#6b3b27]',
     medical_care: 'bg-[#f1d3d1] text-[#6e3a46]',
 };
+
+function formatDisplayDate(value) {
+    if (!value) return 'N/A';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    }).format(date);
+}
 
 function CheckboxList({ title, items, selected = [], onToggle }) {
     return (
@@ -48,11 +59,12 @@ function FieldError({ message }) {
 }
 
 export default function CatsIndex({ cats, categories, filters, options }) {
-    const [showAddModal, setShowAddModal] = useState(false);
+    const pageErrors = usePage().props.errors || {};
+    const [showAddModal, setShowAddModal] = useRemember(false, 'admin.cats.showAddModal');
     const [medicalModalCat, setMedicalModalCat] = useState(null);
     const [searchInput, setSearchInput] = useState(filters.search || '');
 
-    const addForm = useForm({
+    const addForm = useForm('admin.cats.create.form', {
         name: '',
         age_label: '',
         gender: options.gender?.[0] || 'Male',
@@ -87,7 +99,7 @@ export default function CatsIndex({ cats, categories, filters, options }) {
         category_ids: [],
     });
 
-    const medicalForm = useForm({
+    const medicalForm = useForm('admin.cats.medical.form', {
         record_date: new Date().toISOString().slice(0, 10),
         type: options.medicalRecordTypes?.[0] || 'Vaccination',
         description: '',
@@ -121,13 +133,23 @@ export default function CatsIndex({ cats, categories, filters, options }) {
         e.preventDefault();
         addForm.post(route('admin.cats.store'), {
             forceFormData: true,
+            preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
                 setShowAddModal(false);
                 addForm.reset();
             },
+            onError: () => {
+                setShowAddModal(true);
+            },
         });
     };
+
+    useEffect(() => {
+        if (Object.keys(pageErrors).length > 0) {
+            setShowAddModal(true);
+        }
+    }, [pageErrors, setShowAddModal]);
 
     const handlePhotoChange = (e) => {
         const files = Array.from(e.target.files || []);
@@ -309,6 +331,7 @@ export default function CatsIndex({ cats, categories, filters, options }) {
                                 <input
                                     type="file"
                                     multiple
+                                    required
                                     accept="image/png,image/jpeg,image/jpg,image/webp"
                                     onChange={handlePhotoChange}
                                     className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
@@ -331,14 +354,23 @@ export default function CatsIndex({ cats, categories, filters, options }) {
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                 <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FIV Status
+                                    </label>
                                     <select className={inputClass(addForm.errors.fiv_status)} value={addForm.data.fiv_status} onChange={(e) => addForm.setData('fiv_status', e.target.value)}>{options.fivStatus.map((item) => <option key={item}>{item}</option>)}</select>
                                     <FieldError message={addForm.errors.fiv_status} />
                                 </div>
                                 <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FeLV Status
+                                    </label>
                                     <select className={inputClass(addForm.errors.felv_status)} value={addForm.data.felv_status} onChange={(e) => addForm.setData('felv_status', e.target.value)}>{options.felvStatus.map((item) => <option key={item}>{item}</option>)}</select>
                                     <FieldError message={addForm.errors.felv_status} />
                                 </div>
                                 <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Vaccination Status
+                                    </label>
                                     <select className={inputClass(addForm.errors.vaccination_status)} value={addForm.data.vaccination_status} onChange={(e) => addForm.setData('vaccination_status', e.target.value)}>{options.vaccinationStatus.map((item) => <option key={item}>{item}</option>)}</select>
                                     <FieldError message={addForm.errors.vaccination_status} />
                                 </div>
@@ -412,7 +444,7 @@ export default function CatsIndex({ cats, categories, filters, options }) {
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
                                             <p className="text-sm font-semibold">{record.type}</p>
-                                            <p className="text-xs text-[#7f7570]">{record.record_date} - AED {Number(record.cost_aed || 0).toLocaleString()}</p>
+                                            <p className="text-xs text-[#7f7570]">{formatDisplayDate(record.record_date)} - AED {Number(record.cost_aed || 0).toLocaleString()}</p>
                                             <p className="mt-1 text-xs text-[#6e6561]">{record.description || 'No description'}</p>
                                         </div>
                                         <button type="button" className="text-xs text-red-500" onClick={() => deleteMedicalRecord(medicalModalCat.id, record.id)}>

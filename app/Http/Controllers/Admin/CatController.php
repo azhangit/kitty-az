@@ -56,8 +56,8 @@ class CatController extends Controller
             'location' => ['nullable', 'string', 'max:255'],
             'rescue_story' => ['nullable', 'string'],
             'photo_path' => ['nullable', 'string', 'max:2048'],
-            'photos' => ['nullable', 'array'],
-            'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'photos' => ['required', 'array', 'min:1'],
+            'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
 
             'fiv_status' => ['nullable', 'string', 'max:255'],
             'felv_status' => ['nullable', 'string', 'max:255'],
@@ -95,22 +95,18 @@ class CatController extends Controller
 
         $uploadedPaths = [];
 
-        if (! empty($photoFiles)) {
-            $destination = public_path('images/cats');
-            if (! is_dir($destination)) {
-                mkdir($destination, 0755, true);
-            }
-
-            foreach ($photoFiles as $photoFile) {
-                $filename = Str::uuid()->toString() . '.' . $photoFile->getClientOriginalExtension();
-                $photoFile->move($destination, $filename);
-                $uploadedPaths[] = '/images/cats/' . $filename;
-            }
-
-            $validated['photo_path'] = $uploadedPaths[0];
-        } elseif (empty($validated['photo_path'])) {
-            $validated['photo_path'] = '/images/gallery-cat.png';
+        $destination = public_path('images/cats');
+        if (! is_dir($destination)) {
+            mkdir($destination, 0755, true);
         }
+
+        foreach ($photoFiles as $photoFile) {
+            $filename = Str::uuid()->toString() . '.' . $photoFile->getClientOriginalExtension();
+            $photoFile->move($destination, $filename);
+            $uploadedPaths[] = '/images/cats/' . $filename;
+        }
+
+        $validated['photo_path'] = $uploadedPaths[0];
 
         $cat = Cat::create($validated);
         $cat->categories()->sync($categoryIds);
@@ -132,11 +128,99 @@ class CatController extends Controller
 
     public function show(Cat $cat): Response
     {
-        $cat->load(['categories', 'medicalRecords']);
+        $cat->load(['categories', 'medicalRecords', 'images']);
 
         return Inertia::render('Admin/Cats/Show', [
             'cat' => $cat,
+            'categories' => Category::orderBy('name')->get(),
+            'options' => $this->options(),
         ]);
+    }
+
+    public function update(Request $request, Cat $cat): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'age_label' => ['nullable', 'string', 'max:255'],
+            'gender' => ['nullable', 'string', 'max:255'],
+            'breed' => ['nullable', 'string', 'max:255'],
+            'size' => ['nullable', 'string', 'max:255'],
+            'weight_kg' => ['nullable', 'numeric', 'min:0'],
+            'status' => ['required', 'string', 'max:50'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'rescue_story' => ['nullable', 'string'],
+            'photo_path' => ['nullable', 'string', 'max:2048'],
+            'photos' => ['nullable', 'array'],
+            'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+
+            'fiv_status' => ['nullable', 'string', 'max:255'],
+            'felv_status' => ['nullable', 'string', 'max:255'],
+            'fip_history' => ['nullable', 'string', 'max:255'],
+            'spay_neuter_status' => ['nullable', 'string', 'max:255'],
+            'microchip_status' => ['nullable', 'string', 'max:255'],
+            'vaccination_status' => ['nullable', 'string', 'max:255'],
+            'special_medical_needs' => ['nullable', 'array'],
+            'special_medical_needs.*' => ['string', 'max:255'],
+            'current_medication' => ['nullable', 'string'],
+
+            'energy_level' => ['nullable', 'string', 'max:255'],
+            'social_behavior' => ['nullable', 'string', 'max:255'],
+            'ideal_home_type' => ['nullable', 'string', 'max:255'],
+            'handling_tolerance' => ['nullable', 'string', 'max:255'],
+            'daily_attention_requirement' => ['nullable', 'string', 'max:255'],
+
+            'good_with_cats' => ['nullable', 'string', 'max:255'],
+            'good_with_dogs' => ['nullable', 'string', 'max:255'],
+            'good_with_children' => ['nullable', 'string', 'max:255'],
+            'diet_type' => ['nullable', 'string', 'max:255'],
+            'grooming_needs' => ['nullable', 'string', 'max:255'],
+            'personality_traits' => ['nullable', 'array'],
+            'personality_traits.*' => ['string', 'max:255'],
+            'profile_tags' => ['nullable', 'array'],
+            'profile_tags.*' => ['string', 'max:255'],
+            'category_ids' => ['nullable', 'array'],
+            'category_ids.*' => ['integer', 'exists:categories,id'],
+        ]);
+
+        $categoryIds = $validated['category_ids'] ?? [];
+        $photoFiles = $request->file('photos', []);
+        unset($validated['category_ids']);
+        unset($validated['photos']);
+
+        $cat->update($validated);
+        $cat->categories()->sync($categoryIds);
+
+        if (! empty($photoFiles)) {
+            $destination = public_path('images/cats');
+            if (! is_dir($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $nextSortOrder = (int) ($cat->images()->max('sort_order') ?? -1) + 1;
+            $uploadedPaths = [];
+
+            foreach ($photoFiles as $photoFile) {
+                $filename = Str::uuid()->toString() . '.' . $photoFile->getClientOriginalExtension();
+                $photoFile->move($destination, $filename);
+                $uploadedPaths[] = '/images/cats/' . $filename;
+            }
+
+            $cat->images()->createMany(
+                collect($uploadedPaths)
+                    ->values()
+                    ->map(fn (string $path, int $index) => [
+                        'path' => $path,
+                        'sort_order' => $nextSortOrder + $index,
+                    ])
+                    ->all(),
+            );
+
+            if (empty($cat->photo_path)) {
+                $cat->update(['photo_path' => $uploadedPaths[0]]);
+            }
+        }
+
+        return back()->with('success', 'Cat updated successfully.');
     }
 
     public function storeMedicalRecord(Request $request, Cat $cat): RedirectResponse

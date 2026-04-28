@@ -1,9 +1,11 @@
-﻿import { Head, Link, usePage } from '@inertiajs/react';
+import FlashToasts from '@/Components/FlashToasts';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 const navItems = [
     { label: 'Dashboard', href: route('dashboard'), routeName: 'dashboard' },
     { label: 'All Cats', href: route('admin.cats.index'), routeName: 'admin.cats.index' },
     { label: 'Categories', href: route('admin.categories.index'), routeName: 'admin.categories.index' },
+    { label: 'User Management', href: route('admin.users.index'), routeName: 'admin.users.index' },
     { label: 'Reports', href: route('admin.reports.index'), routeName: 'admin.reports.index' },
 ];
 
@@ -14,6 +16,7 @@ export default function AdminLayout({ title, subtitle, children, action }) {
         <>
             {title ? <Head title={title} /> : null}
             <div className="min-h-screen overflow-x-hidden bg-[#f5f2ef] text-[#2e2622] lg:pl-[230px]">
+                <FlashToasts />
                 <aside className="fixed inset-y-0 left-0 hidden w-[230px] flex-col border-r border-[#e5deda] bg-[#f8f6f4] lg:flex">
                     <div className="border-b border-[#e5deda] px-6 py-7">
                         <img src="/images/nav-logo.svg" alt="Dubai Street Kitties" className="h-10 w-auto" />

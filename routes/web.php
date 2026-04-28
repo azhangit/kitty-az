@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Cat;
 use Illuminate\Support\Facades\Route;
@@ -203,6 +204,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     Route::get('/admin/cats', [CatController::class, 'index'])->name('admin.cats.index');
     Route::post('/admin/cats', [CatController::class, 'store'])->name('admin.cats.store');
+    Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
     Route::get('/admin/cats/{cat}', [CatController::class, 'show'])->name('admin.cats.show');
     Route::post('/admin/cats/{cat}/medical-records', [CatController::class, 'storeMedicalRecord'])->name('admin.cats.medical-records.store');
     Route::delete('/admin/cats/{cat}/medical-records/{medicalRecord}', [CatController::class, 'destroyMedicalRecord'])->name('admin.cats.medical-records.destroy');
@@ -213,6 +215,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
     Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
+    Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
 });
 
 Route::middleware('auth')->group(function () {

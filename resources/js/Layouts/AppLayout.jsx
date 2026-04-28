@@ -1,4 +1,5 @@
-﻿import { Link, usePage } from '@inertiajs/react';
+import FlashToasts from '@/Components/FlashToasts';
+import { Link, usePage } from '@inertiajs/react';
 
 const Logo = () => (
     <div className="flex flex-col items-center justify-center">
@@ -22,6 +23,7 @@ export default function AppLayout({ children, currentPath }) {
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-white font-sans text-gray-900">
+            <FlashToasts />
             <header className="sticky top-0 z-50 bg-white px-4 py-3 sm:px-6 lg:px-12 lg:py-4">
                 <div className="mx-auto flex max-w-[1400px] items-center justify-between">
                     <Link href="/" className="flex-shrink-0">

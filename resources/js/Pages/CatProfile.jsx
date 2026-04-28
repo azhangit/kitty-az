@@ -1,4 +1,5 @@
-﻿import { Head, Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
 function SocialIcon({ label }) {
@@ -18,7 +19,12 @@ export default function CatProfile({ cat }) {
     const tags = cat?.tags || [];
     const goodWith = cat?.goodWith || {};
     const galleryImages = cat?.images?.length ? cat.images : [cat?.image, cat?.image, cat?.image].filter(Boolean);
-    const mainImage = galleryImages[0] || '/images/gallery-cat.png';
+    const defaultImage = galleryImages[0] || '/images/gallery-cat.png';
+    const [selectedImage, setSelectedImage] = useState(defaultImage);
+
+    useEffect(() => {
+        setSelectedImage(defaultImage);
+    }, [defaultImage]);
 
     return (
         <AppLayout currentPath="/adopt">
@@ -37,20 +43,27 @@ export default function CatProfile({ cat }) {
                         <div>
                             <div className="aspect-[4/4.1] overflow-hidden rounded-2xl">
                                 <img
-                                    src={mainImage}
+                                    src={selectedImage}
                                     alt={cat?.name || 'Cat'}
                                     className="h-full w-full object-cover"
                                 />
                             </div>
                             <div className="mt-3 grid grid-cols-3 gap-2">
                                 {galleryImages.slice(0, 3).map((imagePath, index) => (
-                                    <div key={`${imagePath}-${index}`} className="aspect-square overflow-hidden rounded-xl">
+                                    <button
+                                        key={`${imagePath}-${index}`}
+                                        type="button"
+                                        onClick={() => setSelectedImage(imagePath)}
+                                        className={`aspect-square overflow-hidden rounded-xl border-2 ${
+                                            selectedImage === imagePath ? 'border-[#8ec8bf]' : 'border-transparent'
+                                        }`}
+                                    >
                                         <img
                                             src={imagePath}
                                             alt={`${cat?.name || 'Cat'} thumbnail ${index + 1}`}
                                             className="h-full w-full object-cover"
                                         />
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                         </div>
