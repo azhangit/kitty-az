@@ -1,6 +1,7 @@
 import FlashToasts from "@/Components/FlashToasts";
 import Dropdown from "@/Components/Dropdown";
 import { Link, usePage } from "@inertiajs/react";
+import { useState } from "react";
 
 const Logo = () => (
     <div className="flex flex-col items-center justify-center">
@@ -23,6 +24,7 @@ const navItems = [
 export default function AppLayout({ children, currentPath }) {
     const { auth } = usePage().props;
     const user = auth?.user;
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-white font-sans text-gray-900">
@@ -52,7 +54,10 @@ export default function AppLayout({ children, currentPath }) {
                     </nav>
 
                     <div className="flex items-center gap-3 text-gray-400 md:gap-5">
-                        <button className="p-1 transition hover:text-black">
+                        <button
+                            type="button"
+                            className="hidden p-1 transition hover:text-black sm:inline-flex"
+                        >
                             <svg
                                 className="h-5 w-5"
                                 fill="none"
@@ -67,18 +72,25 @@ export default function AppLayout({ children, currentPath }) {
                                 />
                             </svg>
                         </button>
-                        <button className="p-1 transition hover:text-black">
+                        <button
+                            type="button"
+                            className="hidden p-1 transition hover:text-black sm:inline-flex"
+                        >
                             <svg
-                                className="h-5 w-5"
+                                width="15"
+                                height="16"
+                                viewBox="0 0 15 16"
                                 fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
+                                xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm5.938 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                                    d="M5.18262 5.12407V3.22718C5.18262 1.76111 5.83044 0.498873 7.44998 0.500001C8.74562 0.5 9.71735 1.13056 9.71735 3.3375V5.12407"
+                                    stroke="#221F1F"
+                                    strokeLinecap="square"
+                                />
+                                <path
+                                    d="M14.2891 5.88086L12.4727 14.8994H2.34473L0.605469 5.88086H14.2891Z"
+                                    stroke="#221F1F"
                                 />
                             </svg>
                         </button>
@@ -106,7 +118,7 @@ export default function AppLayout({ children, currentPath }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center rounded-full   px-4 py-2 text-[13px] font-semibold text-gray-700 transition hover:border-gray-300 hover:text-black"
+                                            className="inline-flex p-1 items-center rounded-full   text-[13px] font-semibold text-gray-700 transition hover:border-gray-300 hover:text-black"
                                         >
                                         
                                             <svg
@@ -216,11 +228,110 @@ export default function AppLayout({ children, currentPath }) {
                             </div>
                         )}
 
-                        <button className="ml-2 p-1 transition hover:text-black lg:hidden">
-
+                        <button
+                            type="button"
+                            className="ml-1 rounded-md p-2 text-gray-700 transition hover:bg-gray-100 hover:text-black lg:hidden"
+                            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                            aria-label="Toggle navigation menu"
+                            aria-expanded={isMobileMenuOpen}
+                        >
+                            <svg
+                                className="h-6 w-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                {isMobileMenuOpen ? (
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                ) : (
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M3 6h18M3 12h18M3 18h18"
+                                    />
+                                )}
+                            </svg>
                         </button>
                     </div>
                 </div>
+
+                {isMobileMenuOpen && (
+                    <div className="mt-3 border-t border-gray-100 pt-3 lg:hidden">
+                        <nav className="grid grid-cols-1 gap-1">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                                        currentPath === item.href ||
+                                        (item.name === "Home" &&
+                                            currentPath === "/")
+                                            ? "bg-[#fac2ac] text-[#2d2d2d]"
+                                            : "text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                    onClick={() =>
+                                        setIsMobileMenuOpen(false)
+                                    }
+                                >
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        <div className="mt-3 border-t border-gray-100 pt-3">
+                            {user ? (
+                                <div className="flex flex-col gap-2">
+                                    <Link
+                                        href="/dashboard"
+                                        className="rounded-lg bg-[#8bcbbd] px-3 py-2 text-sm font-semibold text-[#1f453c]"
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
+                                    >
+                                        Dashboard
+                                    </Link>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="rounded-lg bg-[#fac2ac] px-3 py-2 text-sm font-semibold text-[#30160d] text-left"
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
+                                    >
+                                        Logout
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-2">
+                                    <Link
+                                        href="/login"
+                                        className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700"
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
+                                    >
+                                        Login
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        className="rounded-lg bg-[#fac2ac] px-3 py-2 text-sm font-semibold text-[#30160d]"
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
+                                    >
+                                        Register
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </header>
 
             {children}
