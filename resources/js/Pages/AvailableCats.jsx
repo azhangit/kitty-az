@@ -1,16 +1,106 @@
 import { Head, Link } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
-const filters = [
-    { title: 'Breed', options: ['Domestic Short Hair', 'Persian Mix', 'Siamese Mix', 'Maine Coon Mix'] },
-    { title: 'Color', options: ['Black & White', 'Orange Tabby', 'Calico', 'Grey Tabby', 'Brown Tabby', 'White'] },
-    { title: 'Age', options: ['6 Month', '1 Year', '2 Year', '3 Year', '4 Year', '5 Year'] },
-    { title: 'Personality', options: ['Playful', 'Shy', 'Cuddly', 'Calm', 'Affectionate', 'Independent'] },
-    { title: 'Compatibility', options: ['Special Need', 'Friendly to other dogs', 'Good for Apartments', 'Friendly with Kids'] },
-    { title: 'Vaccinated', options: ['Yes', 'No'] },
-];
+const FILTER_KEYS = ['Breed', 'Age', 'Gender', 'Personality', 'Tags'];
 
-export default function AvailableCats({ availableCats = [] }) {
+export default function AvailableCats({ availableCats = [], initialSearchQuery = '' }) {
+    const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
+    const [selectedFilters, setSelectedFilters] = useState({});
+
+    const dynamicFilters = useMemo(() => {
+        const filterMap = {
+            Breed: new Set(),
+            Age: new Set(),
+            Gender: new Set(),
+            Personality: new Set(),
+            Tags: new Set(),
+        };
+
+        for (const cat of availableCats) {
+            if (cat?.breed) filterMap.Breed.add(cat.breed);
+            if (cat?.age) filterMap.Age.add(cat.age);
+            if (cat?.gender) filterMap.Gender.add(cat.gender);
+            for (const trait of cat?.traits || []) filterMap.Personality.add(trait);
+            for (const tag of cat?.tags || []) filterMap.Tags.add(tag);
+        }
+
+        return FILTER_KEYS.map((title) => ({
+            title,
+            options: Array.from(filterMap[title]).sort((a, b) =>
+                a.localeCompare(b),
+            ),
+        })).filter((filter) => filter.options.length > 0);
+    }, [availableCats]);
+
+    const searchWords = useMemo(() => {
+        const words = new Set();
+        for (const filter of dynamicFilters) {
+            for (const option of filter.options) {
+                words.add(option);
+            }
+        }
+        return Array.from(words).sort((a, b) => a.localeCompare(b));
+    }, [dynamicFilters]);
+
+    const filteredCats = useMemo(() => {
+        const normalizedSearch = searchTerm.trim().toLowerCase();
+
+        return availableCats.filter((cat) => {
+            const catFields = [
+                cat?.name,
+                cat?.breed,
+                cat?.age,
+                cat?.gender,
+                ...(cat?.traits || []),
+                ...(cat?.tags || []),
+            ]
+                .filter(Boolean)
+                .map((value) => String(value).toLowerCase());
+
+            const matchesSearch =
+                normalizedSearch.length === 0 ||
+                catFields.some((value) => value.includes(normalizedSearch));
+
+            if (!matchesSearch) return false;
+
+            for (const [title, selectedOptions] of Object.entries(
+                selectedFilters,
+            )) {
+                if (!selectedOptions?.length) continue;
+
+                let catValues = [];
+                if (title === 'Breed') catValues = [cat?.breed];
+                if (title === 'Age') catValues = [cat?.age];
+                if (title === 'Gender') catValues = [cat?.gender];
+                if (title === 'Personality') catValues = cat?.traits || [];
+                if (title === 'Tags') catValues = cat?.tags || [];
+
+                const matchesThisFilter = selectedOptions.some((option) =>
+                    catValues.includes(option),
+                );
+
+                if (!matchesThisFilter) return false;
+            }
+
+            return true;
+        });
+    }, [availableCats, searchTerm, selectedFilters]);
+
+    const toggleFilterOption = (filterTitle, option) => {
+        setSelectedFilters((prev) => {
+            const currentOptions = prev[filterTitle] || [];
+            const nextOptions = currentOptions.includes(option)
+                ? currentOptions.filter((item) => item !== option)
+                : [...currentOptions, option];
+
+            return {
+                ...prev,
+                [filterTitle]: nextOptions,
+            };
+        });
+    };
+
     return (
         <AppLayout currentPath="/available-cats">
             <Head title="Available Cats - Dubai Street Kitties" />
@@ -41,13 +131,42 @@ export default function AvailableCats({ availableCats = [] }) {
                             </div>
 
                             <div className="space-y-8">
-                                {filters.map((filter) => (
+                                <div className="bg-[#F6EDE5] p-5 rounded-2xl">
+                                    <h4 className="text-xs font-bold text-[#f08063] uppercase tracking-wider mb-4">Search</h4>
+                                    <input
+                                        type="search"
+                                        value={searchTerm}
+                                        onChange={(e) =>
+                                            setSearchTerm(e.target.value)
+                                        }
+                                        list="cat-filter-words"
+                                        placeholder="Search by name, breed, tags..."
+                                        className="w-full rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-[#f08063]"
+                                    />
+                                    <datalist id="cat-filter-words">
+                                        {searchWords.map((word) => (
+                                            <option key={word} value={word} />
+                                        ))}
+                                    </datalist>
+                                </div>
+
+                                {dynamicFilters.map((filter) => (
                                     <div key={filter.title} className="bg-[#F6EDE5] p-5 rounded-2xl">
                                         <h4 className="text-xs font-bold text-[#f08063] uppercase tracking-wider mb-4">{filter.title}</h4>
                                         <div className="space-y-3">
                                             {filter.options.map((option) => (
                                                 <label key={option} className="flex items-center gap-3 cursor-pointer group">
-                                                    <input type="checkbox" className="w-4 h-4 rounded border-gray-200 text-[#f08063] focus:ring-[#f08063]" />
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={(selectedFilters[filter.title] || []).includes(option)}
+                                                        onChange={() =>
+                                                            toggleFilterOption(
+                                                                filter.title,
+                                                                option,
+                                                            )
+                                                        }
+                                                        className="w-4 h-4 rounded border-gray-200 text-[#f08063] focus:ring-[#f08063]"
+                                                    />
                                                     <span className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">{option}</span>
                                                 </label>
                                             ))}
@@ -61,11 +180,11 @@ export default function AvailableCats({ availableCats = [] }) {
                     {/* CAT LISTING GRID */}
                     <div className="flex-grow">
                         <div className="mb-8 flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-gray-900">Showing {availableCats.length} cats</h3>
+                            <h3 className="text-xl font-bold text-gray-900">Showing {filteredCats.length} cats</h3>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {availableCats.map((cat) => (
+                            {filteredCats.map((cat) => (
                                 <div key={cat.id} className="bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition group border border-gray-50">
                                     <div className="relative aspect-[4/3] overflow-hidden">
                                         <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
@@ -98,9 +217,9 @@ export default function AvailableCats({ availableCats = [] }) {
                                     </div>
                                 </div>
                             ))}
-                            {availableCats.length === 0 && (
+                            {filteredCats.length === 0 && (
                                 <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-gray-100 bg-white p-8 text-center text-gray-500">
-                                    No cats available right now.
+                                    No cats match your search/filter.
                                 </div>
                             )}
                         </div>

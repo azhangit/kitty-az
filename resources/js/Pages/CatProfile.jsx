@@ -153,9 +153,12 @@ export default function CatProfile({ cat }) {
                                 </div>
                             </div>
 
-                            <button className="mt-6 w-full rounded-md bg-gradient-to-r from-[#f6b29b] to-[#8ec8bf] py-3 text-sm font-semibold text-[#2f2b28]">
+                            <Link
+                                href="/contact"
+                                className="mt-6 block w-full rounded-md bg-gradient-to-r from-[#f6b29b] to-[#8ec8bf] py-3 text-center text-sm font-semibold text-[#2f2b28]"
+                            >
                                 Apply to Adopt {cat?.name}
-                            </button>
+                            </Link>
 
                             <p className="mt-3 text-center text-[10px] text-[#908784]">
                                 All adoptions include full medical care and lifetime support

@@ -10,6 +10,7 @@ use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Cat;
 use App\Models\GalleryImage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
@@ -104,8 +105,10 @@ Route::get('/support', function () {
     return Inertia::render('Support');
 });
 
-Route::get('/available-cats', function () {
+Route::get('/available-cats', function (Request $request) {
     $availableCats = collect();
+    $searchQuery = trim((string) $request->query('q', ''));
+
     if (Schema::hasTable('cats')) {
         $availableCats = Cat::query()
             ->with('images')
@@ -114,10 +117,29 @@ Route::get('/available-cats', function () {
             ->get()
             ->map(fn (Cat $cat) => mapCatCardData($cat))
             ->values();
+
+        if ($searchQuery !== '') {
+            $needle = mb_strtolower($searchQuery);
+            $availableCats = $availableCats
+                ->filter(function (array $cat) use ($needle): bool {
+                    $haystack = collect([
+                        $cat['name'] ?? '',
+                        $cat['breed'] ?? '',
+                        $cat['age'] ?? '',
+                        $cat['gender'] ?? '',
+                        ...($cat['traits'] ?? []),
+                        ...($cat['tags'] ?? []),
+                    ])->implode(' ');
+
+                    return str_contains(mb_strtolower($haystack), $needle);
+                })
+                ->values();
+        }
     }
 
     return Inertia::render('AvailableCats', [
         'availableCats' => $availableCats,
+        'initialSearchQuery' => $searchQuery,
     ]);
 })->name('cats.available');
 

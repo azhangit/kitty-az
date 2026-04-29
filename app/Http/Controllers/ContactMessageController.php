@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMessageSubmitted;
 use App\Models\ContactMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ContactMessageController extends Controller
 {
@@ -19,7 +22,16 @@ class ContactMessageController extends Controller
             'message' => ['required', 'string', 'max:3000'],
         ]);
 
-        ContactMessage::create($validated);
+        $contactMessage = ContactMessage::create($validated);
+
+        try {
+            Mail::to('info@dubaistrreetkitties.ae')
+                ->send(new ContactMessageSubmitted($contactMessage));
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Your message was saved, but email delivery failed.');
+        }
 
         return back()->with('success', 'Thanks! Your message has been sent.');
     }

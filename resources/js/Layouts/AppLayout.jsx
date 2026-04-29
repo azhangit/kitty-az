@@ -1,6 +1,6 @@
 import FlashToasts from "@/Components/FlashToasts";
 import Dropdown from "@/Components/Dropdown";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
 const Logo = () => (
@@ -25,22 +25,42 @@ export default function AppLayout({ children, currentPath }) {
     const { auth } = usePage().props;
     const user = auth?.user;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        const normalizedQuery = searchQuery.trim();
+
+        router.get(
+            "/available-cats",
+            normalizedQuery ? { q: normalizedQuery } : {},
+            {
+                preserveState: false,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setIsMobileMenuOpen(false);
+                    setIsSearchModalOpen(false);
+                },
+            },
+        );
+    };
 
     return (
         <div className="min-h-screen bg-white font-sans text-gray-900">
             <FlashToasts />
-            <header className="sticky top-0 z-50 bg-white px-4 py-3 sm:px-6 lg:px-12 lg:py-4">
-                <div className="mx-auto flex max-w-[1400px] items-center justify-between">
+            <header className="sticky top-0 z-50 bg-white px-4 py-3 sm:px-6 lg:px-6 lg:py-4">
+                <div className="mx-auto flex max-w-[1200px] items-center justify-between">
                     <Link href="/" className="flex-shrink-0">
                         <Logo />
                     </Link>
 
-                    <nav className="hidden items-center gap-4 lg:flex ">
+                    <nav className="hidden items-center lg:flex ">
                         {navItems.map((item) => (
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className={`whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-semibold transition-colors xl:text-[14px] ${
+                                className={`whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold transition-colors xl:text-[14px] ${
                                     currentPath === item.href ||
                                     (item.name === "Home" &&
                                         currentPath === "/")
@@ -56,7 +76,9 @@ export default function AppLayout({ children, currentPath }) {
                     <div className="flex items-center gap-3 text-gray-400 md:gap-5">
                         <button
                             type="button"
-                            className="hidden p-1 transition hover:text-black sm:inline-flex"
+                            onClick={() => setIsSearchModalOpen(true)}
+                            aria-label="Open search"
+                            className="inline-flex  p-2 text-gray-500 transition hover:border-[#f2b7a7] hover:text-[#f08063]"
                         >
                             <svg
                                 className="h-5 w-5"
@@ -72,28 +94,7 @@ export default function AppLayout({ children, currentPath }) {
                                 />
                             </svg>
                         </button>
-                        <button
-                            type="button"
-                            className="hidden p-1 transition hover:text-black sm:inline-flex"
-                        >
-                            <svg
-                                width="15"
-                                height="16"
-                                viewBox="0 0 15 16"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M5.18262 5.12407V3.22718C5.18262 1.76111 5.83044 0.498873 7.44998 0.500001C8.74562 0.5 9.71735 1.13056 9.71735 3.3375V5.12407"
-                                    stroke="#221F1F"
-                                    strokeLinecap="square"
-                                />
-                                <path
-                                    d="M14.2891 5.88086L12.4727 14.8994H2.34473L0.605469 5.88086H14.2891Z"
-                                    stroke="#221F1F"
-                                />
-                            </svg>
-                        </button>
+
 
                         {user ? (
                             <div className="hidden items-center gap-2 md:flex">
@@ -113,6 +114,7 @@ export default function AppLayout({ children, currentPath }) {
                                 </Link>
                             </div>
                         ) : (
+                            
                             <div className="relative hidden items-center md:flex">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -122,7 +124,7 @@ export default function AppLayout({ children, currentPath }) {
                                         >
                                         
                                             <svg
-                                                className="ml-2 h-[15px] w-[15px]"
+                                                className=" h-[15px] w-[15px]"
                                                 width="15"
                                                 height="15"
                                                 viewBox="0 0 15 15"
@@ -173,17 +175,6 @@ export default function AppLayout({ children, currentPath }) {
                                                         />
                                                     </clipPath>
                                                 </defs>
-                                            </svg>
-                                            <svg
-                                                className="ml-1 h-4 w-4"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
                                             </svg>
                                         </button>
                                     </Dropdown.Trigger>
@@ -255,6 +246,28 @@ export default function AppLayout({ children, currentPath }) {
                                         d="M3 6h18M3 12h18M3 18h18"
                                     />
                                 )}
+                            </svg>
+                        </button>
+                        <button
+                            type="button"
+                            className="hidden p-1  sm:inline-flex"
+                        >
+                            <svg
+                                width="15"
+                                height="16"
+                                viewBox="0 0 15 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M5.18262 5.12407V3.22718C5.18262 1.76111 5.83044 0.498873 7.44998 0.500001C8.74562 0.5 9.71735 1.13056 9.71735 3.3375V5.12407"
+                                    stroke="#221F1F"
+                                    strokeLinecap="square"
+                                />
+                                <path
+                                    d="M14.2891 5.88086L12.4727 14.8994H2.34473L0.605469 5.88086H14.2891Z"
+                                    stroke="#221F1F"
+                                />
                             </svg>
                         </button>
                     </div>
@@ -333,6 +346,58 @@ export default function AppLayout({ children, currentPath }) {
                     </div>
                 )}
             </header>
+
+            {isSearchModalOpen && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#2f1d15]/40 p-4 sm:items-center sm:p-6">
+                    <div className="w-full max-w-2xl rounded-3xl border border-[#f3d5c8] bg-[#fff7f3] p-5 shadow-2xl sm:p-7">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-[#2f1d15] sm:text-xl">
+                                Search Cats
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsSearchModalOpen(false)}
+                                className="rounded-full bg-white p-2 text-[#8d6a5b] transition hover:text-[#f08063]"
+                                aria-label="Close search modal"
+                            >
+                                <svg
+                                    className="h-5 w-5"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form
+                            onSubmit={handleSearchSubmit}
+                            className="flex flex-col gap-3 sm:flex-row"
+                        >
+                            <input
+                                type="search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search by name, breed, tags, personality..."
+                                className="w-full rounded-full border border-[#f2c7b5] bg-white px-5 py-3 text-sm text-[#2f1d15] outline-none focus:border-[#f08063]"
+                                autoFocus
+                            />
+                            <button
+                                type="submit"
+                                className="rounded-full bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] px-6 py-3 text-sm font-semibold text-[#2f2b28]"
+                            >
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {children}
 
