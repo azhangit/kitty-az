@@ -1,4 +1,5 @@
 import FlashToasts from "@/Components/FlashToasts";
+import Dropdown from "@/Components/Dropdown";
 import { Link, usePage } from "@inertiajs/react";
 
 const Logo = () => (
@@ -100,36 +101,123 @@ export default function AppLayout({ children, currentPath }) {
                                 </Link>
                             </div>
                         ) : (
-                            <div className="hidden items-center gap-2 md:flex">
-                                <Link
-                                    href="/login"
-                                    className="rounded-full border border-gray-200 px-4 py-2 text-[13px] font-semibold text-gray-700 transition hover:border-gray-300 hover:text-black"
-                                >
-                                    Login
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="rounded-full bg-[#fac2ac] px-4 py-2 text-[13px] font-semibold text-[#30160d] transition hover:bg-[#efa68a]"
-                                >
-                                    Register
-                                </Link>
+                            <div className="relative hidden items-center md:flex">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center rounded-full   px-4 py-2 text-[13px] font-semibold text-gray-700 transition hover:border-gray-300 hover:text-black"
+                                        >
+                                        
+                                            <svg
+                                                className="ml-2 h-[15px] w-[15px]"
+                                                width="15"
+                                                height="15"
+                                                viewBox="0 0 15 15"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <g
+                                                    clipPath="url(#clip0_account_icon)"
+                                                >
+                                                    <mask
+                                                        id="mask0_account_icon"
+                                                        style={{
+                                                            maskType: "luminance",
+                                                        }}
+                                                        maskUnits="userSpaceOnUse"
+                                                        x="0"
+                                                        y="0"
+                                                        width="15"
+                                                        height="15"
+                                                    >
+                                                        <path
+                                                            d="M0 2.28882e-05H14.8998V14.8998H0V2.28882e-05Z"
+                                                            fill="white"
+                                                        />
+                                                    </mask>
+                                                    <g mask="url(#mask0_account_icon)">
+                                                        <path
+                                                            d="M3.72461 4.30697C3.72461 2.24974 5.39234 0.582012 7.44956 0.582012C9.50679 0.582012 11.1745 2.24974 11.1745 4.30697C11.1745 6.36419 9.50679 8.03192 7.44956 8.03192C5.39234 8.03192 3.72461 6.36419 3.72461 4.30697Z"
+                                                            stroke="#221F1F"
+                                                            strokeMiterlimit="10"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M11.7015 8.87588C12.3798 9.17728 12.9225 9.53401 13.3338 9.89541C13.9609 10.4464 14.3178 11.2423 14.3178 12.077V13.1538C14.3178 13.7966 13.7967 14.3178 13.1538 14.3178H1.74608C1.1032 14.3178 0.582031 13.7966 0.582031 13.1538V12.077C0.582031 11.2423 0.938957 10.4464 1.56603 9.89541C2.62776 8.96258 4.56412 8.03195 7.44992 8.03195"
+                                                            stroke="#221F1F"
+                                                            strokeMiterlimit="10"
+                                                            strokeLinecap="round"
+                                                        />
+                                                    </g>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_account_icon">
+                                                        <rect
+                                                            width="14.8998"
+                                                            height="14.8998"
+                                                            fill="white"
+                                                        />
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                            <svg
+                                                className="ml-1 h-4 w-4"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content contentClasses="py-1 bg-white min-w-[12rem]">
+                                        <Dropdown.Link
+                                            href="/login"
+                                            icon={
+                                                <svg
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M3 4a2 2 0 012-2h5a1 1 0 010 2H5v12h5a1 1 0 110 2H5a2 2 0 01-2-2V4zm9.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L13.586 12H8a1 1 0 110-2h5.586l-1.293-1.293a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            }
+                                        >
+                                            Login
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href="/register"
+                                            icon={
+                                                <svg
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M10 2a4 4 0 100 8 4 4 0 000-8zM2 16a6 6 0 1112 0v1H2v-1zm13-5a1 1 0 011-1h1V9a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 01-1-1z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            }
+                                        >
+                                            Register
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
                             </div>
                         )}
 
                         <button className="ml-2 p-1 transition hover:text-black lg:hidden">
-                            <svg
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 12h18M3 6h18M3 18h18"
-                                />
-                            </svg>
+
                         </button>
                     </div>
                 </div>

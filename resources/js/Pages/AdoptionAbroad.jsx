@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import { useState } from 'react';
 
 const steps = [
     { num: '01', title: 'Choose Your Cat', desc: 'Browse our available cats and find the perfect match for your family. We can help guide your selection.' },
@@ -14,35 +15,76 @@ const countries = [
     { 
         id: 'NA', 
         name: 'United States & Canada', 
-        items: ['🇺🇸 USA', '🇨🇦 Canada'] 
+        items: [
+            { name: 'USA', flag: <img src="images/flags/usa.svg" alt="" /> },
+            { name: 'Canada', flag: <img src="images/flags/canada.svg" alt="" /> }
+        ] 
     },
     { 
         id: 'EU', 
         name: 'Europe', 
-        items: ['🇬🇧 UK', '🇩🇪 Germany', '🇫🇷 France', '🇳🇱 Netherlands', '🇸🇪 Sweden'] 
+        items: [
+            { name: 'UK', flag: <img src="images/flags/uk.svg" alt="" height={17.73} width={29.54} /> },
+            { name: 'Germany', flag: <img src="images/flags/germany.svg" alt="" /> },
+            { name: 'France', flag: <img src="images/flags/france.svg" alt="" /> },
+            { name: 'Netherlands', flag: <img src="images/flags/netherlands.svg" alt="" /> },
+            { name: 'Sweden', flag: <img src="images/flags/sweden.svg" alt="" /> }
+        ] 
     },
     { 
         id: 'AP', 
         name: 'Asia Pacific', 
-        items: ['🇸🇬 Singapore', '🇦🇺 Australia', '🇭🇰 Hong Kong'] 
+        items: [
+            { name: 'Singapore', flag: <img src="images/flags/singapore.svg" alt="" /> },
+            { name: 'Australia', flag: <img src="images/flags/australia.svg" alt="" /> },
+            { name: 'Hong Kong', flag: <img src="images/flags/hongkong.svg" alt="" /> }
+        ] 
     },
     { 
         id: 'ME', 
         name: 'Middle East', 
-        items: ['🇸🇦 Saudi Arabia', '🇰🇼 Kuwait', '🇧🇭 Bahrain'] 
+        items: [
+            { name: 'Saudi Arabia', flag: <img src="images/flags/saudi-arabia.svg" alt="" /> },
+            { name: 'Kuwait', flag: <img src="images/flags/kuwait.svg" alt="" /> },
+            { name: 'Bahrain', flag: <img src="images/flags/bahrain.svg" alt="" /> }
+        ] 
     },
 ];
 
 const faqs = [
-    'Can I adopt if I live outside the UAE?',
-    'How long does the international adoption process take?',
-    'What is included in the adoption fee?',
-    'Do you ship cats alone on the flight alone?',
-    'What happens if I move countries after adoption?',
-    'Are there specific age restrictions for international adoption?',
+    {
+        q: 'Can I adopt if I live outside the UAE?',
+        a: 'Yes, we facilitate international adoptions to many countries across the globe.',
+    },
+    {
+        q: 'How long does the international adoption process take?',
+        a: 'The timeline varies depending on the destination country, usually ranging from a few weeks to several months due to health preparation and documentation.',
+    },
+    {
+        q: 'What is included in the adoption fee?',
+        a: 'The fee generally covers medical preparations, vaccinations, microchipping, exit permits, and the travel crate, but flights are typically quoted separately.',
+    },
+    {
+        q: 'Do you ship cats alone on the flight alone?',
+        a: 'We work with professional IATA-approved pet shippers or flight volunteers to ensure your cat travels safely.',
+    },
+    {
+        q: 'What happens if I move countries after adoption?',
+        a: 'You can definitely take your pet with you! You will just need to follow the import requirements for your new destination country.',
+    },
+    {
+        q: 'Are there specific age restrictions for international adoption?',
+        a: 'Cats usually need to be at least 4 to 7 months old before they can travel internationally, depending on the rabies vaccination requirements of the destination country.',
+    },
 ];
 
 export default function AdoptionAbroad() {
+    const [openFaq, setOpenFaq] = useState(null);
+
+    const toggleFaq = (idx) => {
+        setOpenFaq(openFaq === idx ? null : idx);
+    };
+
     return (
         <AppLayout currentPath="/adoption-abroad">
             <Head title="Adoption Abroad - Dubai Street Kitties" />
@@ -86,11 +128,14 @@ export default function AdoptionAbroad() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {countries.map((region) => (
                             <div key={region.id} className="bg-white p-8 rounded-[40px] text-left shadow-sm">
-                                <div className="w-10 h-10 rounded-full bg-[#ffefe9] mb-6 flex items-center justify-center text-[#f08063]"><svg className="w-5 h-5"></svg></div>
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#FFB5A0] to-[#9BCDC2] mb-6 flex items-center justify-center text-[#f08063]"> <img src="images/flags/language.svg" alt="" /> </div>
                                 <h4 className="text-lg font-bold text-[#f08063] mb-6">{region.name}</h4>
                                 <ul className="space-y-4">
                                     {region.items.map((country) => (
-                                        <li key={country} className="text-gray-700 font-medium text-sm md:text-base">{country}</li>
+                                        <li key={country.name} className="flex items-center gap-3 text-gray-700 font-medium text-sm md:text-base">
+                                            {country.flag}
+                                            {country.name}
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
@@ -105,14 +150,14 @@ export default function AdoptionAbroad() {
                     <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
                         <div className="w-full md:w-1/2">
                             <h2 className="text-4xl md:text-[48px] font-bold text-gray-900 mb-4">What's Included</h2>
-                            <p className="text-gray-500 mb-12 italic">All necessary preparations for your cat's international journey.</p>
+                            <p className="text-gray-500 mb-12">All necessary preparations for your cat's international journey.</p>
                             
                             <ul className="space-y-8">
                                 {[
-                                    { title: 'Full Medical Care', desc: 'All vaccinations, health tests, and treatments are up to date.', icon: <svg></svg> },
-                                    { title: 'Export Documentation', desc: 'Health certificates, export permits, and required paperwork.', icon: <svg></svg> },
-                                    { title: 'Travel Arrangements', desc: 'IATA-approved pet shippers and airlines coordinated for your cat.', icon: <svg></svg> },
-                                    { title: 'Ongoing Support', desc: 'Guidance, advice and assistance from our team.', icon: <svg></svg> },
+                                    { title: 'Full Medical Care', desc: 'All vaccinations, health tests, and treatments are up to date.', icon: <img src="images/heart.svg" alt="" /> },
+                                    { title: 'Export Documentation', desc: 'Health certificates, export permits, and required paperwork.', icon: <img src="images/file-alt-solid.svg" alt="" /> },
+                                    { title: 'Travel Arrangements', desc: 'IATA-approved pet shippers and airlines coordinated for your cat.', icon: <img src="images/plane-departure-solid.svg" alt="" /> },
+                                    { title: 'Ongoing Support', desc: 'Guidance, advice and assistance from our team.', icon: <img src="images/clock.svg" alt="" /> },
                                 ].map((item, idx) => (
                                     <li key={idx} className="flex gap-6 items-start">
                                         <div className="w-10 h-10 flex-shrink-0 text-[#f08063] mt-1">{item.icon}</div>
@@ -178,10 +223,21 @@ export default function AdoptionAbroad() {
                     <p className="text-gray-500 max-w-2xl mx-auto mb-16 italic">Common questions about the international adoption process.</p>
                     
                     <div className="space-y-4">
-                        {faqs.map((q, idx) => (
-                            <div key={idx} className="bg-[#fafafa] p-6 md:p-8 rounded-[30px] flex justify-between items-center text-left group hover:bg-[#ffefe9] transition cursor-pointer">
-                                <span className="font-bold text-gray-800 text-sm md:text-base">{q}</span>
-                                <div className="w-8 h-8 rounded-full bg-white text-[#f08063] flex items-center justify-center font-bold shadow-sm transition group-hover:bg-[#f08063] group-hover:text-white">+</div>
+                        {faqs.map((faq, idx) => (
+                            <div 
+                                key={idx} 
+                                onClick={() => toggleFaq(idx)}
+                                className={`bg-[#fafafa] p-6 md:p-8 rounded-[30px] text-left group transition cursor-pointer border border-transparent ${openFaq === idx ? 'bg-[#ffefe9] border-[#fac2ac]' : 'hover:bg-[#ffefe9]'}`}
+                            >
+                                <div className="flex justify-between items-center">
+                                    <span className="font-bold text-gray-800 text-sm md:text-base pr-4">{faq.q}</span>
+                                    <div className={`w-8 h-8 rounded-full bg-white text-[#f08063] flex items-center justify-center font-bold shadow-sm transition-transform duration-300 flex-shrink-0 ${openFaq === idx ? 'rotate-45' : ''}`}>+</div>
+                                </div>
+                                {openFaq === idx && (
+                                    <div className="mt-4 text-gray-600 text-sm md:text-base leading-relaxed">
+                                        {faq.a}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
