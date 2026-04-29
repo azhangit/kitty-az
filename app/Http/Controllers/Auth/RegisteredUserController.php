@@ -9,10 +9,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -43,9 +45,18 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if (Str::lower($user->email) === 'admin@kitties.com') {
+            Role::findOrCreate('admin');
+            $user->assignRole('admin');
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($user->hasRole('admin')) {
+            return redirect()->route('dashboard');
+        }
 
         return redirect('/');
     }

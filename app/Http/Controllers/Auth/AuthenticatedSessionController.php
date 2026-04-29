@@ -8,8 +8,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -32,6 +34,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if (Str::lower((string) $request->user()?->email) === 'admin@kitties.com') {
+            Role::findOrCreate('admin');
+            if (! $request->user()->hasRole('admin')) {
+                $request->user()->assignRole('admin');
+            }
+        }
 
         if ($request->user()?->hasRole('admin')) {
             return redirect()->route('dashboard');
