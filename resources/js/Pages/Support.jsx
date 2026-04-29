@@ -7,9 +7,9 @@ export default function Support() {
             <Head title="Support Us - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6 overflow-hidden min-h-[400px] flex flex-col justify-center">
+            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6 overflow-visible min-h-[400px] flex flex-col justify-center">
                 <div className="absolute"><img src="/images/left-paws.png" alt="Cat hero" className="w-full" /></div>
-                <div className="absolute top-0 right-0 w-[300px] md:w-[450px] opacity-90"><img src="/images/support-hero.png" alt="Cat hero" className="w-full" /></div>
+                <div className="absolute top-0 right-0 w-[300px] md:w-[450px]"><img src="/images/support-hero.png" alt="Cat hero" className="w-full" /></div>
                 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6 leading-tight">Support Our Mission</h1>

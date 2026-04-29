@@ -9,8 +9,8 @@ export default function Adopt() {
             {/* HERO SECTION */}
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6 overflow-hidden min-h-[500px] flex flex-col justify-center">
                 {/* Peeking Cats Placeholders */}
-                <div className="absolute top-0 left-0 w-[200px] md:w-[350px] opacity-90"><img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=800&q=80" alt="Cat left" className="w-full h-auto object-contain" /></div>
-                <div className="absolute top-0 right-0 w-[200px] md:w-[350px] opacity-90"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" alt="Cat right" className="w-full h-auto object-contain" /></div>
+                <div className="absolute bottom-0 left-0 w-[200px] md:w-[350px] opacity-90"><img src="images/adopt-left.png" alt="Cat left" className="w-full h-auto object-contain" /></div>
+                <div className="absolute bottom-0 right-0 w-[200px] md:w-[350px] opacity-90"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6">Adopt a Cat</h1>
