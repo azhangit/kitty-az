@@ -107,39 +107,103 @@ Route::get('/support', function () {
 
 Route::get('/available-cats', function (Request $request) {
     $availableCats = collect();
-    $searchQuery = trim((string) $request->query('q', ''));
+    $filterOptions = [
+        'breed' => [],
+        'age' => [],
+        'gender' => [],
+        'personality' => [],
+        'vaccination' => [],
+    ];
+    $selectedFilters = [
+        'breed' => array_values((array) $request->input('breed', [])),
+        'age' => array_values((array) $request->input('age', [])),
+        'gender' => array_values((array) $request->input('gender', [])),
+        'personality' => array_values((array) $request->input('personality', [])),
+        'vaccination' => array_values((array) $request->input('vaccination', [])),
+        'compatibility' => array_values((array) $request->input('compatibility', [])),
+    ];
 
     if (Schema::hasTable('cats')) {
+        $baseQuery = Cat::query()->where('status', 'available');
+
+        $filterOptions['breed'] = (clone $baseQuery)
+            ->whereNotNull('breed')
+            ->distinct()
+            ->orderBy('breed')
+            ->pluck('breed')
+            ->values()
+            ->all();
+        $filterOptions['age'] = (clone $baseQuery)
+            ->whereNotNull('age_label')
+            ->distinct()
+            ->orderBy('age_label')
+            ->pluck('age_label')
+            ->values()
+            ->all();
+        $filterOptions['gender'] = (clone $baseQuery)
+            ->whereNotNull('gender')
+            ->distinct()
+            ->orderBy('gender')
+            ->pluck('gender')
+            ->values()
+            ->all();
+        $filterOptions['vaccination'] = (clone $baseQuery)
+            ->whereNotNull('vaccination_status')
+            ->distinct()
+            ->orderBy('vaccination_status')
+            ->pluck('vaccination_status')
+            ->values()
+            ->all();
+        $filterOptions['personality'] = (clone $baseQuery)
+            ->get(['personality_traits'])
+            ->pluck('personality_traits')
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+
         $availableCats = Cat::query()
             ->with('images')
             ->where('status', 'available')
+            ->when(! empty($selectedFilters['breed']), fn ($q) => $q->whereIn('breed', $selectedFilters['breed']))
+            ->when(! empty($selectedFilters['age']), fn ($q) => $q->whereIn('age_label', $selectedFilters['age']))
+            ->when(! empty($selectedFilters['gender']), fn ($q) => $q->whereIn('gender', $selectedFilters['gender']))
+            ->when(! empty($selectedFilters['vaccination']), fn ($q) => $q->whereIn('vaccination_status', $selectedFilters['vaccination']))
+            ->when(! empty($selectedFilters['personality']), function ($q) use ($selectedFilters) {
+                $q->where(function ($inner) use ($selectedFilters) {
+                    foreach ($selectedFilters['personality'] as $trait) {
+                        $inner->orWhereJsonContains('personality_traits', $trait);
+                    }
+                });
+            })
+            ->when(! empty($selectedFilters['compatibility']), function ($q) use ($selectedFilters) {
+                foreach ($selectedFilters['compatibility'] as $compatibility) {
+                    if ($compatibility === 'special_needs') {
+                        $q->whereNotNull('special_medical_needs')->whereJsonLength('special_medical_needs', '>', 0);
+                    }
+                    if ($compatibility === 'good_with_dogs') {
+                        $q->where('good_with_dogs', 'Yes');
+                    }
+                    if ($compatibility === 'apartment_friendly') {
+                        $q->where('ideal_home_type', 'Apartment Friendly');
+                    }
+                    if ($compatibility === 'good_with_children') {
+                        $q->where('good_with_children', 'Yes');
+                    }
+                }
+            })
             ->latest()
             ->get()
             ->map(fn (Cat $cat) => mapCatCardData($cat))
             ->values();
-
-        if ($searchQuery !== '') {
-            $needle = mb_strtolower($searchQuery);
-            $availableCats = $availableCats
-                ->filter(function (array $cat) use ($needle): bool {
-                    $haystack = collect([
-                        $cat['name'] ?? '',
-                        $cat['breed'] ?? '',
-                        $cat['age'] ?? '',
-                        $cat['gender'] ?? '',
-                        ...($cat['traits'] ?? []),
-                        ...($cat['tags'] ?? []),
-                    ])->implode(' ');
-
-                    return str_contains(mb_strtolower($haystack), $needle);
-                })
-                ->values();
-        }
     }
 
     return Inertia::render('AvailableCats', [
         'availableCats' => $availableCats,
-        'initialSearchQuery' => $searchQuery,
+        'filterOptions' => $filterOptions,
+        'selectedFilters' => $selectedFilters,
     ]);
 })->name('cats.available');
 

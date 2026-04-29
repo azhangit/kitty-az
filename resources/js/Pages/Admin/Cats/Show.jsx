@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 function formatDisplayDate(value) {
     if (!value) return 'N/A';
@@ -57,6 +57,10 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
     const tags = cat.profile_tags || [];
     const galleryImages = (cat.images?.length ? cat.images.map((img) => img.path) : [cat.photo_path || '/images/gallery-cat.png']).filter(Boolean);
     const mainImage = galleryImages[0] || '/images/gallery-cat.png';
+    const preselectedGalleryIds = useMemo(
+        () => galleryLibrary.filter((image) => galleryImages.includes(image.path)).map((image) => image.id),
+        [galleryLibrary, galleryImages],
+    );
 
     const editForm = useForm({
         _method: 'put',
@@ -84,7 +88,7 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         profile_tags: cat.profile_tags || [],
         category_ids: (cat.categories || []).map((item) => item.id),
         photos: [],
-        gallery_image_ids: [],
+        gallery_image_ids: preselectedGalleryIds,
         image_source: 'upload',
     });
 
@@ -103,6 +107,11 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
             preserveScroll: true,
             onSuccess: () => setShowEditModal(false),
         });
+    };
+
+    const openEditModal = () => {
+        editForm.setData('gallery_image_ids', preselectedGalleryIds);
+        setShowEditModal(true);
     };
 
     const toggleGalleryImage = (imageId) => {
@@ -130,7 +139,7 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
             action={(
                 <button
                     type="button"
-                    onClick={() => setShowEditModal(true)}
+                    onClick={openEditModal}
                     className="rounded-full bg-gradient-to-r from-[#f6b79f] to-[#9ecfc6] px-5 py-2 text-sm font-semibold text-[#2f1d15]"
                 >
                     Edit Cat
