@@ -3,10 +3,12 @@
 use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Cat;
+use App\Models\GalleryImage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
@@ -49,11 +51,35 @@ Route::get('/', function () {
 });
 
 Route::get('/about-us', function () {
-    return Inertia::render('AboutUs');
+    $latestGalleryImages = collect();
+
+    if (Schema::hasTable('gallery_images')) {
+        $latestGalleryImages = GalleryImage::query()
+            ->latest('id')
+            ->take(6)
+            ->get(['id', 'path', 'type']);
+    }
+
+    return Inertia::render('AboutUs', [
+        'latestGalleryImages' => $latestGalleryImages,
+    ]);
 });
 
 Route::get('/gallery', function () {
-    return Inertia::render('Gallery');
+    $galleryImages = collect();
+    $galleryTypes = GalleryImage::TYPES;
+
+    if (Schema::hasTable('gallery_images')) {
+        $galleryImages = GalleryImage::query()
+            ->orderBy('sort_order')
+            ->latest('id')
+            ->get(['id', 'type', 'path']);
+    }
+
+    return Inertia::render('Gallery', [
+        'galleryImages' => $galleryImages,
+        'galleryTypes' => $galleryTypes,
+    ]);
 });
 
 Route::get('/shop', function () {
@@ -216,6 +242,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
+    Route::get('/admin/gallery', [GalleryController::class, 'index'])->name('admin.gallery.index');
+    Route::post('/admin/gallery', [GalleryController::class, 'store'])->name('admin.gallery.store');
 });
 
 Route::middleware('auth')->group(function () {

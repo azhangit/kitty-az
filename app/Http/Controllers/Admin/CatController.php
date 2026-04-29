@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Cat;
 use App\Models\Category;
+use App\Models\GalleryImage;
 use App\Models\MedicalRecord;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,6 +36,9 @@ class CatController extends Controller
         return Inertia::render('Admin/Cats/Index', [
             'cats' => $cats,
             'categories' => Category::orderBy('name')->get(),
+            'galleryImages' => GalleryImage::query()
+                ->latest('id')
+                ->get(['id', 'path', 'type']),
             'filters' => [
                 'search' => $search,
                 'status' => $status ?: 'all',
@@ -56,8 +60,10 @@ class CatController extends Controller
             'location' => ['nullable', 'string', 'max:255'],
             'rescue_story' => ['nullable', 'string'],
             'photo_path' => ['nullable', 'string', 'max:2048'],
-            'photos' => ['required', 'array', 'min:1'],
-            'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'photos' => ['nullable', 'array'],
+            'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'gallery_image_ids' => ['nullable', 'array'],
+            'gallery_image_ids.*' => ['integer', 'exists:gallery_images,id'],
 
             'fiv_status' => ['nullable', 'string', 'max:255'],
             'felv_status' => ['nullable', 'string', 'max:255'],
@@ -88,10 +94,24 @@ class CatController extends Controller
             'category_ids.*' => ['integer', 'exists:categories,id'],
         ]);
 
+        $hasUploads = count($request->file('photos', [])) > 0;
+        $selectedGalleryIds = $request->input('gallery_image_ids', []);
+        if (! $hasUploads && empty($selectedGalleryIds)) {
+            return back()->withErrors([
+                'photos' => 'Please upload images or select from gallery.',
+            ])->withInput();
+        }
+
         $categoryIds = $validated['category_ids'] ?? [];
         $photoFiles = $request->file('photos', []);
+        $selectedGalleryPaths = GalleryImage::query()
+            ->whereIn('id', $selectedGalleryIds)
+            ->pluck('path')
+            ->values()
+            ->all();
         unset($validated['category_ids']);
         unset($validated['photos']);
+        unset($validated['gallery_image_ids']);
 
         $uploadedPaths = [];
 
@@ -106,14 +126,15 @@ class CatController extends Controller
             $uploadedPaths[] = '/images/cats/' . $filename;
         }
 
-        $validated['photo_path'] = $uploadedPaths[0];
+        $allImagePaths = array_values(array_unique(array_merge($selectedGalleryPaths, $uploadedPaths)));
+        $validated['photo_path'] = $allImagePaths[0] ?? null;
 
         $cat = Cat::create($validated);
         $cat->categories()->sync($categoryIds);
 
-        if (! empty($uploadedPaths)) {
+        if (! empty($allImagePaths)) {
             $cat->images()->createMany(
-                collect($uploadedPaths)
+                collect($allImagePaths)
                     ->values()
                     ->map(fn (string $path, int $index) => [
                         'path' => $path,
@@ -133,6 +154,9 @@ class CatController extends Controller
         return Inertia::render('Admin/Cats/Show', [
             'cat' => $cat,
             'categories' => Category::orderBy('name')->get(),
+            'galleryImages' => GalleryImage::query()
+                ->latest('id')
+                ->get(['id', 'path', 'type']),
             'options' => $this->options(),
         ]);
     }
@@ -152,6 +176,8 @@ class CatController extends Controller
             'photo_path' => ['nullable', 'string', 'max:2048'],
             'photos' => ['nullable', 'array'],
             'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'gallery_image_ids' => ['nullable', 'array'],
+            'gallery_image_ids.*' => ['integer', 'exists:gallery_images,id'],
 
             'fiv_status' => ['nullable', 'string', 'max:255'],
             'felv_status' => ['nullable', 'string', 'max:255'],
@@ -184,13 +210,19 @@ class CatController extends Controller
 
         $categoryIds = $validated['category_ids'] ?? [];
         $photoFiles = $request->file('photos', []);
+        $selectedGalleryPaths = GalleryImage::query()
+            ->whereIn('id', $request->input('gallery_image_ids', []))
+            ->pluck('path')
+            ->values()
+            ->all();
         unset($validated['category_ids']);
         unset($validated['photos']);
+        unset($validated['gallery_image_ids']);
 
         $cat->update($validated);
         $cat->categories()->sync($categoryIds);
 
-        if (! empty($photoFiles)) {
+        if (! empty($photoFiles) || ! empty($selectedGalleryPaths)) {
             $destination = public_path('images/cats');
             if (! is_dir($destination)) {
                 mkdir($destination, 0755, true);
@@ -205,8 +237,9 @@ class CatController extends Controller
                 $uploadedPaths[] = '/images/cats/' . $filename;
             }
 
+            $allNewPaths = array_values(array_unique(array_merge($selectedGalleryPaths, $uploadedPaths)));
             $cat->images()->createMany(
-                collect($uploadedPaths)
+                collect($allNewPaths)
                     ->values()
                     ->map(fn (string $path, int $index) => [
                         'path' => $path,
@@ -215,8 +248,8 @@ class CatController extends Controller
                     ->all(),
             );
 
-            if (empty($cat->photo_path)) {
-                $cat->update(['photo_path' => $uploadedPaths[0]]);
+            if (empty($cat->photo_path) && ! empty($allNewPaths)) {
+                $cat->update(['photo_path' => $allNewPaths[0]]);
             }
         }
 

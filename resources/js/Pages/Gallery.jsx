@@ -2,28 +2,13 @@ import { Head } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { useState } from 'react';
 
-const galleryCats = [
-    { id: 1, type: 'Happy Cat', url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80' },
-    { id: 2, type: 'Kittens', url: 'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=600&q=80' },
-    { id: 3, type: 'New Member', url: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80' },
-    { id: 4, type: 'Happy Cat', url: 'https://images.unsplash.com/photo-1548247416-ec66f4900b2e?auto=format&fit=crop&w=600&q=80' },
-    { id: 5, type: 'Kittens', url: 'https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=600&q=80' },
-    { id: 6, type: 'New Member', url: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=600&q=80' },
-    { id: 7, type: 'Happy Cat', url: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?auto=format&fit=crop&w=600&q=80' },
-    { id: 8, type: 'Kittens', url: 'https://images.unsplash.com/photo-1517331156671-55db07038e83?auto=format&fit=crop&w=600&q=80' },
-    { id: 9, type: 'New Member', url: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=600&q=80' },
-    { id: 10, type: 'Happy Cat', url: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=600&q=80' },
-    { id: 11, type: 'Kittens', url: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=600&q=80' },
-    { id: 12, type: 'New Member', url: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=600&q=80' },
-];
-
-export default function Gallery() {
+export default function Gallery({ galleryImages = [], galleryTypes = [] }) {
     const [activeTab, setActiveTab] = useState('All');
-    const tabs = ['All', 'Happy Cat', 'Kittens', 'New Member'];
+    const tabs = ['All', ...galleryTypes];
 
-    const filteredCats = activeTab === 'All' 
-        ? galleryCats 
-        : galleryCats.filter(cat => cat.type === activeTab);
+    const filteredCats = activeTab === 'All'
+        ? galleryImages
+        : galleryImages.filter((cat) => cat.type === activeTab);
 
     return (
         <AppLayout currentPath="/gallery">
@@ -102,7 +87,7 @@ export default function Gallery() {
                                 className="group relative aspect-square rounded-[32px] md:rounded-[40px] overflow-hidden shadow-sm hover:shadow-md transition duration-300"
                             >
                                 <img 
-                                    src={cat.url} 
+                                    src={cat.path} 
                                     alt={`Cat ${cat.id}`} 
                                     className="w-full h-full object-cover transition duration-500 group-hover:scale-110"
                                 />
@@ -113,6 +98,11 @@ export default function Gallery() {
                             </div>
                         ))}
                     </div>
+                    {filteredCats.length === 0 ? (
+                        <div className="mt-8 rounded-2xl border border-dashed border-[#d8cbc5] bg-[#f8f3ef] px-6 py-10 text-center text-sm text-[#7a706c]">
+                            No images available in this category yet.
+                        </div>
+                    ) : null}
                 </div>
             </section>
 

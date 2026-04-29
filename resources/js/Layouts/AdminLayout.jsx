@@ -5,6 +5,7 @@ const navItems = [
     { label: 'Dashboard', href: route('dashboard'), routeName: 'dashboard' },
     { label: 'All Cats', href: route('admin.cats.index'), routeName: 'admin.cats.index' },
     { label: 'Categories', href: route('admin.categories.index'), routeName: 'admin.categories.index' },
+    { label: 'Gallery', href: route('admin.gallery.index'), routeName: 'admin.gallery.index' },
     { label: 'User Management', href: route('admin.users.index'), routeName: 'admin.users.index' },
     { label: 'Reports', href: route('admin.reports.index'), routeName: 'admin.reports.index' },
 ];

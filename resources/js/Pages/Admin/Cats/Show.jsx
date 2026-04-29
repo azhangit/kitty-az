@@ -52,7 +52,7 @@ function ChipSelector({ items = [], selected = [], onToggle, title }) {
     );
 }
 
-export default function CatShow({ cat, categories = [], options = {} }) {
+export default function CatShow({ cat, categories = [], options = {}, galleryImages: galleryLibrary = [] }) {
     const [showEditModal, setShowEditModal] = useState(false);
     const tags = cat.profile_tags || [];
     const galleryImages = (cat.images?.length ? cat.images.map((img) => img.path) : [cat.photo_path || '/images/gallery-cat.png']).filter(Boolean);
@@ -84,6 +84,8 @@ export default function CatShow({ cat, categories = [], options = {} }) {
         profile_tags: cat.profile_tags || [],
         category_ids: (cat.categories || []).map((item) => item.id),
         photos: [],
+        gallery_image_ids: [],
+        image_source: 'upload',
     });
 
     const toggleArrayField = (field, value) => {
@@ -101,6 +103,24 @@ export default function CatShow({ cat, categories = [], options = {} }) {
             preserveScroll: true,
             onSuccess: () => setShowEditModal(false),
         });
+    };
+
+    const toggleGalleryImage = (imageId) => {
+        const current = editForm.data.gallery_image_ids || [];
+        editForm.setData(
+            'gallery_image_ids',
+            current.includes(imageId) ? current.filter((id) => id !== imageId) : [...current, imageId],
+        );
+    };
+
+    const switchImageSource = (source) => {
+        editForm.setData('image_source', source);
+        if (source === 'upload') {
+            editForm.setData('gallery_image_ids', []);
+        }
+        if (source === 'gallery') {
+            editForm.setData('photos', []);
+        }
     };
 
     return (
@@ -243,13 +263,30 @@ export default function CatShow({ cat, categories = [], options = {} }) {
                                 <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#6f5449]">
                                     Add More Photos
                                 </label>
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                                    onChange={(e) => editForm.setData('photos', Array.from(e.target.files || []))}
-                                    className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
-                                />
+                                <div className="mb-3 flex gap-2">
+                                    <button type="button" onClick={() => switchImageSource('upload')} className={`rounded-full px-3 py-1 text-xs ${editForm.data.image_source === 'upload' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Upload</button>
+                                    <button type="button" onClick={() => switchImageSource('gallery')} className={`rounded-full px-3 py-1 text-xs ${editForm.data.image_source === 'gallery' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Select From Gallery</button>
+                                </div>
+                                {editForm.data.image_source === 'upload' ? (
+                                    <input
+                                        type="file"
+                                        multiple
+                                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                                        onChange={(e) => editForm.setData('photos', Array.from(e.target.files || []))}
+                                        className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
+                                    />
+                                ) : (
+                                    <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
+                                        {galleryLibrary.map((image) => {
+                                            const checked = editForm.data.gallery_image_ids.includes(image.id);
+                                            return (
+                                                <button key={image.id} type="button" onClick={() => toggleGalleryImage(image.id)} className={`overflow-hidden rounded-lg border-2 ${checked ? 'border-[#9cd2c8]' : 'border-transparent'}`}>
+                                                    <img src={image.path} alt={image.type} className="h-20 w-full object-cover" />
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                                 <FieldError message={editForm.errors.photos || editForm.errors['photos.0']} />
                             </div>
 

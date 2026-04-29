@@ -36,16 +36,7 @@ const stats = [
     },
 ];
 
-const galleryImages = [
-    'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1548247416-ec66f4900b2e?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=600&q=80',
-];
-
-export default function AboutUs() {
+export default function AboutUs({ latestGalleryImages = [] }) {
     return (
         <AppLayout currentPath="/about-us">
             <Head title="About Us - Dubai Street Kitties" />
@@ -191,12 +182,17 @@ export default function AboutUs() {
             <section className="py-20 bg-white max-w-[1240px] mx-auto px-6">
                 <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">Our Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                    {galleryImages.map((img, idx) => (
-                        <div key={idx} className="aspect-square rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
-                            <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                    {latestGalleryImages.map((img) => (
+                        <div key={img.id} className="aspect-square rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
+                            <img src={img.path} alt={img.type || `Gallery ${img.id}`} className="w-full h-full object-cover" />
                         </div>
                     ))}
                 </div>
+                {latestGalleryImages.length === 0 ? (
+                    <div className="mt-6 rounded-xl border border-dashed border-[#d8cbc5] bg-[#f8f3ef] px-4 py-8 text-center text-sm text-[#7a706c]">
+                        Gallery images not available yet.
+                    </div>
+                ) : null}
                 <div className="text-center mt-12">
                     <button className="bg-[#8bcbbd] text-[#1f453c] font-bold px-10 py-3 rounded-full hover:bg-[#7abeaf] transition shadow-sm">
                         See all
@@ -215,5 +211,4 @@ export default function AboutUs() {
         </AppLayout>
     );
 }
-
 

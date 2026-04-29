@@ -58,7 +58,7 @@ function FieldError({ message }) {
     return <p className="mt-1 text-xs font-medium text-red-600">{message}</p>;
 }
 
-export default function CatsIndex({ cats, categories, filters, options }) {
+export default function CatsIndex({ cats, categories, filters, options, galleryImages = [] }) {
     const pageErrors = usePage().props.errors || {};
     const [showAddModal, setShowAddModal] = useRemember(false, 'admin.cats.showAddModal');
     const [medicalModalCat, setMedicalModalCat] = useState(null);
@@ -76,6 +76,8 @@ export default function CatsIndex({ cats, categories, filters, options }) {
         rescue_story: '',
         photo_path: '',
         photos: [],
+        gallery_image_ids: [],
+        image_source: 'upload',
         fiv_status: options.fivStatus?.[2] || 'Pending Test',
         felv_status: options.felvStatus?.[2] || 'Pending Test',
         fip_history: options.fipHistory?.[0] || 'Never Diagnosed',
@@ -154,6 +156,24 @@ export default function CatsIndex({ cats, categories, filters, options }) {
     const handlePhotoChange = (e) => {
         const files = Array.from(e.target.files || []);
         addForm.setData('photos', files);
+    };
+
+    const toggleGalleryImage = (imageId) => {
+        const current = addForm.data.gallery_image_ids || [];
+        addForm.setData(
+            'gallery_image_ids',
+            current.includes(imageId) ? current.filter((id) => id !== imageId) : [...current, imageId],
+        );
+    };
+
+    const switchImageSource = (source) => {
+        addForm.setData('image_source', source);
+        if (source === 'upload') {
+            addForm.setData('gallery_image_ids', []);
+        }
+        if (source === 'gallery') {
+            addForm.setData('photos', []);
+        }
     };
 
     const openMedicalHistory = (cat) => {
@@ -328,21 +348,40 @@ export default function CatsIndex({ cats, categories, filters, options }) {
                                 <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#6f5449]">
                                     Cat Photo Upload
                                 </label>
-                                <input
-                                    type="file"
-                                    multiple
-                                    required
-                                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                                    onChange={handlePhotoChange}
-                                    className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
-                                />
-                                <p className="mt-2 text-xs text-[#8a807b]">
-                                    Image will be saved in <code>public/images/cats/</code>
-                                </p>
-                                {addForm.data.photos.length > 0 && (
-                                    <p className="mt-1 text-xs text-[#6e6561]">
-                                        Selected: {addForm.data.photos.length} image(s)
-                                    </p>
+                                <div className="mb-3 flex gap-2">
+                                    <button type="button" onClick={() => switchImageSource('upload')} className={`rounded-full px-3 py-1 text-xs ${addForm.data.image_source === 'upload' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Upload</button>
+                                    <button type="button" onClick={() => switchImageSource('gallery')} className={`rounded-full px-3 py-1 text-xs ${addForm.data.image_source === 'gallery' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Select From Gallery</button>
+                                </div>
+
+                                {addForm.data.image_source === 'upload' ? (
+                                    <>
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/png,image/jpeg,image/jpg,image/webp"
+                                            onChange={handlePhotoChange}
+                                            className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
+                                        />
+                                        <p className="mt-2 text-xs text-[#8a807b]">
+                                            Image will be saved in <code>public/images/cats/</code>
+                                        </p>
+                                        {addForm.data.photos.length > 0 && (
+                                            <p className="mt-1 text-xs text-[#6e6561]">
+                                                Selected: {addForm.data.photos.length} image(s)
+                                            </p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
+                                        {galleryImages.map((image) => {
+                                            const checked = addForm.data.gallery_image_ids.includes(image.id);
+                                            return (
+                                                <button key={image.id} type="button" onClick={() => toggleGalleryImage(image.id)} className={`overflow-hidden rounded-lg border-2 ${checked ? 'border-[#9cd2c8]' : 'border-transparent'}`}>
+                                                    <img src={image.path} alt={image.type} className="h-20 w-full object-cover" />
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 )}
                                 <FieldError message={addForm.errors.photos || addForm.errors['photos.0']} />
                             </div>
