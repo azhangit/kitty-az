@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Cat;
 use App\Models\GalleryImage;
@@ -93,6 +94,7 @@ Route::get('/adopt', function () {
 Route::get('/contact', function () {
     return Inertia::render('Contact');
 });
+Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 
 Route::get('/adoption-abroad', function () {
     return Inertia::render('AdoptionAbroad');

@@ -1,7 +1,26 @@
-import { Head } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
 
 export default function Contact() {
+    const { flash } = usePage().props;
+    const { data, setData, post, processing, errors, reset } = useForm({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        inquiry_type: "",
+        message: "",
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route("contact.store"), {
+            onSuccess: () => {
+                reset("first_name", "last_name", "email", "phone", "inquiry_type", "message");
+            },
+        });
+    };
+
     return (
         <AppLayout currentPath="/contact">
             <Head title="Contact Us - Dubai Street Kitties" />
@@ -187,7 +206,13 @@ export default function Contact() {
                                 Send Us a Message
                             </h3>
 
-                            <form className="space-y-6">
+                            {flash?.success && (
+                                <p className="mb-6 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
+                                    {flash.success}
+                                </p>
+                            )}
+
+                            <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
@@ -197,12 +222,24 @@ export default function Contact() {
                                             <input
                                                 type="text"
                                                 placeholder="First Name*"
+                                                value={data.first_name}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "first_name",
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
                                             />
                                             <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
                                                 <svg className="w-4 h-4"></svg>
                                             </div>
                                         </div>
+                                        {errors.first_name && (
+                                            <p className="text-xs text-red-600">
+                                                {errors.first_name}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
@@ -212,12 +249,24 @@ export default function Contact() {
                                             <input
                                                 type="text"
                                                 placeholder="Last Name*"
+                                                value={data.last_name}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "last_name",
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
                                             />
                                             <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
                                                 <svg className="w-4 h-4"></svg>
                                             </div>
                                         </div>
+                                        {errors.last_name && (
+                                            <p className="text-xs text-red-600">
+                                                {errors.last_name}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -229,12 +278,21 @@ export default function Contact() {
                                         <input
                                             type="email"
                                             placeholder="Your Email"
+                                            value={data.email}
+                                            onChange={(e) =>
+                                                setData("email", e.target.value)
+                                            }
                                             className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
                                         />
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
                                             <svg className="w-4 h-4"></svg>
                                         </div>
                                     </div>
+                                    {errors.email && (
+                                        <p className="text-xs text-red-600">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -245,12 +303,21 @@ export default function Contact() {
                                         <input
                                             type="tel"
                                             placeholder="Phone Number*"
+                                            value={data.phone}
+                                            onChange={(e) =>
+                                                setData("phone", e.target.value)
+                                            }
                                             className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
                                         />
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
                                             <svg className="w-4 h-4"></svg>
                                         </div>
                                     </div>
+                                    {errors.phone && (
+                                        <p className="text-xs text-red-600">
+                                            {errors.phone}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -258,8 +325,19 @@ export default function Contact() {
                                         Inquiry Type
                                     </label>
                                     <div className="relative">
-                                        <select className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] appearance-none transition-all">
-                                            <option>Select Inquiry Type</option>
+                                        <select
+                                            value={data.inquiry_type}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "inquiry_type",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] appearance-none transition-all"
+                                        >
+                                            <option value="">
+                                                Select Inquiry Type
+                                            </option>
                                             <option>Adoption</option>
                                             <option>Volunteering</option>
                                             <option>Donation</option>
@@ -269,6 +347,11 @@ export default function Contact() {
                                             <svg className="w-4 h-4"></svg>
                                         </div>
                                     </div>
+                                    {errors.inquiry_type && (
+                                        <p className="text-xs text-red-600">
+                                            {errors.inquiry_type}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -279,12 +362,24 @@ export default function Contact() {
                                         <textarea
                                             rows="4"
                                             placeholder="Write Message..."
+                                            value={data.message}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "message",
+                                                    e.target.value,
+                                                )
+                                            }
                                             className="w-full bg-[#fcfcfc] border border-gray-100 rounded-[28px] px-6 py-5 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all resize-none"
                                         ></textarea>
                                         <div className="absolute right-6 top-6 text-gray-300">
                                             <svg className="w-4 h-4"></svg>
                                         </div>
                                     </div>
+                                    {errors.message && (
+                                        <p className="text-xs text-red-600">
+                                            {errors.message}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="pt-4 flex flex-col items-center">
@@ -297,9 +392,12 @@ export default function Contact() {
                                     </p>
                                     <button
                                         type="submit"
+                                        disabled={processing}
                                         className="w-full bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] text-gray-800 font-bold py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.01]"
                                     >
-                                        Send Message
+                                        {processing
+                                            ? "Sending..."
+                                            : "Send Message"}
                                     </button>
                                 </div>
                             </form>
