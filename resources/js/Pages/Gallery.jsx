@@ -30,7 +30,7 @@ export default function Gallery() {
             <Head title="Gallery - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6 overflow-hidden">
+            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
                 {/* Decorative Paw Print Placeholders */}
                 <div className="absolute top-10 left-10 opacity-20 transform -rotate-12"><svg className="w-16 h-16"></svg></div>
                 <div className="absolute top-1/4 right-10 opacity-20 transform rotate-12"><svg className="w-20 h-20"></svg></div>
@@ -118,9 +118,9 @@ export default function Gallery() {
 
             {/* JOIN OUR MISSION */}
             <section className="py-24 bg-white text-center px-6 border-t border-gray-50">
-                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><svg className="w-full h-full"></svg></div>
+                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><img src="images/2-User.svg" alt="" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed text-sm md:text-base">
+                <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
                     Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.
                 </p>
             </section>

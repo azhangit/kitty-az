@@ -7,10 +7,10 @@ export default function Adopt() {
             <Head title="Adopt a Cat - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6 overflow-hidden min-h-[500px] flex flex-col justify-center">
+            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 overflow-visible flex flex-col items-center justify-center">
                 {/* Peeking Cats Placeholders */}
-                <div className="absolute bottom-0 left-0 w-[200px] md:w-[350px] opacity-90"><img src="images/adopt-left.png" alt="Cat left" className="w-full h-auto object-contain" /></div>
-                <div className="absolute bottom-0 right-0 w-[200px] md:w-[350px] opacity-90"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
+                <div className="absolute bottom-0 left-0 w-[200px] md:w-[350px]"><img src="images/adopt-left.png" alt="Cat left" className="w-full h-auto object-contain" /></div>
+                <div className="absolute -bottom-16 right-0 w-[200px] md:w-[350px]"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6">Adopt a Cat</h1>
@@ -25,9 +25,9 @@ export default function Adopt() {
                 <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
                     <div className="w-full md:w-1/2 relative flex justify-center">
                         {/* Oval Image Frame */}
-                        <div className="w-full max-w-[450px] aspect-[4/5] rounded-[240px] overflow-hidden border-8 border-white shadow-2xl">
+                        <div className="w-full">
                             <img 
-                                src="https://images.unsplash.com/photo-1596701062351-8c2c14d18cd3?auto=format&fit=crop&w=1000&q=80" 
+                                src="images/founder-with-cats.png" 
                                 alt="Founder with cats" 
                                 className="w-full h-full object-cover"
                             />
@@ -36,12 +36,12 @@ export default function Adopt() {
                         <div className="absolute -top-10 -left-10 w-24 h-24 text-[#8bcbbd]"><svg></svg></div>
                     </div>
                     
-                    <div className="w-full md:w-1/2">
-                        <div className="w-32 h-32 mb-8"><svg className="w-full h-full"></svg></div>
-                        <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 leading-tight mb-2">
+                    <div className="w-full text-center md:w-1/2">
+                        <div className=" mb-8"><img src="images/sanctuary.png" alt="" className='mx-auto max-h-[139px]' /></div>
+                        <h2 className="text-4xl md:text-[40px] font-bold text-gray-900 leading-tight">
                             Give a Cat a Second Chance
                         </h2>
-                        <h3 className="text-3xl md:text-[44px] font-bold text-[#8bcbbd] leading-tight mb-8">
+                        <h3 className="text-3xl md:text-[40px] font-bold text-[#8bcbbd] leading-tight mb-8">
                             Behind every cat on this page is a story.
                         </h3>
                         <div className="space-y-6 text-gray-600 leading-relaxed text-sm md:text-base">
@@ -53,13 +53,13 @@ export default function Adopt() {
             </section>
 
             {/* FINAL CTA SECTION */}
-            <section className="relative py-24 bg-[#f8e9e1] overflow-hidden">
+            <section className="relative py-24 bg-[#FAC8AE] overflow-visible">
                 {/* Background Doodles Placeholder */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none"><svg className="w-full h-full"></svg></div>
 
                 {/* Corner Cats */}
-                <div className="absolute -bottom-10 -left-10 w-[200px] md:w-[350px] opacity-90"><img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=1000&q=80" alt="Peeking black cat" className="w-full h-auto" /></div>
-                <div className="absolute -bottom-10 -right-10 w-[250px] md:w-[450px] opacity-90 translate-y-10"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1000&q=80" alt="Jumping cat" className="w-full h-auto" /></div>
+                <div className="absolute bottom-0 -left-10 w-[200px] md:w-[350px] "><img src="images/black-cat.png" alt="Peeking black cat" className="w-full h-auto" /></div>
+                <div className="absolute -top-20 -right-20 w-[250px]  md:w-[369px]"><img src="images/adult-gray-cat.png" alt="Jumping cat" className=" max-h-[676px]" /></div>
 
                 <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
                     <div className="space-y-6 text-gray-700 leading-relaxed text-sm md:text-base font-medium mb-10">
@@ -80,9 +80,9 @@ export default function Adopt() {
 
             {/* JOIN OUR MISSION */}
             <section className="py-24 bg-white text-center px-6">
-                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><svg className="w-full h-full"></svg></div>
+                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><img src="images/2-User.svg" alt="" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed text-sm md:text-base">
+                <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
                     Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.
                 </p>
             </section>

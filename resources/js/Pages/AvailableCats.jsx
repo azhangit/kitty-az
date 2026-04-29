@@ -12,13 +12,13 @@ const filters = [
 
 export default function AvailableCats({ availableCats = [] }) {
     return (
-        <AppLayout currentPath="/adopt">
+        <AppLayout currentPath="/available-cats">
             <Head title="Available Cats - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 md:py-24 text-center px-6 overflow-hidden">
-                <div className="absolute top-0 left-0 w-[150px] md:w-[250px] opacity-80"><img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=600&q=80" alt="Cat hero left" className="w-full h-auto" /></div>
-                <div className="absolute top-0 right-0 w-[150px] md:w-[250px] opacity-80"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Cat hero right" className="w-full h-auto" /></div>
+            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
+                <div className="absolute bottom-0 left-0 w-[150px] md:w-[415px] "><img src="images/adopt-left.png" alt="Cat hero left" className="w-full h-auto" /></div>
+                <div className="absolute -bottom-10 right-0 w-[150px] md:w-[415px] "><img src="images/adopt-right.png" alt="Cat hero right" className="w-full h-auto" /></div>
                 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-4">Adopt a Cat</h1>
@@ -29,20 +29,20 @@ export default function AvailableCats({ availableCats = [] }) {
             </section>
 
             {/* MAIN CONTENT WITH SIDEBAR */}
-            <section className="py-12 bg-[#faf7f3]">
+            <section className="py-12 bg-[#F5EDE4]">
                 <div className="max-w-[1400px] mx-auto px-6 flex flex-col lg:flex-row gap-10">
                     
                     {/* SIDEBAR FILTERS */}
                     <aside className="w-full lg:w-72 flex-shrink-0">
-                        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 sticky top-24">
+                        <div className="bg-white rounded-[32px] p-4 shadow-sm border border-gray-100 sticky top-24">
                             <div className="flex items-center gap-3 mb-8">
-                                <div className="w-6 h-6 text-[#f08063]"><svg className="w-full h-full"></svg></div>
+                                <div className="w-6 h-6 text-[#f08063]"><img src="images/filters.svg" alt="" /></div>
                                 <h3 className="text-lg font-bold text-gray-900">Filters</h3>
                             </div>
 
                             <div className="space-y-8">
                                 {filters.map((filter) => (
-                                    <div key={filter.title} className="bg-[#fdf3f0]/40 p-5 rounded-2xl">
+                                    <div key={filter.title} className="bg-[#F6EDE5] p-5 rounded-2xl">
                                         <h4 className="text-xs font-bold text-[#f08063] uppercase tracking-wider mb-4">{filter.title}</h4>
                                         <div className="space-y-3">
                                             {filter.options.map((option) => (
@@ -110,9 +110,9 @@ export default function AvailableCats({ availableCats = [] }) {
 
             {/* JOIN OUR MISSION */}
             <section className="py-24 bg-white text-center px-6">
-                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><svg className="w-full h-full"></svg></div>
+                <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><img src="images/2-User.svg" alt="" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed text-sm md:text-base">
+                <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
                     Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.
                 </p>
             </section>

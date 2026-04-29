@@ -4,9 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 const stats = [
     { 
         icon: (
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-            </svg>
+            <img src="/images/heart.svg" alt="heart" className="w-5 h-5 md:w-6 md:h-6" />
         ),
         value: '2,500', 
         label: 'Cats Rescued', 
@@ -28,9 +26,7 @@ const stats = [
     },
     { 
         icon: (
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-               <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 10.5l-3-3m-4.5-4.5a3 3 0 100 6 3 3 0 000-6zm4.5 4.5l-3 3m10.5-3a3 3 0 100-6 3 3 0 000 6zm-10.5 3l4.5 4.5m-4.5-4.5l-4.5 4.5" />
-            </svg>
+            <img src="/images/cut.svg" alt="scissor" className="w-5 h-5 md:w-6 md:h-6" />
         ),
         value: '200+', 
         label: 'TNR Efforts', 
@@ -55,9 +51,7 @@ const stats = [
 const supportPoints = [
     {
         icon: (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-            </svg>
+<img src="/images/heart.svg" alt="heart" />
         ),
         title: 'Fitness With Dina',
         detail: 'Join my own online fitness application, available in...',
@@ -114,12 +108,12 @@ export default function Home({ availableCats = [] }) {
                             >
                                 View Cats for Adoption
                             </Link>
-                            <a
-                                href="#"
+                            <Link
+                                href="/support"
                                 className="inline-flex justify-center items-center rounded-full bg-white px-7 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100"
                             >
                                 Support Our Mission
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -146,7 +140,7 @@ export default function Home({ availableCats = [] }) {
 
             {/* AVAILABLE CATS SECTION */}
             <section className="bg-[#fbf9f8] py-20 md:py-28">
-                <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+                <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
                     <div className="text-center max-w-2xl mx-auto mb-14 md:mb-16">
                         <h2 className="text-[34px] md:text-[44px] font-semibold text-gray-900 leading-tight">Meet Our Available Cats</h2>
                         <p className="mt-4 text-[14px] md:text-[16px] text-gray-500 leading-relaxed max-w-xl mx-auto">
@@ -161,7 +155,7 @@ export default function Home({ availableCats = [] }) {
                                 <div className="h-[280px] w-full relative">
                                     <img src={cat.image} alt={cat.name} className="h-full w-full object-cover" />
                                 </div>
-                                <div className="p-6 md:p-8 text-center flex-1 flex flex-col">
+                                <div className="p-6 md:p-5 text-center flex-1 flex flex-col">
                                     <h3 className="text-[26px] md:text-[28px] font-bold text-gray-900">{cat.name}</h3>
                                     
                                     <div className="mt-2.5 flex items-center justify-center gap-2 text-[13px] md:text-[14px] text-gray-400 font-medium">
@@ -181,7 +175,7 @@ export default function Home({ availableCats = [] }) {
                                     </div>
                                     
                                     <div className="mt-auto pt-8">
-                                        <Link href={route('cat-profile.show', cat.id)} className="block w-full rounded-full border border-gray-100 bg-[#f8f9fa] px-6 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100">
+                                        <Link href={route('cat-profile.show', cat.id)} className="block w-full rounded-full border border-gray-100 bg-[#FDF8F5] px-6 py-3.5 text-[14px] font-semibold text-[#111] transition hover:bg-gray-100">
                                             View Profile
                                         </Link>
                                     </div>
@@ -204,7 +198,7 @@ export default function Home({ availableCats = [] }) {
             </section>
 
             {/* SUPPORT OUR MISSION SECTION */}
-            <section className="bg-[#f3f6f5] py-20 md:py-28">
+            <section className="bg-gradient-to-b from-[#ECF2EE] to-[#FAF1EC] py-20 md:py-28">
                 <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
                     <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
                         <div className="w-full lg:w-1/2">
@@ -229,9 +223,9 @@ export default function Home({ availableCats = [] }) {
                             </ul>
                             
                             <div className="mt-10">
-                                <a href="#" className="inline-flex items-center justify-center rounded-full bg-[#fac2ac] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#30160d] transition hover:bg-[#efa68a]">
+                                <Link href="/support" className="inline-flex items-center justify-center rounded-full bg-[#fac2ac] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#30160d] transition hover:bg-[#efa68a]">
                                     Learn More
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         

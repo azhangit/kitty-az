@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 
 const stats = [
     { 
-        icon: <svg className="w-5 h-5 md:w-6 md:h-6"></svg>,
+        icon: <img src="images/heart.svg" alt="" />,
         value: '2,500', 
         label: 'Cats Rescued', 
         valueColor: 'text-[#f07b61]', 
@@ -11,7 +11,7 @@ const stats = [
         bgCircle: 'bg-[#ffede9]' 
     },
     { 
-        icon: <svg className="w-5 h-5 md:w-6 md:h-6"></svg>,
+        icon: <img src="images/home-solid.svg" alt="" />,
         value: '350+', 
         label: 'Successful Adoptions', 
         valueColor: 'text-[#7abaac]', 
@@ -19,7 +19,7 @@ const stats = [
         bgCircle: 'bg-[#eef8f6]' 
     },
     { 
-        icon: <svg className="w-5 h-5 md:w-6 md:h-6"></svg>,
+        icon: <img src="images/cut.svg" alt="" />,
         value: '200+', 
         label: 'TNR Efforts', 
         valueColor: 'text-[#f07b61]', 
@@ -27,7 +27,7 @@ const stats = [
         bgCircle: 'bg-[#ffede9]' 
     },
     { 
-        icon: <svg className="w-5 h-5 md:w-6 md:h-6"></svg>,
+        icon: <img src="images/user.svg" alt="" />,
         value: '5', 
         label: 'Years Active', 
         valueColor: 'text-black', 
@@ -51,7 +51,7 @@ export default function AboutUs() {
             <Head title="About Us - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-20 md:py-32 text-center px-6">
+            <section className="bg-gradient-to-b from-[#FFB5A0] to-[#9BCCC1] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
                 <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-4">About Us</h1>
                 <p className="text-lg md:text-xl text-gray-700 font-medium">Dubai Street Kitties Cat Sanctuary</p>
             </section>
@@ -68,16 +68,14 @@ export default function AboutUs() {
                             className=" w-full object-cover "
                         />
                     </div>
-                    <div className="w-full md:w-1/2">
-                        <p className="text-[#f08063] font-bold tracking-widest text-xs uppercase mb-4">Dubai Street Kitties Cat Sanctuary</p>
-                        <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 leading-tight mb-8">
+                    <div className="w-full md:w-1/2 text-center">
+                        <img src="images/sanctuary.png" alt="" className='dina-sanctuary mx-auto max-h-[139px]'/>
+                        <h2 className="text-4xl md:text-[40px] font-bold text-gray-900 leading-tight mb-8">
                             A Vision of Compassion, <br />
                             <span className="text-[#8bcbbd]">Innovation, and Community</span>
                         </h2>
                         <p className="text-gray-600 leading-relaxed mb-6">
                             At Dubai Street Kitties Cat Sanctuary, our mission is to build a future where every cat in the UAE is safe, healthy, and loved. Founded by Dina Taj and her local Emirati partner, our sanctuary represents the power of unity, compassion, and shared purpose.
-                        </p>
-                        <p className="text-gray-600 leading-relaxed">
                             Together, we are creating a model of animal welfare rooted in care, responsibility, and the values that make the UAE extraordinary.
                         </p>
                     </div>
@@ -102,14 +100,14 @@ export default function AboutUs() {
                         <img 
                             src="/images/mission-promise.png" 
                             alt="Mission" 
-                            className="rounded-[40px] w-full h-[450px] object-cover shadow-lg"
+                            className="rounded-[40px] w-full "
                         />
                     </div>
                 </div>
             </section>
 
             {/* STATS SECTION */}
-            <section className="bg-[#f3f6f5] py-16 md:py-24">
+            <section className="bg-gradient-to-b from-[#ECF2EE] to-[#FAF1EC] py-16 md:py-24">
                 <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
                         {stats.map((stat) => (
@@ -151,7 +149,8 @@ export default function AboutUs() {
                                 'Drive sustainable change in alignment with UAE environmental goals.',
                             ].map((point, idx) => (
                                 <li key={idx} className="flex gap-4 items-start">
-                                    <div className="w-6 h-6 flex-shrink-0 mt-1 text-[#f08063]"><svg width="33" height="27" viewBox="0 0 33 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <div className="w-6 h-6 flex-shrink-0 mt-1 text-[#f08063]">
+                                        <svg width="33" height="27" viewBox="0 0 33 27" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_43_681)">
 <path d="M16.6039 14.4034C11.6307 14.5229 7.16073 18.8606 7.1498 23.8355C7.1498 24.8638 7.8316 26.2216 8.65195 26.8154C9.26448 27.2571 10.6208 26.7973 11.6089 26.5692C12.1703 26.4388 12.6771 26.0116 13.1621 25.6531C15.7434 23.7558 18.2847 23.7269 20.8296 25.7183C21.2562 26.0514 21.7302 26.4279 22.2333 26.5293C23.2287 26.7321 24.6105 27.2064 25.1939 26.7538C26.0069 26.1274 26.6523 24.7479 26.6377 23.6979C26.5721 18.7918 21.577 14.2803 16.6002 14.3998L16.6039 14.4034Z" fill="#FFB5A0"/>
 <path d="M26.8784 5.63017C26.5539 2.59597 24.9388 0.195408 22.8605 0.0143704C20.9063 -0.155805 18.6312 1.87182 18.1317 4.52222C17.8801 5.84379 17.8874 7.28123 18.1317 8.60281C18.4416 10.2973 19.5281 11.6008 21.3511 11.8724C23.1085 12.1331 24.4502 11.1554 25.256 9.74335C25.9815 8.47608 26.3534 7.00968 26.8821 5.63379L26.8784 5.63017Z" fill="#FFB5A0"/>
@@ -207,9 +206,9 @@ export default function AboutUs() {
 
             {/* JOIN OUR MISSION */}
             <section className="py-20 bg-white text-center px-6 pb-32">
-                <div className="w-20 h-20 mx-auto text-[#f2b7a7] mb-6 opacity-80"><svg className="w-full h-full"></svg></div>
+                <div className="w-20 h-20 mx-auto text-[#f2b7a7] mb-6 opacity-80"><img src="images/2-User.svg" alt="" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-6">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto italic leading-relaxed">
+                <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
                     At Dubai Street Kitties, volunteering is more than helping - it's a way to join a family dedicated to kindness and making a real difference in the lives of our feline friends.
                 </p>
             </section>
