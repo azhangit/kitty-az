@@ -17,6 +17,8 @@ const statusPillClass = {
     medical_care: 'bg-[#f1d3d1] text-[#6e3a46]',
 };
 
+const catLocationOptions = ['Sanctuary resident', 'Foster care', 'Rehome'];
+
 function formatDisplayDate(value) {
     if (!value) return 'N/A';
     const date = new Date(value);
@@ -28,12 +30,27 @@ function formatDisplayDate(value) {
     }).format(date);
 }
 
-function CheckboxList({ title, items, selected = [], onToggle }) {
+function CheckboxList({ title, items = [], selected = [], onToggle, onAddCustom }) {
+    const [customValue, setCustomValue] = useState('');
+    const visibleItems = useMemo(
+        () => Array.from(new Set([...items, ...selected])).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })),
+        [items, selected],
+    );
+
+    const addCustomValue = () => {
+        const value = customValue.trim();
+
+        if (!value) return;
+
+        onAddCustom(value);
+        setCustomValue('');
+    };
+
     return (
         <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6f5449]">{title}</p>
             <div className="flex flex-wrap gap-2">
-                {items.map((item) => {
+                {visibleItems.map((item) => {
                     const checked = selected.includes(item);
                     return (
                         <button
@@ -49,6 +66,28 @@ function CheckboxList({ title, items, selected = [], onToggle }) {
                     );
                 })}
             </div>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <input
+                    type="text"
+                    value={customValue}
+                    onChange={(e) => setCustomValue(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addCustomValue();
+                        }
+                    }}
+                    placeholder={`Add ${title.toLowerCase()}`}
+                    className="min-w-0 flex-1 rounded-xl border border-[#e5d9d2] bg-white px-3 py-2 text-sm"
+                />
+                <button
+                    type="button"
+                    onClick={addCustomValue}
+                    className="rounded-xl bg-[#9cd2c8] px-4 py-2 text-sm font-semibold text-[#18574a]"
+                >
+                    Add
+                </button>
+            </div>
         </div>
     );
 }
@@ -58,7 +97,80 @@ function FieldError({ message }) {
     return <p className="mt-1 text-xs font-medium text-red-600">{message}</p>;
 }
 
-export default function CatsIndex({ cats, categories, filters, options, galleryImages = [] }) {
+function CategoryPicker({ categories, selected = [], onChange, categoryForm, colorOptions }) {
+    const toggleCategory = (categoryId) => {
+        onChange(selected.includes(categoryId) ? selected.filter((id) => id !== categoryId) : [...selected, categoryId]);
+    };
+
+    const submitNewCategory = () => {
+        if (!categoryForm.data.name.trim()) return;
+
+        categoryForm.post(route('admin.categories.store'), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => categoryForm.reset(),
+        });
+    };
+
+    return (
+        <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6f5449]">Categories</p>
+            <div className="flex flex-wrap gap-2">
+                {categories.map((category) => {
+                    const checked = selected.includes(category.id);
+                    return (
+                        <button
+                            key={category.id}
+                            type="button"
+                            onClick={() => toggleCategory(category.id)}
+                            className={`rounded-full px-3 py-1 text-xs ${checked ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}
+                        >
+                            {category.name}
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className="mt-3 rounded-xl border border-[#e5d9d2] bg-white p-3">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                    <div className="min-w-0 flex-1">
+                        <input
+                            type="text"
+                            value={categoryForm.data.name}
+                            onChange={(e) => categoryForm.setData('name', e.target.value)}
+                            placeholder="Add new category"
+                            className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2 text-sm"
+                        />
+                        <FieldError message={categoryForm.errors.name} />
+                    </div>
+                    <button
+                        type="button"
+                        onClick={submitNewCategory}
+                        className="rounded-xl bg-[#9cd2c8] px-4 py-2 text-sm font-semibold text-[#18574a]"
+                        disabled={categoryForm.processing || !categoryForm.data.name.trim()}
+                    >
+                        {categoryForm.processing ? 'Adding...' : 'Add Category'}
+                    </button>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {colorOptions.map((color) => (
+                        <button
+                            key={color}
+                            type="button"
+                            onClick={() => categoryForm.setData('color', color)}
+                            className={`h-7 w-7 rounded-full border-2 ${categoryForm.data.color === color ? 'border-[#2f1d15]' : 'border-transparent'}`}
+                            style={{ backgroundColor: color }}
+                            aria-label={`Use category color ${color}`}
+                        />
+                    ))}
+                </div>
+                <FieldError message={categoryForm.errors.color} />
+            </div>
+        </div>
+    );
+}
+
+export default function CatsIndex({ cats, categories, filters, options, galleryImages = [], colorOptions = ['#9cd2c8'] }) {
     const pageErrors = usePage().props.errors || {};
     const [showAddModal, setShowAddModal] = useRemember(false, 'admin.cats.showAddModal');
     const [medicalModalCat, setMedicalModalCat] = useState(null);
@@ -72,7 +184,7 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         size: options.size?.[1] || 'Medium',
         weight_kg: '',
         status: 'available',
-        location: 'Foster home',
+        location: 'Foster care',
         rescue_story: '',
         photo_path: '',
         photos: [],
@@ -109,6 +221,11 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         cost_aed: '0',
     });
 
+    const categoryForm = useForm('admin.cats.category.form', {
+        name: '',
+        color: colorOptions[0] || '#9cd2c8',
+    });
+
     const selectedMedicalRecords = useMemo(() => {
         if (!medicalModalCat) return [];
         return medicalModalCat.medical_records || [];
@@ -129,6 +246,14 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
             field,
             current.includes(value) ? current.filter((item) => item !== value) : [...current, value],
         );
+    };
+
+    const addCustomArrayField = (field, value) => {
+        const current = addForm.data[field] || [];
+
+        if (current.includes(value)) return;
+
+        addForm.setData(field, [...current, value]);
     };
 
     const submitNewCat = (e) => {
@@ -202,6 +327,16 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         router.delete(route('admin.cats.medical-records.destroy', [catId, recordId]), { preserveScroll: true });
     };
 
+    const deleteDuplicateListing = (cat) => {
+        const confirmed = window.confirm(`Delete duplicate listing for ${cat.name}? This cannot be undone.`);
+
+        if (!confirmed) return;
+
+        router.delete(route('admin.cats.destroy', cat.id), {
+            preserveScroll: true,
+        });
+    };
+
     const inputClass = (hasError) => `w-full rounded-xl border bg-white px-3 py-2.5 text-sm ${
         hasError ? 'border-red-500 focus:border-red-500' : 'border-[#e5d9d2]'
     }`;
@@ -260,11 +395,20 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                             </div>
 
                             <div className="p-4">
-                                <div className="mb-2 flex items-center justify-between">
+                                <div className="mb-2 flex items-start justify-between gap-3">
                                     <h3 className="text-2xl font-semibold">{cat.name}</h3>
-                                    <Link href={route('admin.cats.show', cat.id)} className="text-xs text-[#7e726b] underline">
-                                        Profile
-                                    </Link>
+                                    <div className="flex shrink-0 items-center gap-3">
+                                        <Link href={route('admin.cats.show', cat.id)} className="text-xs text-[#7e726b] underline">
+                                            Profile
+                                        </Link>
+                                        <button
+                                            type="button"
+                                            onClick={() => deleteDuplicateListing(cat)}
+                                            className="text-xs font-semibold text-red-600 underline"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                                 <p className="text-xs text-[#7f7570]">{cat.age_label || 'Age N/A'} - {cat.breed || 'Breed N/A'}</p>
                                 <p className="mt-2 line-clamp-2 text-xs text-[#6e6561]">{cat.rescue_story || 'Rescue story not added yet.'}</p>
@@ -335,7 +479,9 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <FieldError message={addForm.errors.status} />
                                 </div>
                                 <div>
-                                    <input className={inputClass(addForm.errors.location)} placeholder="Location" value={addForm.data.location} onChange={(e) => addForm.setData('location', e.target.value)} />
+                                    <select className={inputClass(addForm.errors.location)} value={addForm.data.location} onChange={(e) => addForm.setData('location', e.target.value)}>
+                                        {catLocationOptions.map((item) => <option key={item} value={item}>{item}</option>)}
+                                    </select>
                                     <FieldError message={addForm.errors.location} />
                                 </div>
                                 <div>
@@ -415,30 +561,35 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                 </div>
                             </div>
 
-                            <CheckboxList title="Special Medical Needs" items={options.specialMedicalNeeds} selected={addForm.data.special_medical_needs} onToggle={(item) => toggleArrayField('special_medical_needs', item)} />
-                            <CheckboxList title="Personality Traits" items={options.personalityTraits} selected={addForm.data.personality_traits} onToggle={(item) => toggleArrayField('personality_traits', item)} />
-                            <CheckboxList title="Profile Tags" items={options.profileTags} selected={addForm.data.profile_tags} onToggle={(item) => toggleArrayField('profile_tags', item)} />
+                            <CheckboxList
+                                title="Special Medical Needs"
+                                items={options.specialMedicalNeeds}
+                                selected={addForm.data.special_medical_needs}
+                                onToggle={(item) => toggleArrayField('special_medical_needs', item)}
+                                onAddCustom={(item) => addCustomArrayField('special_medical_needs', item)}
+                            />
+                            <CheckboxList
+                                title="Personality Traits"
+                                items={options.personalityTraits}
+                                selected={addForm.data.personality_traits}
+                                onToggle={(item) => toggleArrayField('personality_traits', item)}
+                                onAddCustom={(item) => addCustomArrayField('personality_traits', item)}
+                            />
+                            <CheckboxList
+                                title="Profile Tags"
+                                items={options.profileTags}
+                                selected={addForm.data.profile_tags}
+                                onToggle={(item) => toggleArrayField('profile_tags', item)}
+                                onAddCustom={(item) => addCustomArrayField('profile_tags', item)}
+                            />
 
-                            <div>
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6f5449]">Categories</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {categories.map((category) => {
-                                        const checked = addForm.data.category_ids.includes(category.id);
-                                        return (
-                                            <button
-                                                key={category.id}
-                                                type="button"
-                                                onClick={() => {
-                                                    addForm.setData('category_ids', checked ? addForm.data.category_ids.filter((id) => id !== category.id) : [...addForm.data.category_ids, category.id]);
-                                                }}
-                                                className={`rounded-full px-3 py-1 text-xs ${checked ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}
-                                            >
-                                                {category.name}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                            <CategoryPicker
+                                categories={categories}
+                                selected={addForm.data.category_ids}
+                                onChange={(categoryIds) => addForm.setData('category_ids', categoryIds)}
+                                categoryForm={categoryForm}
+                                colorOptions={colorOptions}
+                            />
 
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <button type="button" className="rounded-xl bg-[#e5e5e5] py-3 text-sm font-semibold" onClick={() => setShowAddModal(false)}>

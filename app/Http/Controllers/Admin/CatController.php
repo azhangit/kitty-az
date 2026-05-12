@@ -44,6 +44,7 @@ class CatController extends Controller
                 'status' => $status ?: 'all',
             ],
             'options' => $this->options(),
+            'colorOptions' => $this->colorOptions(),
         ]);
     }
 
@@ -158,6 +159,7 @@ class CatController extends Controller
                 ->latest('id')
                 ->get(['id', 'path', 'type']),
             'options' => $this->options(),
+            'colorOptions' => $this->colorOptions(),
         ]);
     }
 
@@ -256,6 +258,15 @@ class CatController extends Controller
         return back()->with('success', 'Cat updated successfully.');
     }
 
+    public function destroy(Cat $cat): RedirectResponse
+    {
+        $cat->delete();
+
+        return redirect()
+            ->route('admin.cats.index')
+            ->with('success', 'Duplicate cat listing deleted.');
+    }
+
     public function storeMedicalRecord(Request $request, Cat $cat): RedirectResponse
     {
         $validated = $request->validate([
@@ -311,17 +322,50 @@ class CatController extends Controller
             'spayNeuterStatus' => ['Spayed', 'Neutered', 'Scheduled'],
             'specialMedicalNeeds' => [
                 'None',
+                'Liver Support',
+                'Kidney Support',
+                'Immune Support',
                 'On Special Diet',
+                'Special Diet',
+                'Ongoing Medication',
+                'Under Treatment',
+                'Recovery Care',
+                'Senior Care',
+                'Medical Monitoring',
                 'Skin Allergies',
+                'Dermatitis',
+                'Sensitive Skin',
+                'Ringworm Recovery',
+                'Hair Regrowth Treatment',
+                'Chronic Flu',
+                'Respiratory Support',
+                'Sensitive Immune System',
+                'Frequent Sneezing',
+                'Chronic Nasal Discharge',
+                'Diabetic',
+                'Former Diabetic',
+                'Insulin Support',
+                'Weight Management',
                 'Sensitive Stomach',
+                'Digestive Support',
+                'Food Sensitivities',
+                'Special Needs',
+                'Mobility Support',
+                'Paralysis Care',
+                'Wheelchair Cat',
                 'Requires Daily Medication',
                 'Needs Bladder Expression',
+                'Bladder Expression Needed',
                 'Paralyzed (Partial)',
                 'Paralyzed (Full)',
                 'Neurological Condition',
                 'Vision Impaired',
                 'Hearing Impaired',
                 'Former FIP Case',
+                'FIV Positive',
+                'FIP Survivor',
+                'FIP Under Treatment',
+                'Chronic Condition',
                 'Other (Specify)',
             ],
             'goodWithCats' => ['Yes', 'No', 'Selective', 'Prefers to Be Only Cat'],
@@ -330,10 +374,13 @@ class CatController extends Controller
             'homeType' => ['Apartment Friendly', 'Needs Larger Space', 'Needs Secure Balcony'],
             'personalityTraits' => [
                 'Affectionate',
+                'Extremely Affectionate',
                 'Cuddly',
                 'Playful',
                 'Calm',
+                'Calm Personality',
                 'Independent',
+                'Independent Personality',
                 'Shy',
                 'Needs Time to Trust',
                 'Lap Cat',
@@ -342,6 +389,7 @@ class CatController extends Controller
                 'Requires Lots of Attention',
                 'Quiet',
                 'Vocal',
+                'Loves Being Held',
                 'Trauma Survivor (Needs Patient Adopter)',
             ],
             'dietType' => [
@@ -362,8 +410,59 @@ class CatController extends Controller
                 'Special Needs Hero',
                 'High Energy',
                 'Needs Experienced Owner',
+                'Duplicate Post',
+                'Liver Support',
+                'Kidney Support',
+                'Immune Support',
+                'Special Diet',
+                'Ongoing Medication',
+                'Under Treatment',
+                'Recovery Care',
+                'Senior Care',
+                'Medical Monitoring',
+                'Skin Allergies',
+                'Dermatitis',
+                'Sensitive Skin',
+                'Ringworm Recovery',
+                'Hair Regrowth Treatment',
+                'Chronic Flu',
+                'Respiratory Support',
+                'Sensitive Immune System',
+                'Frequent Sneezing',
+                'Chronic Nasal Discharge',
+                'Diabetic',
+                'Former Diabetic',
+                'Insulin Support',
+                'Weight Management',
+                'Sensitive Stomach',
+                'Digestive Support',
+                'Food Sensitivities',
+                'Special Needs',
+                'Mobility Support',
+                'Paralysis Care',
+                'Wheelchair Cat',
+                'Bladder Expression Needed',
+                'Neurological Condition',
+                'FIV Positive',
+                'FIP Survivor',
+                'FIP Under Treatment',
+                'Chronic Condition',
+                'Indoor Only',
+                'Garden Friendly',
+                'Apartment Friendly',
+                'Independent Personality',
+                'Extremely Affectionate',
+                'Calm Personality',
+                'Lap Cat',
+                'Loves Being Held',
+                'Bonded Pair',
             ],
             'medicalRecordTypes' => ['Vaccination', 'Procedure', 'Checkup', 'Medication', 'Lab Test', 'Other'],
         ];
+    }
+
+    private function colorOptions(): array
+    {
+        return ['#9cd2c8', '#f2c79a', '#f2d0ce', '#e8d4b5', '#e9bfd5', '#d9d9d9'];
     }
 }

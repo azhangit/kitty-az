@@ -321,6 +321,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::post('/admin/cats', [CatController::class, 'store'])->name('admin.cats.store');
     Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
     Route::get('/admin/cats/{cat}', [CatController::class, 'show'])->name('admin.cats.show');
+    Route::delete('/admin/cats/{cat}', [CatController::class, 'destroy'])->name('admin.cats.destroy');
     Route::post('/admin/cats/{cat}/medical-records', [CatController::class, 'storeMedicalRecord'])->name('admin.cats.medical-records.store');
     Route::delete('/admin/cats/{cat}/medical-records/{medicalRecord}', [CatController::class, 'destroyMedicalRecord'])->name('admin.cats.medical-records.destroy');
 
