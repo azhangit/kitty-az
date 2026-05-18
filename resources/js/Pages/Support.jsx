@@ -7,9 +7,9 @@ export default function Support() {
             <Head title="Support Us - Dubai Street Kitties" />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
-                <div className="absolute bottom-0 left-0"><img src="/images/left-paws.png" alt="Cat hero" className="w-full object-contain max-h-[358px]" /></div>
-                <div className="absolute top-2 -right-16 w-[300px] md:w-[450px]"><img src="/images/support-hero.png" alt="Cat hero" className=" h-[300px] md:h-[450px]" /></div>
+            <section className="relative overflow-hidden bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
+                <div className="pointer-events-none absolute bottom-0 left-0 hidden w-[180px] sm:block md:w-[300px] lg:w-[415px]"><img src="/images/left-paws.png" alt="Cat hero" className="w-full object-contain max-h-[358px]" /></div>
+                <div className="pointer-events-none absolute top-2 -right-12 hidden w-[260px] sm:block md:-right-16 md:w-[450px]"><img src="/images/support-hero.png" alt="Cat hero" className="h-[280px] md:h-[450px]" /></div>
                 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6 leading-tight">Support Our Mission</h1>
@@ -20,7 +20,7 @@ export default function Support() {
             </section>
 
             {/* FITNESS SECTION */}
-            <section className="py-24  bg-gradient-to-b from-[#FCEBEE] to-[#F8EDF5]">
+            <section className="py-16 md:py-24 bg-gradient-to-b from-[#FCEBEE] to-[#F8EDF5]">
                 <div className="max-w-[1240px] mx-auto px-6 lg:px-12">
                     <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
                         <div className="w-full md:w-1/2 relative">
@@ -55,11 +55,11 @@ export default function Support() {
                                 ))}
                             </ul>
 
-                            <div className="bg-gradient-to-br from-[#FAC8AE] to-[#F4775B] p-8 rounded-[30px] shadow-sm">
+                            <div className="bg-gradient-to-br from-[#FAC8AE] to-[#F4775B] p-5 sm:p-8 rounded-[30px] shadow-sm">
                                 <h4 className="font-bold">Join Today</h4>
                                 <p className='mb-3'>Start your fitness journey and help save cats at the same time</p>
                                 <div className="flex flex-col sm:flex-row gap-4">
-                                    <button className="bg-[#FFB5A0]  text-white px-6 py-3 rounded-full text-sm hover:bg-white hover:text-[#f08063] transition">Download on App Store</button>
+                                    <button className="bg-[#FFB5A0] text-white px-5 py-3 rounded-full text-sm hover:bg-white hover:text-[#f08063] transition">Download on App Store</button>
                                     <button className="bg-white text-gray-800 font-bold px-6 py-3 rounded-full text-sm shadow-sm hover:shadow-md transition">Get on Google Play</button>
                                 </div>
                             </div>
@@ -70,46 +70,31 @@ export default function Support() {
                 </div>
             </section>
 
-            {/* OTHER WAYS TO SUPPORT */}
-            <section className="py-24 bg-[#F6EDE5]">
+            {/* WAYS YOU CAN HELP */}
+            <section className="py-16 md:py-24 bg-[#F6EDE5]">
                 <div className="max-w-[1240px] mx-auto px-6 lg:px-12 text-center">
-                    <h2 className="text-4xl md:text-[48px] font-bold text-gray-900 mb-4">Other Ways to Support</h2>
-                    <p className="text-gray-500 max-w-2xl mx-auto mb-16 italic">There are many ways you can help us continue our mission to rescue and rehome Dubai's street cats.</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold text-gray-900 mb-4 leading-tight">3. Ways You Can Help</h2>
+                    <p className="text-gray-500 max-w-2xl mx-auto mb-10 md:mb-16 italic">There are many ways you can help us continue our mission to rescue and rehome Dubai's street cats.</p>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
                         {[
-                            { 
-                                title: 'Shop Merchandise', 
-                                desc: 'Are you a cat lover? We have amazing cat merchandise. All proceeds go directly to the cats at our sanctuary.', 
-                                points: ['Support your local rescue cats', 'High quality shirts, hoodies, etc.', 'Designed with love for cats', 'Perfect gift for cat lovers'],
-                                button: 'Visit Shop',
-                                link: '/shop'
-                            },
-                            { 
-                                title: 'Direct Support', 
-                                desc: 'Make a one-time or monthly donation to help provide essential care and food for our rescued cats.', 
-                                points: ['Food and nutrition', 'Medical supplies', 'Shelter maintenance', 'Spay and neuter'],
-                                button: 'Get in Touch',
-                                link: '/contact'
-                            },
-                            { 
-                                title: 'Cat Sponsorship', 
-                                desc: 'Choose a specific cat to support. Your monthly contribution helps pay for the care of your sponsored cat.', 
-                                points: ['Monthly updates and photos', 'Healthcare costs cover', 'Personalized certificate', 'Visit your sponsored cat'],
-                                button: 'View Cats to Sponsor',
-                                link: '/adopt'
-                            },
+                            { title: 'Adopt', desc: 'Give a cat a forever home.' },
+                            { title: 'Foster', desc: 'Provide temporary care.' },
+                            { title: 'Sponsor a Cat', desc: 'Help cover food and medical expenses.' },
+                            { title: 'Volunteer', desc: 'Support rescue and sanctuary operations.' },
+                            { title: 'Share Our Mission', desc: 'Help raise awareness online.' },
+                            { title: 'Shop With Purpose', desc: 'Support rescue through merchandise and partnerships.' },
                         ].map((card, idx) => (
-                            <div key={idx} className="bg-white p-10 rounded-[40px] shadow-sm flex flex-col items-center group hover:shadow-md transition">
-                                <div className="w-14 h-14 rounded-full bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] flex items-center justify-center text-[#f08063] mb-8 group-hover:scale-110 transition"><img src="images/donate-solid.svg" alt="" /></div>
-                                <h4 className="text-xl font-bold text-gray-900 mb-6">{card.title}</h4>
-                                <p className="text-gray-500 text-sm leading-relaxed mb-8">{card.desc}</p>
-                                <ul className="text-left space-y-3 mb-10 text-xs text-gray-600 self-start">
-                                    {card.points.map((p, i) => (
+                            <div key={idx} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm flex min-h-[180px] flex-col items-center justify-center group hover:shadow-md transition">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] flex items-center justify-center text-[#f08063] mb-5 group-hover:scale-110 transition"><img src="images/donate-solid.svg" alt="" /></div>
+                                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">{card.title}</h4>
+                                <p className="text-gray-500 text-sm leading-relaxed">{card.desc}</p>
+                                <ul className="hidden">
+                                    {(card.points || []).map((p, i) => (
                                         <li key={i} className="flex gap-3"><span className="text-[#8bcbbd]">✓</span> {p}</li>
                                     ))}
                                 </ul>
-                                <button className="mt-auto bg-[#8bcbbd]/20 text-[#1f453c] font-bold px-8 py-3 rounded-full text-sm hover:bg-[#8bcbbd] hover:text-white transition w-full">{card.button}</button>
+                                {card.button ? <button className="mt-auto bg-[#8bcbbd]/20 text-[#1f453c] font-bold px-8 py-3 rounded-full text-sm hover:bg-[#8bcbbd] hover:text-white transition w-full">{card.button}</button> : null}
                             </div>
                         ))}
                     </div>

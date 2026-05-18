@@ -12,6 +12,7 @@ const Logo = () => (
 const navItems = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about-us" },
+    { name: "Our Story", href: "/our-story" },
     { name: "Adopt", href: "/adopt" },
     { name: "Available Cats", href: "/available-cats" },
     { name: "Gallery", href: "/gallery" },
@@ -528,12 +529,12 @@ export default function AppLayout({ children, currentPath }) {
                                     </a>
                                 </li>
                                 <li>
-                                    <a
-                                        href="#"
+                                    <Link
+                                        href="/our-story"
                                         className="text-gray-500 transition hover:text-[#f07b61]"
                                     >
                                         Our Story
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         </div>

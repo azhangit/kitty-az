@@ -12,8 +12,8 @@ const stats = [
     },
     { 
         icon: <img src="images/home-solid.svg" alt="" />,
-        value: '350+', 
-        label: 'Successful Adoptions', 
+        value: '550+', 
+        label: 'Cats in Care', 
         valueColor: 'text-[#7abaac]', 
         iconColor: 'text-[#7abaac]', 
         bgCircle: 'bg-[#eef8f6]' 
@@ -34,6 +34,33 @@ const stats = [
         iconColor: 'text-gray-700', 
         bgCircle: 'bg-white border border-gray-200' 
     },
+];
+
+const openingParagraphs = [
+    'At Dubai Street Kitties, our mission is rooted in compassion, responsibility, and community. What began as two people rescuing injured and abandoned cats from the streets of the UAE has grown into a larger vision built on love, structure, and hope for a better future for animals.',
+    'Over the past two years, we have rescued more than 2,500 cats, and today we continue caring for over 550 cats in our sanctuary and foster network. Every rescue represents a life that deserved another chance - a kitten abandoned in the heat, an injured cat found on the roadside, a mother struggling to protect her babies, or a sick animal left without care. Behind every rescue is a story of survival, rehabilitation, and healing.',
+];
+
+const missionParagraphs = [
+    'I have lived in the UAE for over 20 years, and this country has become my home. Dubai Street Kitties was built from a deep love for this community and a desire to contribute positively to the society we live in. The UAE continues to evolve as a compassionate and forward-thinking nation, and we believe animal welfare is part of that vision.',
+    'Our goal is not only to rescue cats, but to help build awareness, encourage responsibility, and inspire more people to become involved in supporting their communities.',
+    'Stray animal overpopulation and abandonment are not issues unique to the UAE. They are global challenges faced by cities and shelters around the world. No individual, rescue, or government can solve these problems alone. Real change only happens when communities unite - through adoption, fostering, education, collaboration, and compassion.',
+    'This is why we share our journey online. Not to seek praise, and never from a place of judgment, but to encourage kindness, awareness, and collective action. We want people to understand that even small acts of compassion can save lives.',
+];
+
+const visionPoints = [
+    'A world-class sanctuary and rehabilitation center designed to provide rescued animals with safety, medical care, structure, and love.',
+    'A peaceful sanctuary where injured cats can recover during long healing journeys.',
+    'Protected spaces where kittens and pregnant mothers can be cared for with safety and compassion.',
+    'Meaningful spaces where families and children can connect with animals in a compassionate environment.',
+    'A future supported through professionalism, education, innovation, and strong community partnerships.',
+    'Sustainable solutions created through people, businesses, rescuers, veterinarians, and local communities working together.',
+];
+
+const compassionActions = [
+    'Every adoption changes a life.',
+    'Every foster creates space for another rescue.',
+    'Every act of support helps us continue.',
 ];
 
 export default function AboutUs({ latestGalleryImages = [] }) {
@@ -65,10 +92,11 @@ export default function AboutUs({ latestGalleryImages = [] }) {
                             A Vision of Compassion, <br />
                             <span className="text-[#8bcbbd]">Innovation, and Community</span>
                         </h2>
-                        <p className="text-gray-600 leading-relaxed mb-6">
-                            At Dubai Street Kitties Cat Sanctuary, our mission is to build a future where every cat in the UAE is safe, healthy, and loved. Founded by Dina Taj and her local Emirati partner, our sanctuary represents the power of unity, compassion, and shared purpose.
-                            Together, we are creating a model of animal welfare rooted in care, responsibility, and the values that make the UAE extraordinary.
-                        </p>
+                        <div className="space-y-6 text-gray-600 leading-relaxed">
+                            {openingParagraphs.map((paragraph) => (
+                                <p key={paragraph}>{paragraph}</p>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -81,9 +109,9 @@ export default function AboutUs({ latestGalleryImages = [] }) {
                             Mission <span className="text-[#8bcbbd]">& Promise</span>
                         </h2>
                         <div className="space-y-6 text-gray-600 leading-relaxed">
-                            <p>We are dedicated to supporting the UAE's vision for a compassionate and forward-thinking society. Every day, our team provides medical care, love, and rehabilitation to hundreds of rescued cats, helping them heal and prepare for their forever homes.</p>
-                            <p>With over 2,500 cats rescued and more than 400 currently thriving at our sanctuary, we are proud to be part of a growing movement of kindness and responsibility toward animals.</p>
-                            <p>Our mission goes beyond rescue – it's about education, structure, and innovation. We are building systems that ensure every cat receives the best possible care while promoting awareness about responsible ownership, health, and community involvement.</p>
+                            {missionParagraphs.map((paragraph) => (
+                                <p key={paragraph}>{paragraph}</p>
+                            ))}
                         </div>
                     </div>
                     <div className="w-full md:w-1/2 relative">
@@ -130,16 +158,11 @@ export default function AboutUs({ latestGalleryImages = [] }) {
                         <h2 className="text-4xl md:text-[46px] font-bold text-gray-900 leading-tight mb-4">Our Vision:</h2>
                         <h3 className="text-4xl md:text-[46px] font-bold text-[#8bcbbd] leading-tight mb-6">A Model for the Future</h3>
                         <p className="text-gray-600 mb-8 leading-relaxed">
-                            We aim to be the region's benchmark in rescue, care, and welfare policy through an integrated approach of education, legal reform, and direct action in partnership with the UAE.
+                            Our long-term vision is to create a world-class sanctuary and rehabilitation center designed to provide rescued animals with safety, medical care, structure, and love.
                         </p>
                         <ul className="space-y-6">
-                            {[
-                                'Support and rehabilitated over five years with unwavering love and dedication.',
-                                'Advocate animal welfare laws that offer robust safeguards and services.',
-                                'Dedicatedly promoting and education across the community.',
-                                'Drive sustainable change in alignment with UAE environmental goals.',
-                            ].map((point, idx) => (
-                                <li key={idx} className="flex gap-4 items-start">
+                            {visionPoints.map((point) => (
+                                <li key={point} className="flex gap-4 items-start">
                                     <div className="w-6 h-6 flex-shrink-0 mt-1 text-[#f08063]">
                                         <svg width="33" height="27" viewBox="0 0 33 27" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_43_681)">
@@ -160,20 +183,29 @@ export default function AboutUs({ latestGalleryImages = [] }) {
                                 </li>
                             ))}
                         </ul>
-                        <p className="mt-8 text-gray-600 italic">I made with your cat in Dubai has safe homes, access medical care, and a future built together with purpose and kindness.</p>
+                        <p className="mt-8 text-gray-600 leading-relaxed">
+                            We envision a future where rescue is supported through professionalism, education, innovation, and strong community partnerships. A future where people, businesses, rescuers, veterinarians, and local communities work together to create sustainable solutions that improve the lives of animals while strengthening the compassion within society itself.
+                        </p>
                     </div>
                 </div>
             </section>
 
-            {/* GUIDED BY FAITH */}
+            {/* COMPASSION IN ACTION */}
             <section className="bg-[#f3ece8] py-20 px-6 text-center">
                 <div className="max-w-[1000px] mx-auto">
                     <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8">
-                        Guided by Faith <span className="text-[#8bcbbd]">& National Values</span>
+                        Compassion <span className="text-[#8bcbbd]">Creates Change</span>
                     </h2>
-                    <div className="space-y-6 text-gray-500 max-w-3xl mx-auto leading-relaxed">
-                        <p>Our work reflects the values of mercy and responsibility that lie at the heart of both Islam and UAE culture. We believe that compassion toward animals is a form of service and an expression of humanity.</p>
-                        <p>By aligning our mission with national ethics, we strive to create a sanctuary that honors preservation, empowerment, and care for all living beings.</p>
+                    <div className="grid gap-4 md:grid-cols-3">
+                        {compassionActions.map((action) => (
+                            <div key={action} className="rounded-2xl bg-white px-5 py-6 text-base font-semibold text-[#4c403a] shadow-sm">
+                                {action}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-10 space-y-6 text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-lg font-semibold text-gray-900">Most importantly, every person who chooses compassion becomes part of something bigger than themselves.</p>
+                        <p>Together, we can build a future where more animals are safe, loved, and given the second chance they deserve.</p>
                     </div>
                 </div>
             </section>
@@ -205,10 +237,9 @@ export default function AboutUs({ latestGalleryImages = [] }) {
                 <div className="w-20 h-20 mx-auto text-[#f2b7a7] mb-6 opacity-80"><img src="images/2-User.svg" alt="" /></div>
                 <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-6">Join Our Mission</h2>
                 <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                    At Dubai Street Kitties, volunteering is more than helping - it's a way to join a family dedicated to kindness and making a real difference in the lives of our feline friends.
+                    Whether through adoption, fostering, education, collaboration, or support, every act of compassion helps us continue building a safer future for rescued animals.
                 </p>
             </section>
         </AppLayout>
     );
 }
-

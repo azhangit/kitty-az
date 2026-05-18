@@ -105,11 +105,7 @@ class CatController extends Controller
 
         $categoryIds = $validated['category_ids'] ?? [];
         $photoFiles = $request->file('photos', []);
-        $selectedGalleryPaths = GalleryImage::query()
-            ->whereIn('id', $selectedGalleryIds)
-            ->pluck('path')
-            ->values()
-            ->all();
+        $selectedGalleryPaths = $this->galleryPathsInRequestOrder($selectedGalleryIds);
         unset($validated['category_ids']);
         unset($validated['photos']);
         unset($validated['gallery_image_ids']);
@@ -212,11 +208,7 @@ class CatController extends Controller
 
         $categoryIds = $validated['category_ids'] ?? [];
         $photoFiles = $request->file('photos', []);
-        $selectedGalleryPaths = GalleryImage::query()
-            ->whereIn('id', $request->input('gallery_image_ids', []))
-            ->pluck('path')
-            ->values()
-            ->all();
+        $selectedGalleryPaths = $this->galleryPathsInRequestOrder($request->input('gallery_image_ids', []));
         unset($validated['category_ids']);
         unset($validated['photos']);
         unset($validated['gallery_image_ids']);
@@ -464,5 +456,22 @@ class CatController extends Controller
     private function colorOptions(): array
     {
         return ['#9cd2c8', '#f2c79a', '#f2d0ce', '#e8d4b5', '#e9bfd5', '#d9d9d9'];
+    }
+
+    private function galleryPathsInRequestOrder(array $galleryImageIds): array
+    {
+        if (empty($galleryImageIds)) {
+            return [];
+        }
+
+        $pathsById = GalleryImage::query()
+            ->whereIn('id', $galleryImageIds)
+            ->pluck('path', 'id');
+
+        return collect($galleryImageIds)
+            ->map(fn ($id) => $pathsById->get($id))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

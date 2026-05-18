@@ -68,6 +68,10 @@ Route::get('/about-us', function () {
     ]);
 });
 
+Route::get('/our-story', function () {
+    return Inertia::render('OurStory');
+});
+
 Route::get('/gallery', function () {
     $galleryImages = collect();
     $galleryTypes = GalleryImage::TYPES;

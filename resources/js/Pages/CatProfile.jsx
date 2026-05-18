@@ -20,11 +20,23 @@ export default function CatProfile({ cat }) {
     const goodWith = cat?.goodWith || {};
     const galleryImages = cat?.images?.length ? cat.images : [cat?.image, cat?.image, cat?.image].filter(Boolean);
     const defaultImage = galleryImages[0] || '/images/gallery-cat.png';
-    const [selectedImage, setSelectedImage] = useState(defaultImage);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const selectedImage = galleryImages[selectedIndex] || defaultImage;
+    const hasMultipleImages = galleryImages.length > 1;
+    const thumbnailStart = Math.min(Math.max(selectedIndex - 1, 0), Math.max(galleryImages.length - 3, 0));
+    const visibleThumbnails = galleryImages.slice(thumbnailStart, thumbnailStart + 3);
+
+    const showPreviousImage = () => {
+        setSelectedIndex((currentIndex) => (currentIndex === 0 ? galleryImages.length - 1 : currentIndex - 1));
+    };
+
+    const showNextImage = () => {
+        setSelectedIndex((currentIndex) => (currentIndex + 1) % galleryImages.length);
+    };
 
     useEffect(() => {
-        setSelectedImage(defaultImage);
-    }, [defaultImage]);
+        setSelectedIndex(0);
+    }, [defaultImage, galleryImages.length]);
 
     return (
         <AppLayout currentPath="/adopt">
@@ -41,30 +53,57 @@ export default function CatProfile({ cat }) {
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[440px_minmax(0,1fr)]">
                         <div>
-                            <div className="aspect-[4/4.1] overflow-hidden rounded-2xl">
+                            <div className="relative aspect-[4/4.1] overflow-hidden rounded-2xl">
                                 <img
                                     src={selectedImage}
                                     alt={cat?.name || 'Cat'}
                                     className="h-full w-full object-cover"
                                 />
+                                {hasMultipleImages && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={showPreviousImage}
+                                            className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl leading-none text-[#4f3126] shadow-sm transition hover:bg-white"
+                                            aria-label="Show previous cat image"
+                                        >
+                                            &lsaquo;
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={showNextImage}
+                                            className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl leading-none text-[#4f3126] shadow-sm transition hover:bg-white"
+                                            aria-label="Show next cat image"
+                                        >
+                                            &rsaquo;
+                                        </button>
+                                        <div className="absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-semibold text-white">
+                                            {selectedIndex + 1} / {galleryImages.length}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                             <div className="mt-3 grid grid-cols-3 gap-2">
-                                {galleryImages.slice(0, 3).map((imagePath, index) => (
+                                {visibleThumbnails.map((imagePath, index) => {
+                                    const actualIndex = thumbnailStart + index;
+
+                                    return (
                                     <button
-                                        key={`${imagePath}-${index}`}
+                                        key={`${imagePath}-${actualIndex}`}
                                         type="button"
-                                        onClick={() => setSelectedImage(imagePath)}
+                                        onClick={() => setSelectedIndex(actualIndex)}
                                         className={`aspect-square overflow-hidden rounded-xl border-2 ${
-                                            selectedImage === imagePath ? 'border-[#8ec8bf]' : 'border-transparent'
+                                            selectedIndex === actualIndex ? 'border-[#8ec8bf]' : 'border-transparent'
                                         }`}
                                     >
                                         <img
                                             src={imagePath}
-                                            alt={`${cat?.name || 'Cat'} thumbnail ${index + 1}`}
+                                            alt={`${cat?.name || 'Cat'} thumbnail ${actualIndex + 1}`}
                                             className="h-full w-full object-cover"
                                         />
                                     </button>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 

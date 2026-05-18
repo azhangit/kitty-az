@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { router, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function formatDisplayDate(value) {
     if (!value) return 'N/A';
@@ -25,6 +25,131 @@ function InfoRow({ label, value }) {
 function FieldError({ message }) {
     if (!message) return null;
     return <p className="mt-1 text-xs font-medium text-red-600">{message}</p>;
+}
+
+function mergeSelectedFiles(currentFiles = [], newFiles = []) {
+    const existingKeys = new Set(currentFiles.map((file) => `${file.name}-${file.size}-${file.lastModified}`));
+    const uniqueNewFiles = newFiles.filter((file) => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+
+        if (existingKeys.has(key)) return false;
+
+        existingKeys.add(key);
+        return true;
+    });
+
+    return [...currentFiles, ...uniqueNewFiles];
+}
+
+function moveArrayItem(items, fromIndex, toIndex) {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return items;
+
+    const nextItems = [...items];
+    const [movedItem] = nextItems.splice(fromIndex, 1);
+    nextItems.splice(toIndex, 0, movedItem);
+
+    return nextItems;
+}
+
+function SelectedImagePreviewGrid({ files = [], onRemove, onMove }) {
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const previews = useMemo(
+        () => files.map((file, index) => ({
+            file,
+            index,
+            url: URL.createObjectURL(file),
+        })),
+        [files],
+    );
+
+    useEffect(() => () => {
+        previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+    }, [previews]);
+
+    if (previews.length === 0) return null;
+
+    return (
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+            {previews.map((preview) => (
+                <div
+                    key={`${preview.file.name}-${preview.file.lastModified}-${preview.index}`}
+                    draggable
+                    onDragStart={() => setDraggedIndex(preview.index)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => {
+                        if (draggedIndex !== null) {
+                            onMove(draggedIndex, preview.index);
+                        }
+                        setDraggedIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    className={`group relative cursor-grab overflow-hidden rounded-lg border border-[#e5d9d2] active:cursor-grabbing ${draggedIndex === preview.index ? 'opacity-60' : ''}`}
+                >
+                    <img src={preview.url} alt={preview.file.name} className="h-24 w-full object-cover" />
+                    <div className="absolute left-1.5 top-1.5 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-semibold text-[#4f3126] shadow-sm">
+                        Drag
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => onRemove(preview.index)}
+                        className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-semibold leading-none text-[#4f3126] shadow-sm transition hover:bg-red-50 hover:text-red-600"
+                        aria-label={`Remove ${preview.file.name}`}
+                    >
+                        x
+                    </button>
+                    <div className="absolute inset-x-0 bottom-0 bg-black/45 px-2 py-1 text-[11px] text-white">
+                        <p className="truncate">{preview.file.name}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function SelectedGalleryPreviewGrid({ images = [], selectedIds = [], onRemove, onMove }) {
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const selectedImages = useMemo(
+        () => selectedIds
+            .map((id) => images.find((image) => image.id === id))
+            .filter(Boolean),
+        [images, selectedIds],
+    );
+
+    if (selectedImages.length === 0) return null;
+
+    return (
+        <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+            {selectedImages.map((image, index) => (
+                <div
+                    key={image.id}
+                    draggable
+                    onDragStart={() => setDraggedIndex(index)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => {
+                        if (draggedIndex !== null) {
+                            onMove(draggedIndex, index);
+                        }
+                        setDraggedIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    className={`relative cursor-grab overflow-hidden rounded-lg border-2 border-[#9cd2c8] active:cursor-grabbing ${draggedIndex === index ? 'opacity-60' : ''}`}
+                >
+                    <img src={image.path} alt={image.type} className="h-20 w-full object-cover" />
+                    <div className="absolute left-1.5 top-1.5 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-semibold text-[#4f3126] shadow-sm">
+                        Drag
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => onRemove(image.id)}
+                        className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-semibold leading-none text-[#4f3126] shadow-sm transition hover:bg-red-50 hover:text-red-600"
+                        aria-label={`Remove ${image.type}`}
+                    >
+                        x
+                    </button>
+                </div>
+            ))}
+        </div>
+    );
 }
 
 const catLocationOptions = ['Sanctuary resident', 'Foster care', 'Rehome'];
@@ -259,6 +384,10 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         );
     };
 
+    const moveSelectedGalleryImage = (fromIndex, toIndex) => {
+        editForm.setData('gallery_image_ids', moveArrayItem(editForm.data.gallery_image_ids || [], fromIndex, toIndex));
+    };
+
     const switchImageSource = (source) => {
         editForm.setData('image_source', source);
         if (source === 'upload') {
@@ -267,6 +396,19 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         if (source === 'gallery') {
             editForm.setData('photos', []);
         }
+    };
+
+    const handlePhotoChange = (e) => {
+        editForm.setData('photos', mergeSelectedFiles(editForm.data.photos, Array.from(e.target.files || [])));
+        e.target.value = '';
+    };
+
+    const removeSelectedPhoto = (indexToRemove) => {
+        editForm.setData('photos', editForm.data.photos.filter((_, index) => index !== indexToRemove));
+    };
+
+    const moveSelectedPhoto = (fromIndex, toIndex) => {
+        editForm.setData('photos', moveArrayItem(editForm.data.photos, fromIndex, toIndex));
     };
 
     return (
@@ -425,24 +567,35 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <button type="button" onClick={() => switchImageSource('gallery')} className={`rounded-full px-3 py-1 text-xs ${editForm.data.image_source === 'gallery' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Select From Gallery</button>
                                 </div>
                                 {editForm.data.image_source === 'upload' ? (
-                                    <input
-                                        type="file"
-                                        multiple
-                                        accept="image/png,image/jpeg,image/jpg,image/webp"
-                                        onChange={(e) => editForm.setData('photos', Array.from(e.target.files || []))}
-                                        className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
-                                    />
+                                    <>
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/png,image/jpeg,image/jpg,image/webp"
+                                            onChange={handlePhotoChange}
+                                            className="block w-full text-sm text-[#6e6561] file:mr-3 file:rounded-lg file:border-0 file:bg-[#9cd2c8] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#1f4d43]"
+                                        />
+                                        <SelectedImagePreviewGrid files={editForm.data.photos} onRemove={removeSelectedPhoto} onMove={moveSelectedPhoto} />
+                                    </>
                                 ) : (
-                                    <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
-                                        {galleryLibrary.map((image) => {
-                                            const checked = editForm.data.gallery_image_ids.includes(image.id);
-                                            return (
-                                                <button key={image.id} type="button" onClick={() => toggleGalleryImage(image.id)} className={`overflow-hidden rounded-lg border-2 ${checked ? 'border-[#9cd2c8]' : 'border-transparent'}`}>
-                                                    <img src={image.path} alt={image.type} className="h-20 w-full object-cover" />
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                                    <>
+                                        <SelectedGalleryPreviewGrid images={galleryLibrary} selectedIds={editForm.data.gallery_image_ids} onRemove={toggleGalleryImage} onMove={moveSelectedGalleryImage} />
+                                        <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
+                                            {galleryLibrary.map((image) => {
+                                                const checked = editForm.data.gallery_image_ids.includes(image.id);
+                                                return (
+                                                    <button key={image.id} type="button" onClick={() => toggleGalleryImage(image.id)} className={`relative overflow-hidden rounded-lg border-2 ${checked ? 'border-[#9cd2c8]' : 'border-transparent'}`}>
+                                                        <img src={image.path} alt={image.type} className="h-20 w-full object-cover" />
+                                                        {checked ? (
+                                                            <span className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-semibold leading-none text-[#4f3126] shadow-sm">
+                                                                x
+                                                            </span>
+                                                        ) : null}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </>
                                 )}
                                 <FieldError message={editForm.errors.photos || editForm.errors['photos.0']} />
                             </div>
