@@ -1,5 +1,9 @@
-﻿import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
+
+const INITIAL_VISIBLE_CATS = 9;
+const LOAD_MORE_COUNT = 9;
 
 const compatibilityOptions = [
     { value: 'special_needs', label: 'Special Need' },
@@ -38,6 +42,8 @@ function FilterGroup({ title, items, selected = [], onToggle }) {
 }
 
 export default function AvailableCats({ availableCats = [], filterOptions = {}, selectedFilters = {} }) {
+    const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_CATS);
+
     const activeFilters = {
         breed: selectedFilters.breed || [],
         age: selectedFilters.age || [],
@@ -80,6 +86,12 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
     };
 
     const hasActiveFilters = Object.values(activeFilters).some((values) => values.length > 0);
+    const visibleCats = availableCats.slice(0, visibleCount);
+    const hasMoreCats = availableCats.length > visibleCount;
+
+    useEffect(() => {
+        setVisibleCount(INITIAL_VISIBLE_CATS);
+    }, [availableCats.length]);
 
     return (
         <AppLayout currentPath="/available-cats">
@@ -134,7 +146,7 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {availableCats.map((cat) => (
+                            {visibleCats.map((cat) => (
                                 <div key={cat.id} className="bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition group border border-gray-50">
                                     <div className="relative aspect-[4/3] overflow-hidden">
                                         <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
@@ -173,6 +185,18 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
                                 </div>
                             )}
                         </div>
+
+                        {hasMoreCats ? (
+                            <div className="mt-10 flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => setVisibleCount((current) => current + LOAD_MORE_COUNT)}
+                                    className="inline-flex items-center justify-center rounded-full bg-[#f08063] px-8 py-3 text-sm font-bold text-white transition hover:bg-[#e06d50]"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
             </section>
