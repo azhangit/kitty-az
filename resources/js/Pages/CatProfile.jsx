@@ -30,7 +30,7 @@ function Badge({ label, value, tone = 'sand' }) {
     );
 }
 
-function ChipSection({ title, items, tone = 'sand' }) {
+function ChipSection({ title, items, tone = 'sand', className = 'mt-5' }) {
     if (!items.length) return null;
 
     const styles = {
@@ -41,7 +41,7 @@ function ChipSection({ title, items, tone = 'sand' }) {
     };
 
     return (
-        <div className="mt-5">
+        <div className={className}>
             <h3 className="text-sm font-semibold text-[#2f2b28]">{title}</h3>
             <div className="mt-2 flex flex-wrap gap-2">
                 {items.map((item) => (
@@ -75,7 +75,6 @@ export default function CatProfile({ cat }) {
 
     const savedBadges = useMemo(() => {
         const badges = [
-            { label: 'Status', value: cat?.status, tone: 'sage' },
             { label: 'Age', value: cat?.age },
             { label: 'Gender', value: cat?.gender },
             { label: 'Breed', value: cat?.breed },
@@ -192,8 +191,8 @@ export default function CatProfile({ cat }) {
                                 </div>
                             ) : null}
 
-                            <div className="mt-6 rounded-2xl border border-[#e8ddd5] bg-white p-5">
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#6f5449]">Saved Details</h3>
+                            <div className="mt-6">
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#6f5449]">Details</h3>
                                 <div className="mt-4 flex flex-wrap gap-2">
                                     {savedBadges.map((item) => (
                                         <Badge key={item.label} label={item.label} value={item.value} tone={item.tone} />
@@ -202,36 +201,44 @@ export default function CatProfile({ cat }) {
                             </div>
 
                             <ChipSection title="Special Medical Needs" items={specialMedicalNeeds} tone="cream" />
-                            <ChipSection title="Personality Traits" items={personalityTraits} tone="sand" />
-                            <ChipSection title="Profile Tags" items={profileTags} tone="mint" />
 
-                            {categories.length > 0 ? (
-                                <div className="mt-5">
-                                    <h3 className="text-sm font-semibold text-[#2f2b28]">Categories</h3>
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                        {categories.map((category) => (
-                                            <span
-                                                key={category.id}
-                                                className="rounded-full px-4 py-1 text-xs font-medium"
-                                                style={{
-                                                    backgroundColor: `${category.color}33`,
-                                                    color: '#5f5855',
-                                                }}
-                                            >
-                                                {category.name}
-                                            </span>
-                                        ))}
+                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                <ChipSection title="Personality Traits" items={personalityTraits} tone="sand" className="" />
+                                <ChipSection title="Profile Tags" items={profileTags} tone="mint" className="" />
+                            </div>
+
+                            <div className="mt-5 grid gap-5 sm:grid-cols-2 sm:items-end">
+                                {categories.length > 0 ? (
+                                    <div>
+                                        <h3 className="text-sm font-semibold text-[#2f2b28]">Categories</h3>
+                                        <div className="mt-2 flex flex-wrap gap-2">
+                                            {categories.map((category) => (
+                                                <span
+                                                    key={category.id}
+                                                    className="rounded-full px-4 py-1 text-xs font-medium"
+                                                    style={{
+                                                        backgroundColor: `${category.color}33`,
+                                                        color: '#5f5855',
+                                                    }}
+                                                >
+                                                    {category.name}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ) : null}
+                                ) : (
+                                    <div />
+                                )}
 
-                            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                                <a
-                                    href={route('cat-profile.report', cat?.id)}
-                                    className="rounded-full bg-white px-5 py-2 text-xs font-semibold text-[#544c47] shadow-sm"
-                                >
-                                    Download Report
-                                </a>
+                                <div>
+                                    <h3 className="text-sm font-semibold text-[#2f2b28]">Medical Report</h3>
+                                    <a
+                                        href={route('cat-profile.report', cat?.id)}
+                                        className="mt-2 inline-flex rounded-full bg-white px-5 py-2 text-xs font-semibold text-[#544c47] shadow-sm"
+                                    >
+                                        Download Report
+                                    </a>
+                                </div>
                             </div>
 
                             <Link

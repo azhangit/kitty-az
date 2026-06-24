@@ -1,5 +1,6 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import PasswordInput from '@/Components/PasswordInput';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -76,12 +77,11 @@ export default function Register() {
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="Password" className="text-xs font-bold uppercase tracking-wider text-[#6f5449]" />
 
-                    <TextInput
+                    <PasswordInput
                         id="password"
-                        type="password"
                         name="password"
                         value={data.password}
-                        className="mt-2 block w-full rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
+                        className="rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
                         placeholder="Create a password"
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
@@ -98,12 +98,11 @@ export default function Register() {
                         className="text-xs font-bold uppercase tracking-wider text-[#6f5449]"
                     />
 
-                    <TextInput
+                    <PasswordInput
                         id="password_confirmation"
-                        type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-2 block w-full rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
+                        className="rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
                         placeholder="Re-enter your password"
                         autoComplete="new-password"
                         onChange={(e) =>

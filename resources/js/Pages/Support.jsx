@@ -43,7 +43,7 @@ export default function Support() {
                                 {[
                                     { title: 'Personalized Workout Plans', desc: 'Custom fitness routines tailored to your goals.', icon: <img src="/images/workout.svg" alt="" /> },
                                     { title: 'Community Support', desc: 'Join a community of fitness and animal lovers.', icon: <img src="/images/user.svg" alt="" /> },
-                                    { title: 'Make a Real Impact', desc: 'Your subscription directly supports cat rescue operations.', icon: <img src="/images/heart.svg" alt="" /> },
+                                    { title: 'Make a Real Impact', desc: 'Your subscription directly supports cat rescue operations.', icon: <img src="/images/Heart.svg" alt="" /> },
                                 ].map((item, idx) => (
                                     <li key={idx} className="flex gap-4 items-start">
                                         <div className="w-8 h-8 flex-shrink-0 text-[#8bcbbd] mt-1">{item.icon}</div>

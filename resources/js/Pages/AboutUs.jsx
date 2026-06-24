@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 
 const stats = [
     { 
-        icon: <img src="images/heart.svg" alt="" />,
+        icon: <img src="images/Heart.svg" alt="" />,
         value: '2,500', 
         label: 'Cats Rescued', 
         valueColor: 'text-[#f07b61]', 

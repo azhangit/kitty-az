@@ -9,6 +9,7 @@ use App\Models\GalleryImage;
 use App\Models\MedicalRecord;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -287,9 +288,44 @@ class CatController extends Controller
         return back()->with('success', 'Medical record removed.');
     }
 
+    public function destroyOption(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'group' => ['required', 'string', 'in:specialMedicalNeeds,personalityTraits,profileTags'],
+            'value' => ['required', 'string', 'max:255'],
+        ]);
+
+        $group = $validated['group'];
+        $value = $validated['value'];
+        $deletedOptions = $this->deletedOptions();
+        $deletedOptions[$group] = array_values(array_unique([...(array) ($deletedOptions[$group] ?? []), $value]));
+
+        Storage::disk('local')->put('admin-option-deletions.json', json_encode($deletedOptions, JSON_PRETTY_PRINT));
+
+        $field = [
+            'specialMedicalNeeds' => 'special_medical_needs',
+            'personalityTraits' => 'personality_traits',
+            'profileTags' => 'profile_tags',
+        ][$group];
+
+        Cat::query()
+            ->whereJsonContains($field, $value)
+            ->get([$field, 'id'])
+            ->each(function (Cat $cat) use ($field, $value): void {
+                $cat->update([
+                    $field => collect($cat->{$field} ?: [])
+                        ->reject(fn ($item) => $item === $value)
+                        ->values()
+                        ->all(),
+                ]);
+            });
+
+        return back()->with('success', 'Option deleted successfully.');
+    }
+
     private function options(): array
     {
-        return [
+        $options = [
             'status' => ['available', 'adopted', 'fostered', 'medical_care'],
             'breed' => [
                 'Domestic Short Hair',
@@ -453,6 +489,30 @@ class CatController extends Controller
             ],
             'medicalRecordTypes' => ['Vaccination', 'Procedure', 'Checkup', 'Medication', 'Lab Test', 'Other'],
         ];
+
+        foreach ($this->deletedOptions() as $group => $deletedValues) {
+            if (! array_key_exists($group, $options)) {
+                continue;
+            }
+
+            $options[$group] = collect($options[$group])
+                ->reject(fn ($option) => in_array($option, (array) $deletedValues, true))
+                ->values()
+                ->all();
+        }
+
+        return $options;
+    }
+
+    private function deletedOptions(): array
+    {
+        if (! Storage::disk('local')->exists('admin-option-deletions.json')) {
+            return [];
+        }
+
+        $decoded = json_decode(Storage::disk('local')->get('admin-option-deletions.json'), true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     private function colorOptions(): array

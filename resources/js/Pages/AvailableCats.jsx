@@ -45,6 +45,7 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
     const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_CATS);
 
     const activeFilters = {
+        q: selectedFilters.q || '',
         breed: selectedFilters.breed || [],
         age: selectedFilters.age || [],
         gender: selectedFilters.gender || [],
@@ -54,9 +55,17 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
     };
 
     const applyFilters = (nextFilters) => {
-        const payload = Object.fromEntries(
-            Object.entries(nextFilters).filter(([, values]) => Array.isArray(values) && values.length > 0),
-        );
+        const payload = {};
+
+        if (nextFilters.q) {
+            payload.q = nextFilters.q;
+        }
+
+        Object.entries(nextFilters).forEach(([key, values]) => {
+            if (key !== 'q' && Array.isArray(values) && values.length > 0) {
+                payload[key] = values;
+            }
+        });
 
         router.get(route('cats.available'), payload, {
             preserveState: true,
@@ -142,7 +151,14 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
 
                     <div className="flex-grow">
                         <div className="mb-8 flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-gray-900">Showing {availableCats.length} cats</h3>
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900">Showing {availableCats.length} cats</h3>
+                                {activeFilters.q ? (
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        Search results for <span className="font-semibold text-[#f08063]">"{activeFilters.q}"</span>
+                                    </p>
+                                ) : null}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

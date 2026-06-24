@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 const stats = [
     { 
         icon: (
-            <img src="/images/heart.svg" alt="heart" className="w-5 h-5 md:w-6 md:h-6" />
+            <img src="/images/Heart.svg" alt="heart" className="w-5 h-5 md:w-6 md:h-6" />
         ),
         value: '2,500', 
         label: 'Cats Rescued', 
@@ -51,7 +51,7 @@ const stats = [
 const supportPoints = [
     {
         icon: (
-<img src="/images/heart.svg" alt="heart" />
+<img src="/images/Heart.svg" alt="heart" />
         ),
         title: 'Fitness With Dina',
         detail: 'Join my own online fitness application, available in...',

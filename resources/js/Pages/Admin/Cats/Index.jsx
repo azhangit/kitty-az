@@ -30,7 +30,7 @@ function formatDisplayDate(value) {
     }).format(date);
 }
 
-function CheckboxList({ title, items = [], selected = [], onToggle, onAddCustom }) {
+function CheckboxList({ title, items = [], selected = [], onToggle, onAddCustom, onDelete }) {
     const [customValue, setCustomValue] = useState('');
     const visibleItems = useMemo(
         () => Array.from(new Set([...items, ...selected])).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })),
@@ -53,16 +53,26 @@ function CheckboxList({ title, items = [], selected = [], onToggle, onAddCustom 
                 {visibleItems.map((item) => {
                     const checked = selected.includes(item);
                     return (
-                        <button
+                        <span
                             key={item}
-                            type="button"
-                            onClick={() => onToggle(item)}
-                            className={`rounded-full px-3 py-1 text-xs transition ${
+                            className={`inline-flex items-center overflow-hidden rounded-full text-xs transition ${
                                 checked ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449] hover:bg-[#e7ddd7]'
                             }`}
                         >
-                            {item}
-                        </button>
+                            <button type="button" onClick={() => onToggle(item)} className="px-3 py-1">
+                                {item}
+                            </button>
+                            {onDelete ? (
+                                <button
+                                    type="button"
+                                    onClick={() => onDelete(item)}
+                                    className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] leading-none transition hover:bg-red-100 hover:text-red-600"
+                                    aria-label={`Delete ${item}`}
+                                >
+                                    x
+                                </button>
+                            ) : null}
+                        </span>
                     );
                 })}
             </div>
@@ -87,6 +97,43 @@ function CheckboxList({ title, items = [], selected = [], onToggle, onAddCustom 
                 >
                     Add
                 </button>
+            </div>
+        </div>
+    );
+}
+
+function OptionDeleteModal({ option, onCancel, onConfirm }) {
+    if (!option) return null;
+
+    return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#2f1d15]/35 p-4">
+            <div className="w-full max-w-md overflow-hidden rounded-2xl bg-[#f8f6f4] shadow-2xl">
+                <div className="bg-gradient-to-r from-[#f8c6ac] to-[#9fd4ca] px-6 py-4">
+                    <h3 className="text-2xl font-semibold text-[#2f1d15]">Delete Option?</h3>
+                    <p className="mt-1 text-sm text-[#5f4034]">This action cannot be undone.</p>
+                </div>
+                <div className="space-y-4 p-6">
+                    <p className="text-sm leading-relaxed text-[#5f5855]">
+                        Delete <span className="font-semibold text-[#2f1d15]">"{option.value}"</span> from this option list?
+                        This will also remove it from existing cats.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button
+                            type="button"
+                            onClick={onCancel}
+                            className="rounded-xl bg-[#e5e5e5] py-3 text-sm font-semibold text-[#2f1d15]"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onConfirm}
+                            className="rounded-xl bg-red-500 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -299,6 +346,7 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
     const pageErrors = usePage().props.errors || {};
     const [showAddModal, setShowAddModal] = useRemember(false, 'admin.cats.showAddModal');
     const [medicalModalCat, setMedicalModalCat] = useState(null);
+    const [pendingOptionDelete, setPendingOptionDelete] = useState(null);
     const [searchInput, setSearchInput] = useState(filters.search || '');
 
     const addForm = useForm('admin.cats.create.form', {
@@ -380,6 +428,23 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         if (current.includes(value)) return;
 
         addForm.setData(field, [...current, value]);
+    };
+
+    const deleteOption = (group, field, value) => {
+        setPendingOptionDelete({ group, field, value });
+    };
+
+    const confirmDeleteOption = () => {
+        if (!pendingOptionDelete) return;
+
+        const { group, field, value } = pendingOptionDelete;
+
+        addForm.setData(field, (addForm.data[field] || []).filter((item) => item !== value));
+        setPendingOptionDelete(null);
+        router.delete(route('admin.cat-options.destroy'), {
+            data: { group, value },
+            preserveScroll: true,
+        });
     };
 
     const submitNewCat = (e) => {
@@ -767,6 +832,7 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                 selected={addForm.data.special_medical_needs}
                                 onToggle={(item) => toggleArrayField('special_medical_needs', item)}
                                 onAddCustom={(item) => addCustomArrayField('special_medical_needs', item)}
+                                onDelete={(item) => deleteOption('specialMedicalNeeds', 'special_medical_needs', item)}
                             />
                             <CheckboxList
                                 title="Personality Traits"
@@ -774,6 +840,7 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                 selected={addForm.data.personality_traits}
                                 onToggle={(item) => toggleArrayField('personality_traits', item)}
                                 onAddCustom={(item) => addCustomArrayField('personality_traits', item)}
+                                onDelete={(item) => deleteOption('personalityTraits', 'personality_traits', item)}
                             />
                             <CheckboxList
                                 title="Profile Tags"
@@ -781,6 +848,7 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                 selected={addForm.data.profile_tags}
                                 onToggle={(item) => toggleArrayField('profile_tags', item)}
                                 onAddCustom={(item) => addCustomArrayField('profile_tags', item)}
+                                onDelete={(item) => deleteOption('profileTags', 'profile_tags', item)}
                             />
 
                             <CategoryPicker
@@ -847,6 +915,12 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                     </div>
                 </div>
             ) : null}
+
+            <OptionDeleteModal
+                option={pendingOptionDelete}
+                onCancel={() => setPendingOptionDelete(null)}
+                onConfirm={confirmDeleteOption}
+            />
         </AdminLayout>
     );
 }

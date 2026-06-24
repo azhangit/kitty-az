@@ -1,6 +1,7 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import PasswordInput from '@/Components/PasswordInput';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -64,12 +65,11 @@ export default function Login({ status, canResetPassword }) {
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="Password" className="text-xs font-bold uppercase tracking-wider text-[#6f5449]" />
 
-                    <TextInput
+                    <PasswordInput
                         id="password"
-                        type="password"
                         name="password"
                         value={data.password}
-                        className="mt-2 block w-full rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
+                        className="rounded-full border-[#ead6cf] bg-white px-5 py-3.5 text-sm shadow-none placeholder:text-[#ad948b] focus:border-[#f08063] focus:ring-[#f5b19f]"
                         placeholder="Enter your password"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}

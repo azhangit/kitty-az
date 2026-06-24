@@ -154,7 +154,7 @@ export default function AdoptionAbroad() {
                             
                             <ul className="space-y-8">
                                 {[
-                                    { title: 'Full Medical Care', desc: 'All vaccinations, health tests, and treatments are up to date.', icon: <img src="images/heart.svg" alt="" /> },
+                                    { title: 'Full Medical Care', desc: 'All vaccinations, health tests, and treatments are up to date.', icon: <img src="images/Heart.svg" alt="" /> },
                                     { title: 'Export Documentation', desc: 'Health certificates, export permits, and required paperwork.', icon: <img src="images/file-alt-solid.svg" alt="" /> },
                                     { title: 'Travel Arrangements', desc: 'IATA-approved pet shippers and airlines coordinated for your cat.', icon: <img src="images/plane-departure-solid.svg" alt="" /> },
                                     { title: 'Ongoing Support', desc: 'Guidance, advice and assistance from our team.', icon: <img src="images/clock.svg" alt="" /> },

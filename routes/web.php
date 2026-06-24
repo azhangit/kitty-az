@@ -111,6 +111,7 @@ Route::get('/support', function () {
 });
 
 Route::get('/available-cats', function (Request $request) {
+    $search = trim($request->string('q')->toString());
     $availableCats = collect();
     $filterOptions = [
         'breed' => [],
@@ -120,6 +121,7 @@ Route::get('/available-cats', function (Request $request) {
         'vaccination' => [],
     ];
     $selectedFilters = [
+        'q' => $search,
         'breed' => array_values((array) $request->input('breed', [])),
         'age' => array_values((array) $request->input('age', [])),
         'gender' => array_values((array) $request->input('gender', [])),
@@ -172,6 +174,18 @@ Route::get('/available-cats', function (Request $request) {
         $availableCats = Cat::query()
             ->with('images')
             ->where('status', 'available')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($inner) use ($search) {
+                    $inner
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('breed', 'like', "%{$search}%")
+                        ->orWhere('gender', 'like', "%{$search}%")
+                        ->orWhere('age_label', 'like', "%{$search}%")
+                        ->orWhere('rescue_story', 'like', "%{$search}%")
+                        ->orWhereJsonContains('personality_traits', $search)
+                        ->orWhereJsonContains('profile_tags', $search);
+                });
+            })
             ->when(! empty($selectedFilters['breed']), fn ($q) => $q->whereIn('breed', $selectedFilters['breed']))
             ->when(! empty($selectedFilters['age']), fn ($q) => $q->whereIn('age_label', $selectedFilters['age']))
             ->when(! empty($selectedFilters['gender']), fn ($q) => $q->whereIn('gender', $selectedFilters['gender']))
@@ -326,6 +340,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     Route::get('/admin/cats', [CatController::class, 'index'])->name('admin.cats.index');
     Route::post('/admin/cats', [CatController::class, 'store'])->name('admin.cats.store');
+    Route::delete('/admin/cat-options', [CatController::class, 'destroyOption'])->name('admin.cat-options.destroy');
     Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
     Route::get('/admin/cats/{cat}', [CatController::class, 'show'])->name('admin.cats.show');
     Route::delete('/admin/cats/{cat}', [CatController::class, 'destroy'])->name('admin.cats.destroy');
