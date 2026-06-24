@@ -309,7 +309,8 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         age_label: cat.age_label || '',
         gender: cat.gender || options.gender?.[0] || 'Male',
         breed: cat.breed || options.breed?.[0] || 'Domestic Short Hair',
-        size: cat.size || options.size?.[1] || 'Medium',
+        color: cat.color || '',
+        size: cat.size || '',
         weight_kg: cat.weight_kg || '',
         status: cat.status || 'available',
         location: cat.location || '',
@@ -322,14 +323,14 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         vaccination_status: cat.vaccination_status || options.vaccinationStatus?.[1] || 'Partially Vaccinated',
         special_medical_needs: cat.special_medical_needs || [],
         current_medication: cat.current_medication || '',
-        energy_level: cat.energy_level || 'Medium',
-        social_behavior: cat.social_behavior || 'Friendly',
-        ideal_home_type: cat.ideal_home_type || options.homeType?.[0] || 'Apartment Friendly',
-        handling_tolerance: cat.handling_tolerance || 'Enjoys regular handling',
-        daily_attention_requirement: cat.daily_attention_requirement || 'Moderate',
-        good_with_cats: cat.good_with_cats || options.goodWithCats?.[0] || 'Yes',
-        good_with_dogs: cat.good_with_dogs || options.goodWithDogs?.[2] || 'Unknown',
-        good_with_children: cat.good_with_children || options.goodWithChildren?.[3] || 'Unknown',
+        energy_level: cat.energy_level || '',
+        social_behavior: cat.social_behavior || '',
+        ideal_home_type: cat.ideal_home_type || '',
+        handling_tolerance: cat.handling_tolerance || '',
+        daily_attention_requirement: cat.daily_attention_requirement || '',
+        good_with_cats: cat.good_with_cats || '',
+        good_with_dogs: cat.good_with_dogs || '',
+        good_with_children: cat.good_with_children || '',
         personality_traits: cat.personality_traits || [],
         profile_tags: cat.profile_tags || [],
         category_ids: (cat.categories || []).map((item) => item.id),
@@ -549,6 +550,14 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     </select>
                                 </div>
                                 <div>
+                                    <input
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Color"
+                                        value={editForm.data.color}
+                                        onChange={(e) => editForm.setData('color', e.target.value)}
+                                    />
+                                </div>
+                                <div>
                                     <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.status} onChange={(e) => editForm.setData('status', e.target.value)}>
                                         {(options.status || []).map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}
                                     </select>
@@ -608,21 +617,66 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                             <textarea className="h-24 w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" placeholder="Rescue story" value={editForm.data.rescue_story} onChange={(e) => editForm.setData('rescue_story', e.target.value)} />
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fiv_status} onChange={(e) => editForm.setData('fiv_status', e.target.value)}>{(options.fivStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.felv_status} onChange={(e) => editForm.setData('felv_status', e.target.value)}>{(options.felvStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fip_history} onChange={(e) => editForm.setData('fip_history', e.target.value)}>{(options.fipHistory || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FIV Status
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fiv_status} onChange={(e) => editForm.setData('fiv_status', e.target.value)}>{(options.fivStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FeLV Status
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.felv_status} onChange={(e) => editForm.setData('felv_status', e.target.value)}>{(options.felvStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FIP History
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fip_history} onChange={(e) => editForm.setData('fip_history', e.target.value)}>{(options.fipHistory || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.spay_neuter_status} onChange={(e) => editForm.setData('spay_neuter_status', e.target.value)}>{(options.spayNeuterStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
-                                <input className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" placeholder="Microchip status" value={editForm.data.microchip_status} onChange={(e) => editForm.setData('microchip_status', e.target.value)} />
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.vaccination_status} onChange={(e) => editForm.setData('vaccination_status', e.target.value)}>{(options.vaccinationStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Spay / Neuter Status
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.spay_neuter_status} onChange={(e) => editForm.setData('spay_neuter_status', e.target.value)}>{(options.spayNeuterStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Microchip Status
+                                    </label>
+                                    <input className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" placeholder="Microchip status" value={editForm.data.microchip_status} onChange={(e) => editForm.setData('microchip_status', e.target.value)} />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Vaccination Status
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.vaccination_status} onChange={(e) => editForm.setData('vaccination_status', e.target.value)}>{(options.vaccinationStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_cats} onChange={(e) => editForm.setData('good_with_cats', e.target.value)}>{(options.goodWithCats || []).map((item) => <option key={item}>{item}</option>)}</select>
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_dogs} onChange={(e) => editForm.setData('good_with_dogs', e.target.value)}>{(options.goodWithDogs || []).map((item) => <option key={item}>{item}</option>)}</select>
-                                <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_children} onChange={(e) => editForm.setData('good_with_children', e.target.value)}>{(options.goodWithChildren || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Cats
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_cats} onChange={(e) => editForm.setData('good_with_cats', e.target.value)}>{(options.goodWithCats || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Dogs
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_dogs} onChange={(e) => editForm.setData('good_with_dogs', e.target.value)}>{(options.goodWithDogs || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Children
+                                    </label>
+                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_children} onChange={(e) => editForm.setData('good_with_children', e.target.value)}>{(options.goodWithChildren || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                </div>
                             </div>
 
                             <ChipSelector

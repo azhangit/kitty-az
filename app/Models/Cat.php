@@ -16,6 +16,7 @@ class Cat extends Model
         'age_label',
         'gender',
         'breed',
+        'color',
         'size',
         'weight_kg',
         'status',

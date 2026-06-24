@@ -306,7 +306,8 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         age_label: '',
         gender: options.gender?.[0] || 'Male',
         breed: options.breed?.[0] || 'Domestic Short Hair',
-        size: options.size?.[1] || 'Medium',
+        color: '',
+        size: '',
         weight_kg: '',
         status: 'available',
         location: 'Foster care',
@@ -323,16 +324,16 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         vaccination_status: options.vaccinationStatus?.[1] || 'Partially Vaccinated',
         special_medical_needs: [],
         current_medication: '',
-        energy_level: 'Medium',
-        social_behavior: 'Friendly',
-        ideal_home_type: options.homeType?.[0] || 'Apartment Friendly',
-        handling_tolerance: 'Enjoys regular handling',
-        daily_attention_requirement: 'Moderate',
-        good_with_cats: options.goodWithCats?.[0] || 'Yes',
-        good_with_dogs: options.goodWithDogs?.[2] || 'Unknown',
-        good_with_children: options.goodWithChildren?.[3] || 'Unknown',
-        diet_type: options.dietType?.[0] || 'Standard Dry + Wet',
-        grooming_needs: options.groomingNeeds?.[0] || 'Low Maintenance',
+        energy_level: '',
+        social_behavior: '',
+        ideal_home_type: '',
+        handling_tolerance: '',
+        daily_attention_requirement: '',
+        good_with_cats: '',
+        good_with_dogs: '',
+        good_with_children: '',
+        diet_type: '',
+        grooming_needs: '',
         personality_traits: [],
         profile_tags: [],
         category_ids: [],
@@ -611,6 +612,15 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <FieldError message={addForm.errors.breed} />
                                 </div>
                                 <div>
+                                    <input
+                                        className={inputClass(addForm.errors.color)}
+                                        placeholder="Color"
+                                        value={addForm.data.color}
+                                        onChange={(e) => addForm.setData('color', e.target.value)}
+                                    />
+                                    <FieldError message={addForm.errors.color} />
+                                </div>
+                                <div>
                                     <select className={inputClass(addForm.errors.status)} value={addForm.data.status} onChange={(e) => addForm.setData('status', e.target.value)}>
                                         {options.status.map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}
                                     </select>
@@ -696,10 +706,58 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        FIP History
+                                    </label>
+                                    <select className={inputClass(addForm.errors.fip_history)} value={addForm.data.fip_history} onChange={(e) => addForm.setData('fip_history', e.target.value)}>{options.fipHistory.map((item) => <option key={item}>{item}</option>)}</select>
+                                    <FieldError message={addForm.errors.fip_history} />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Spay / Neuter Status
+                                    </label>
+                                    <select className={inputClass(addForm.errors.spay_neuter_status)} value={addForm.data.spay_neuter_status} onChange={(e) => addForm.setData('spay_neuter_status', e.target.value)}>{options.spayNeuterStatus.map((item) => <option key={item}>{item}</option>)}</select>
+                                    <FieldError message={addForm.errors.spay_neuter_status} />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Microchip Status
+                                    </label>
+                                    <input className={inputClass(addForm.errors.microchip_status)} placeholder="Microchip status" value={addForm.data.microchip_status} onChange={(e) => addForm.setData('microchip_status', e.target.value)} />
+                                    <FieldError message={addForm.errors.microchip_status} />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Vaccination Status
                                     </label>
                                     <select className={inputClass(addForm.errors.vaccination_status)} value={addForm.data.vaccination_status} onChange={(e) => addForm.setData('vaccination_status', e.target.value)}>{options.vaccinationStatus.map((item) => <option key={item}>{item}</option>)}</select>
                                     <FieldError message={addForm.errors.vaccination_status} />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Cats
+                                    </label>
+                                    <select className={inputClass(addForm.errors.good_with_cats)} value={addForm.data.good_with_cats} onChange={(e) => addForm.setData('good_with_cats', e.target.value)}>{options.goodWithCats.map((item) => <option key={item}>{item}</option>)}</select>
+                                    <FieldError message={addForm.errors.good_with_cats} />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Dogs
+                                    </label>
+                                    <select className={inputClass(addForm.errors.good_with_dogs)} value={addForm.data.good_with_dogs} onChange={(e) => addForm.setData('good_with_dogs', e.target.value)}>{options.goodWithDogs.map((item) => <option key={item}>{item}</option>)}</select>
+                                    <FieldError message={addForm.errors.good_with_dogs} />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
+                                        Good With Children
+                                    </label>
+                                    <select className={inputClass(addForm.errors.good_with_children)} value={addForm.data.good_with_children} onChange={(e) => addForm.setData('good_with_children', e.target.value)}>{options.goodWithChildren.map((item) => <option key={item}>{item}</option>)}</select>
+                                    <FieldError message={addForm.errors.good_with_children} />
                                 </div>
                             </div>
 
