@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 export default function Adopt() {
     return (
         <AppLayout currentPath="/adopt">
-            <Head title="Adopt a Cat - Dubai Street Kitties" />
+            <Head title="Adopt a Cat" />
 
             {/* HERO SECTION */}
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 overflow-visible flex flex-col items-center justify-center">

@@ -1,5 +1,6 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
+import SeoHead from '@/Components/SeoHead';
 import AppLayout from '@/Layouts/AppLayout';
 
 function SocialIcon({ label }) {
@@ -112,7 +113,16 @@ export default function CatProfile({ cat }) {
 
     return (
         <AppLayout currentPath="/adopt">
-            <Head title={`${cat?.name || 'Cat'} Profile - Dubai Street Kitties`} />
+            <SeoHead
+                title={`${cat?.name || 'Cat'} Profile`}
+                description={
+                    cat?.name
+                        ? `Meet ${cat.name}, a ${[cat.age, cat.gender, cat.breed].filter(Boolean).join(' · ')} available for adoption with Dubai Street Kitties.`
+                        : 'Meet a Dubai Street Kitties cat available for adoption.'
+                }
+                image={cat?.image || '/images/gallery-cat.png'}
+                type="article"
+            />
 
             <section className="bg-[#f5efea] py-10">
                 <div className="mx-auto max-w-[1160px] px-6">

@@ -1,5 +1,6 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import SeoHead from '@/Components/SeoHead';
 import AppLayout from '@/Layouts/AppLayout';
 
 const INITIAL_VISIBLE_CATS = 9;
@@ -104,7 +105,10 @@ export default function AvailableCats({ availableCats = [], filterOptions = {}, 
 
     return (
         <AppLayout currentPath="/available-cats">
-            <Head title="Available Cats - Dubai Street Kitties" />
+            <SeoHead
+                title="Available Cats"
+                description="Find your perfect feline companion. Each cat has been vaccinated, sterilized, and microchipped through Dubai Street Kitties."
+            />
 
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">
                 <div className="absolute bottom-0 left-0 w-[150px] md:w-[415px]"><img src="/images/adopt-left.png" alt="Cat hero left" className="w-full h-auto" /></div>

@@ -1,18 +1,22 @@
 import FlashToasts from '@/Components/FlashToasts';
 import { Head, Link, usePage } from '@inertiajs/react';
 
-const navItems = [
-    { label: 'Dashboard', href: route('dashboard'), routeName: 'dashboard' },
-    { label: 'All Cats', href: route('admin.cats.index'), routeName: 'admin.cats.index' },
-    { label: 'Categories', href: route('admin.categories.index'), routeName: 'admin.categories.index' },
-    { label: 'Gallery', href: route('admin.gallery.index'), routeName: 'admin.gallery.index' },
-    { label: 'Contact', href: route('admin.contacts.index'), routeName: 'admin.contacts.index' },
-    { label: 'User Management', href: route('admin.users.index'), routeName: 'admin.users.index' },
-    { label: 'Reports', href: route('admin.reports.index'), routeName: 'admin.reports.index' },
+const navItemDefs = [
+    { label: 'Dashboard', routeName: 'dashboard' },
+    { label: 'All Cats', routeName: 'admin.cats.index' },
+    { label: 'Categories', routeName: 'admin.categories.index' },
+    { label: 'Gallery', routeName: 'admin.gallery.index' },
+    { label: 'Contact', routeName: 'admin.contacts.index' },
+    { label: 'User Management', routeName: 'admin.users.index' },
+    { label: 'Reports', routeName: 'admin.reports.index' },
 ];
 
 export default function AdminLayout({ title, subtitle, children, action }) {
     const user = usePage().props.auth?.user;
+    const navItems = navItemDefs.map((item) => ({
+        ...item,
+        href: route(item.routeName),
+    }));
 
     return (
         <>

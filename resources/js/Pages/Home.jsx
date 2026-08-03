@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/Components/SeoHead';
 import AppLayout from '@/Layouts/AppLayout';
 
 const stats = [
@@ -79,7 +80,10 @@ const supportPoints = [
 export default function Home({ availableCats = [] }) {
     return (
         <AppLayout currentPath="/">
-            <Head title="Dubai Street Kitties" />
+            <SeoHead
+                title="Cat Rescue & Adoption in Dubai"
+                description="Rescuing, rehabilitating, and rehoming Dubai's street cats with compassion and care. Browse cats for adoption or support our mission."
+            />
 
             {/* HERO SECTION */}
             <section className="relative h-[450px] md:h-[550px] lg:h-[650px] flex items-center bg-gray-900">

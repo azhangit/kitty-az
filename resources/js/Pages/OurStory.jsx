@@ -35,7 +35,7 @@ const compassionActions = [
 export default function OurStory() {
     return (
         <AppLayout currentPath="/our-story">
-            <Head title="Our Story - Dubai Street Kitties" />
+            <Head title="Our Story" />
 
             <section className="relative overflow-hidden bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] px-6 py-16 text-center sm:py-20 lg:h-[400px] lg:py-0 flex flex-col items-center justify-center">
                 <div className="absolute bottom-0 left-0 opacity-70">

@@ -66,7 +66,7 @@ const compassionActions = [
 export default function AboutUs({ latestGalleryImages = [] }) {
     return (
         <AppLayout currentPath="/about-us">
-            <Head title="About Us - Dubai Street Kitties" />
+            <Head title="About Us" />
 
             {/* HERO SECTION */}
             <section className="bg-gradient-to-b from-[#FFB5A0] to-[#9BCCC1] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">

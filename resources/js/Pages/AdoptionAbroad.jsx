@@ -87,7 +87,7 @@ export default function AdoptionAbroad() {
 
     return (
         <AppLayout currentPath="/adoption-abroad">
-            <Head title="Adoption Abroad - Dubai Street Kitties" />
+            <Head title="Adoption Abroad" />
 
             {/* HERO SECTION */}
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">

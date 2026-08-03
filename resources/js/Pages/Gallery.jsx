@@ -12,7 +12,7 @@ export default function Gallery({ galleryImages = [], galleryTypes = [] }) {
 
     return (
         <AppLayout currentPath="/gallery">
-            <Head title="Gallery - Dubai Street Kitties" />
+            <Head title="Gallery" />
 
             {/* HERO SECTION */}
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">

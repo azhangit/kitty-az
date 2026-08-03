@@ -4,7 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <title inertia>{{ config('app.name', 'Dubai Street Kitties') }}</title>
+        <meta name="description" content="Rescuing, rehabilitating, and rehoming Dubai's street cats with compassion and care.">
         <link rel="icon" type="image/svg+xml" href="/images/nav-logo.svg">
         <link rel="shortcut icon" href="/images/nav-logo.svg">
 

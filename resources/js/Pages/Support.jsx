@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 export default function Support() {
     return (
         <AppLayout currentPath="/support">
-            <Head title="Support Us - Dubai Street Kitties" />
+            <Head title="Support Us" />
 
             {/* HERO SECTION */}
             <section className="relative overflow-hidden bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 flex flex-col items-center justify-center">

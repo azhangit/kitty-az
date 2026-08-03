@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 export default function Shop() {
     return (
         <AppLayout currentPath="/shop">
-            <Head title="Shop - Dubai Street Kitties" />
+            <Head title="Shop" />
 
             {/* SHOP HERO SECTION */}
             <section className="relative py-16 sm:py-20 lg:h-[400px] lg:py-0 flex items-center justify-center bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] overflow-hidden px-6">
