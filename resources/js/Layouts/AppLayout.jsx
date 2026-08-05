@@ -414,7 +414,7 @@ export default function AppLayout({ children, currentPath }) {
                             </p>
                             <div className="flex gap-4">
                                 <a
-                                    href="#"
+                                    href="https://www.instagram.com/dubaistreetkitties?igsh=bzFnMWJhYnh6b3o3"
                                     className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:text-black"
                                 >
                                     <svg
@@ -448,7 +448,7 @@ export default function AppLayout({ children, currentPath }) {
                                     </svg>
                                 </a>
                                 <a
-                                    href="#"
+                                    href="tel:+971585818608"
                                     className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:text-black"
                                 >
                                     <svg
@@ -482,7 +482,7 @@ export default function AppLayout({ children, currentPath }) {
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="/support"
                                         className="text-gray-500 transition hover:text-[#f07b61]"
                                     >
                                         Support Us

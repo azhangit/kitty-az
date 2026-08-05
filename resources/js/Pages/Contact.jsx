@@ -423,7 +423,7 @@ export default function Contact() {
                             WhatsApp Us Now
                         </button>
                         <button className="bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition">
-                            Call: +971 50 123 4567
+                            Call: +971 58 581 8608
                         </button>
                     </div>
                 </div>
