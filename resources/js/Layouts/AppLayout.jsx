@@ -431,7 +431,7 @@ export default function AppLayout({ children, currentPath }) {
                                     </svg>
                                 </a>
                                 <a
-                                    href="#"
+                                    href="tel:+971585818608"
                                     className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:text-black"
                                 >
                                     <svg
@@ -448,7 +448,7 @@ export default function AppLayout({ children, currentPath }) {
                                     </svg>
                                 </a>
                                 <a
-                                    href="tel:+971585818608"
+                                    href="mailto:info@dubaistreetkitties.ae"
                                     className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:text-black"
                                 >
                                     <svg
