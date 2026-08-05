@@ -60,8 +60,14 @@ export default function Support() {
                                 <p className='mb-3'>Start your fitness journey and help save cats at the same time</p>
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <button className="bg-[#FFB5A0] text-white px-5 py-3 rounded-full text-sm hover:bg-white hover:text-[#f08063] transition">Download on App Store</button>
-                                    <button href="https://play.google.com/store/apps/details?id=com.fitnesswithdina.fitnessapp" className="bg-white text-gray-800 font-bold px-6 py-3 rounded-full text-sm shadow-sm hover:shadow-md transition">Get on Google Play</button>
-                                </div>
+                                    <a
+  href="https://play.google.com/store/apps/details?id=com.fitnesswithdina.fitnessapp"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="bg-white text-gray-800 font-bold px-6 py-3 rounded-full text-sm shadow-sm hover:shadow-md transition inline-block"
+>
+  Get on Google Play
+</a>                                </div>
                             </div>
                                                             <p className='text-[#2B2B2B] my-5 text-[15px]'>* 100% of Fitness With Dina profits go directly to Dubai Street Kitties operations</p>
 
