@@ -422,9 +422,9 @@ export default function Contact() {
                         <button className="bg-gradient-to-r from-[#fac2ac] to-[#f08063] text-white font-bold px-10 py-4 rounded-full shadow-md hover:shadow-lg transition">
                             WhatsApp Us Now
                         </button>
-                        <button className="bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition">
+                        <a href="tel:+971585818608" className="bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition">
                             Call: +971 58 581 8608
-                        </button>
+                        </a>
                     </div>
                 </div>
             </section>
