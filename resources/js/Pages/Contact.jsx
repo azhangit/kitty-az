@@ -1,25 +1,76 @@
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
+import { useEffect } from "react";
 import AppLayout from "@/Layouts/AppLayout";
 
-export default function Contact() {
-    const { flash } = usePage().props;
-    const { data, setData, post, processing, errors, reset } = useForm({
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone: "",
-        inquiry_type: "",
-        message: "",
-    });
+const ZOHO_FORM_SRC =
+    "https://forms.zohopublic.com/dinasworkouttips/form/Dubaistreetkitties/formperma/f03r5TtyH0lOxJOLrSewbJY05TbnGkfWfhXDT41_0N8";
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post(route("contact.store"), {
-            onSuccess: () => {
-                reset("first_name", "last_name", "email", "phone", "inquiry_type", "message");
-            },
-        });
-    };
+export default function Contact() {
+    useEffect(() => {
+        const zfFrame = document.getElementById("ziframe_261412");
+        if (!zfFrame) return undefined;
+
+        try {
+            let ifrmSrc = zfFrame.src;
+
+            if (!/[?&]referrername=/.test(ifrmSrc)) {
+                let rfr = window.location.href;
+
+                try {
+                    rfr =
+                        window.self !== window.top
+                            ? window.top.location.href
+                            : /^https?:\/\/[\w.-]+\.[a-zA-Z]{2,}/i.test(rfr)
+                              ? rfr
+                              : "";
+                } catch (e) {
+                    // Cross-origin top frame access can throw; keep current href.
+                }
+
+                if (rfr) {
+                    if (rfr.length > 1800) {
+                        const queryIndex = rfr.indexOf("?");
+                        if (queryIndex > -1) {
+                            rfr = rfr.substring(0, queryIndex);
+                        }
+                        if (rfr.length > 1800) {
+                            rfr = rfr.substring(0, 1800);
+                        }
+                    }
+                    ifrmSrc +=
+                        (ifrmSrc.indexOf("?") > 0 ? "&" : "?") +
+                        "referrername=" +
+                        encodeURIComponent(rfr);
+                }
+            }
+
+            if (zfFrame.src !== ifrmSrc) {
+                zfFrame.src = ifrmSrc;
+            }
+        } catch (e) {
+            // Zoho referrer enrichment is best-effort.
+        }
+
+        const onMessage = (event) => {
+            try {
+                const data =
+                    typeof event.data === "string"
+                        ? JSON.parse(event.data)
+                        : event.data;
+
+                if (data?.zf_ifrm_ht_msg && data?.zf_ifrm_ht) {
+                    const nextHeight = `${parseInt(data.zf_ifrm_ht, 10)}px`;
+                    zfFrame.style.height = nextHeight;
+                    zfFrame.style.minHeight = nextHeight;
+                }
+            } catch (e) {
+                // Ignore non-Zoho messages.
+            }
+        };
+
+        window.addEventListener("message", onMessage);
+        return () => window.removeEventListener("message", onMessage);
+    }, []);
 
     return (
         <AppLayout currentPath="/contact">
@@ -109,7 +160,7 @@ export default function Contact() {
                                             WhatsApp
                                         </h4>
                                         <p className="text-gray-500">
-                                            +971 50 123 4567
+                                        +971 58 581 8608
                                         </p>
                                     </div>
                                 </div>
@@ -149,26 +200,26 @@ export default function Contact() {
                                             <path
                                                 d="M20 9C19.1434 4.9811 14.9912 2 11.0011 2C7.45834 2 4.08963 4.09916 2.68627 7.37966C0.090763 13.4469 5.41302 17.626 9.38449 21.367C9.81818 21.773 10.3978 22 11.0011 22C11.5513 22 12.0819 21.8112 12.5 21.4699"
                                                 stroke="#9DD9D2"
-                                                stroke-width="1.5"
-                                                stroke-linecap="round"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
                                             />
                                             <path
                                                 d="M14 9.19621C13.3876 8.17979 12.2732 7.5 11 7.5C9.067 7.5 7.5 9.067 7.5 11C7.5 12.3962 8.31753 13.6015 9.5 14.1632"
                                                 stroke="#9DD9D2"
-                                                stroke-width="1.5"
-                                                stroke-linecap="round"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
                                             />
                                             <path
                                                 d="M17 16H17.009"
                                                 stroke="#9DD9D2"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
                                             />
                                             <path
                                                 d="M17.8981 21.6518C17.6572 21.8752 17.3352 22 17.0001 22C16.665 22 16.343 21.8752 16.1021 21.6518C13.8959 19.5943 10.9394 17.2958 12.3812 13.9588C13.1608 12.1545 15.0321 11 17.0001 11C18.9681 11 20.8394 12.1545 21.619 13.9588C23.059 17.2916 20.1097 19.6014 17.8981 21.6518Z"
                                                 stroke="#9DD9D2"
-                                                stroke-width="1.5"
+                                                strokeWidth="1.5"
                                             />
                                         </svg>
                                     </div>
@@ -200,207 +251,24 @@ export default function Contact() {
                             </div>
                         </div>
 
-                        {/* RIGHT COLUMN: CONTACT FORM */}
-                        <div className="lg:col-span-7 bg-white rounded-[40px] p-8 md:p-12 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border border-gray-100">
-                            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
-                                Send Us a Message
-                            </h3>
+                        {/* RIGHT COLUMN: ZOHO FORM (same card chrome as old form) */}
+                        <div className="lg:col-span-7 bg-white rounded-[40px] p-8 md:p-12  border border-gray-100">
 
-                            {flash?.success && (
-                                <p className="mb-6 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-                                    {flash.success}
-                                </p>
-                            )}
-
-                            <form className="space-y-6" onSubmit={handleSubmit}>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                            First Name*
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                placeholder="First Name*"
-                                                value={data.first_name}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "first_name",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
-                                            />
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
-                                                <svg className="w-4 h-4"></svg>
-                                            </div>
-                                        </div>
-                                        {errors.first_name && (
-                                            <p className="text-xs text-red-600">
-                                                {errors.first_name}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                            Last Name
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                placeholder="Last Name*"
-                                                value={data.last_name}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "last_name",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
-                                            />
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
-                                                <svg className="w-4 h-4"></svg>
-                                            </div>
-                                        </div>
-                                        {errors.last_name && (
-                                            <p className="text-xs text-red-600">
-                                                {errors.last_name}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                        Your Email
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            type="email"
-                                            placeholder="Your Email"
-                                            value={data.email}
-                                            onChange={(e) =>
-                                                setData("email", e.target.value)
-                                            }
-                                            className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
-                                        />
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
-                                            <svg className="w-4 h-4"></svg>
-                                        </div>
-                                    </div>
-                                    {errors.email && (
-                                        <p className="text-xs text-red-600">
-                                            {errors.email}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                        Phone Number*
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            type="tel"
-                                            placeholder="Phone Number*"
-                                            value={data.phone}
-                                            onChange={(e) =>
-                                                setData("phone", e.target.value)
-                                            }
-                                            className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all"
-                                        />
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300">
-                                            <svg className="w-4 h-4"></svg>
-                                        </div>
-                                    </div>
-                                    {errors.phone && (
-                                        <p className="text-xs text-red-600">
-                                            {errors.phone}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                        Inquiry Type
-                                    </label>
-                                    <div className="relative">
-                                        <select
-                                            value={data.inquiry_type}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "inquiry_type",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full bg-[#fcfcfc] border border-gray-100 rounded-full px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] appearance-none transition-all"
-                                        >
-                                            <option value="">
-                                                Select Inquiry Type
-                                            </option>
-                                            <option>Adoption</option>
-                                            <option>Volunteering</option>
-                                            <option>Donation</option>
-                                            <option>Other</option>
-                                        </select>
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                            <svg className="w-4 h-4"></svg>
-                                        </div>
-                                    </div>
-                                    {errors.inquiry_type && (
-                                        <p className="text-xs text-red-600">
-                                            {errors.inquiry_type}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                        Message
-                                    </label>
-                                    <div className="relative">
-                                        <textarea
-                                            rows="4"
-                                            placeholder="Write Message..."
-                                            value={data.message}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "message",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full bg-[#fcfcfc] border border-gray-100 rounded-[28px] px-6 py-5 text-sm focus:outline-none focus:ring-2 focus:ring-[#fac2ac] transition-all resize-none"
-                                        ></textarea>
-                                        <div className="absolute right-6 top-6 text-gray-300">
-                                            <svg className="w-4 h-4"></svg>
-                                        </div>
-                                    </div>
-                                    {errors.message && (
-                                        <p className="text-xs text-red-600">
-                                            {errors.message}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="pt-4 flex flex-col items-center">
-                                    <p className="text-[12px] text-gray-400 mb-6 text-center italic">
-                                        Note: This form is for demonstration
-                                        purposes. For actual inquiries, please
-                                        contact us via email
-                                        at info@dubaistrreetkitties.ae or
-                                        WhatsApp.
-                                    </p>
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] text-gray-800 font-bold py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.01]"
-                                    >
-                                        {processing
-                                            ? "Sending..."
-                                            : "Send Message"}
-                                    </button>
-                                </div>
-                            </form>
+                            <div className="w-full -mx-1">
+                                <iframe
+                                    id="ziframe_261412"
+                                    title="Dubai Street Kitties - Adoption Inquiry"
+                                    aria-label="Dubai Street Kitties - Adoption Inquiry"
+                                    src={ZOHO_FORM_SRC}
+                                    scrolling="no"
+                                    className="block w-full max-w-full border-0 bg-transparent"
+                                    style={{
+                                        height: "980px",
+                                        minHeight: "980px",
+                                        overflow: "hidden",
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -419,9 +287,9 @@ export default function Contact() {
                         as possible.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <button className="bg-gradient-to-r from-[#fac2ac] to-[#f08063] text-white font-bold px-10 py-4 rounded-full shadow-md hover:shadow-lg transition">
+                        <a href="https://wa.me/+971585818608" className="bg-gradient-to-r from-[#fac2ac] to-[#f08063] text-white font-bold px-10 py-4 rounded-full shadow-md hover:shadow-lg transition">
                             WhatsApp Us Now
-                        </button>
+                        </a>
                         <a href="tel:+971585818608" className="bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition">
                             Call: +971 58 581 8608
                         </a>
