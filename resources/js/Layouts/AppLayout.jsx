@@ -522,7 +522,7 @@ export default function AppLayout({ children, currentPath }) {
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="https://www.fitnesswithdina.com/"
                                         className="text-gray-500 transition hover:text-[#f07b61]"
                                     >
                                         Fitness With Dina
