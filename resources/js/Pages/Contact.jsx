@@ -135,33 +135,74 @@ export default function Contact() {
                                         <h4 className="font-bold text-gray-900 text-lg md:text-xl">
                                             Email
                                         </h4>
-                                        <p className="text-gray-500">
+                                        <a
+                                            href="mailto:info@dubaistreetkitties.ae"
+                                            className="text-gray-500 hover:text-gray-700 transition"
+                                        >
                                             info@dubaistreetkitties.ae
-                                        </p>
+                                        </a>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <div className="w-14 h-14 rounded-full bg-[#f3f6f5] flex items-center justify-center text-[#8bcbbd]">
                                         <svg
-                                            width="14"
-                                            height="14"
-                                            viewBox="0 0 17 17"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
+                                            aria-hidden="true"
                                         >
                                             <path
-                                                d="M3.05077 7.49802C3.29301 7.33391 3.62333 7.39337 3.78905 7.63474C5.62721 10.3029 8.98475 13.3065 11.1211 14.1943C11.9852 14.5957 12.6286 14.6206 13.1074 14.2773C13.4806 14.0515 14.5412 12.9982 14.5224 12.4502C14.5161 12.3858 14.4417 12.2648 14.3164 12.1367C13.9084 11.719 12.5391 10.6828 12.2529 10.5752C12.027 10.5272 11.7919 10.6648 11.4336 10.8906L11.2519 11.0029C11.0005 11.1535 10.674 11.0732 10.5224 10.8213C10.3719 10.5707 10.4527 10.2442 10.7041 10.0927L10.8672 9.99216C11.2638 9.74229 11.8116 9.4011 12.5 9.54392C13.0425 9.65647 14.7494 11.0589 15.0762 11.3925C15.3835 11.7068 15.5529 12.042 15.582 12.3867C15.628 13.6912 13.8817 15.0547 13.6806 15.1699C13.2996 15.4446 12.8525 15.583 12.3496 15.583C11.8495 15.583 11.2938 15.4463 10.6924 15.166C8.37961 14.2059 4.8818 11.0929 2.91405 8.2363C2.74758 7.99488 2.80922 7.66439 3.05077 7.49802ZM4.58983 1.41892C4.95521 1.44943 5.28979 1.62 5.6035 1.92575C5.93842 2.2529 7.34149 3.95996 7.45409 4.49997C7.57507 5.08107 7.31355 5.53491 7.12303 5.86618C6.93556 6.19215 6.87038 6.33174 6.93456 6.50778C7.40844 7.66673 8.14139 8.61456 9.10545 9.3027C9.34397 9.47408 9.39818 9.80541 9.22752 10.0439C9.12414 10.1882 8.96149 10.2665 8.79588 10.2666C8.68833 10.2666 8.58072 10.2334 8.48729 10.167C7.35818 9.35917 6.50223 8.25671 5.94334 6.88962C5.69769 6.21379 5.98895 5.7071 6.20213 5.33688C6.36211 5.05954 6.45042 4.89363 6.41307 4.71677C6.3139 4.46119 5.27826 3.09358 4.86034 2.68649C4.73151 2.55992 4.61039 2.48556 4.52049 2.47849C4.01321 2.46682 2.97633 3.46932 2.7412 3.85935C2.37668 4.36051 2.40237 5.00236 2.79393 5.86227C2.91506 6.12917 2.7973 6.44362 2.53026 6.5654C2.2625 6.68646 1.94897 6.56934 1.82713 6.30173C1.26979 5.07919 1.28041 4.05839 1.85838 3.27048C2.0742 2.90964 3.4277 1.34318 4.58983 1.41892Z"
-                                                fill="currentColor"
-                                            ></path>
+                                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.8"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
                                         </svg>
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-900 text-lg md:text-xl">
-                                            WhatsApp
+                                            Emergency
                                         </h4>
-                                        <p className="text-gray-500">
-                                        +971 58 581 8608
-                                        </p>
+                                        <a
+                                            href="tel:+971585818608"
+                                            className="text-gray-500 hover:text-gray-700 transition"
+                                        >
+                                            +971 58 581 8608
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-6">
+                                    <div className="w-14 h-14 rounded-full bg-[#ffefe9] flex items-center justify-center text-[#f08063]">
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.8"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-lg md:text-xl">
+                                            For Adoption
+                                        </h4>
+                                        <a
+                                            href="tel:+971557641252"
+                                            className="text-gray-500 hover:text-gray-700 transition"
+                                        >
+                                            +971 55 764 1252
+                                        </a>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
@@ -183,9 +224,24 @@ export default function Contact() {
                                         <h4 className="font-bold text-gray-900 text-lg md:text-xl">
                                             Instagram
                                         </h4>
-                                        <p className="text-gray-500">
-                                            @dubatstreetkitties
-                                        </p>
+                                        <div className="flex flex-col gap-1">
+                                            <a
+                                                href="https://www.instagram.com/dubaistreetkitties"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-gray-500 hover:text-gray-700 transition"
+                                            >
+                                                @dubaistreetkitties
+                                            </a>
+                                            <a
+                                                href="https://www.instagram.com/dubaistreetkittiesadoption"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-gray-500 hover:text-gray-700 transition"
+                                            >
+                                                @dubaistreetkittiesadoption
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
@@ -227,9 +283,14 @@ export default function Contact() {
                                         <h4 className="font-bold text-gray-900 text-lg md:text-xl">
                                             Location
                                         </h4>
-                                        <p className="text-gray-500">
+                                        <a
+                                            href="https://www.google.com/maps/search/?api=1&query=Dubai%2C%20United%20Arab%20Emirates"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-gray-500 hover:text-gray-700 transition"
+                                        >
                                             Dubai, United Arab Emirates
-                                        </p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -242,8 +303,8 @@ export default function Contact() {
                                 <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-6">
                                     We typically respond within 24-48 hours
                                     during weekdays. For urgent rescue
-                                    situations, please call or WhatsApp
-                                    directly.
+                                    situations, please call the emergency
+                                    number directly.
                                 </p>
                                 <p className="text-gray-500 text-sm md:text-base font-medium">
                                     Usually active during UAE business hours
@@ -282,16 +343,53 @@ export default function Contact() {
                     </h2>
                     <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base mb-10">
                         If you've found an injured or sick cat that needs
-                        immediate attention, please contact us directly via
-                        WhatsApp or phone. We respond to emergencies as quickly
-                        as possible.
+                        immediate attention, please call us directly. We respond
+                        to emergencies as quickly as possible.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a href="https://wa.me/+971585818608" className="bg-gradient-to-r from-[#fac2ac] to-[#f08063] text-white font-bold px-10 py-4 rounded-full shadow-md hover:shadow-lg transition">
-                            For Emergency
+                        <a
+                            href="tel:+971585818608"
+                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#fac2ac] to-[#f08063] text-white font-bold px-10 py-4 rounded-full shadow-md hover:shadow-lg transition"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            Emergency: +971 58 581 8608
                         </a>
-                        <a href="tel:+971557641252" className="bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition">
-                            For Adoption
+                        <a
+                            href="tel:+971557641252"
+                            className="inline-flex items-center justify-center gap-2 bg-white border-2 border-transparent text-gray-800 font-bold px-10 py-4 rounded-full shadow-sm hover:shadow-md transition"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            For Adoption: +971 55 764 1252
                         </a>
                     </div>
                 </div>

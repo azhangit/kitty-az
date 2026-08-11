@@ -90,19 +90,29 @@ export default function Support() {
                             { title: 'Volunteer', desc: 'Support rescue and sanctuary operations.' },
                             { title: 'Share Our Mission', desc: 'Help raise awareness online.' },
                             { title: 'Shop With Purpose', desc: 'Support rescue through merchandise and partnerships.' },
-                        ].map((card, idx) => (
-                            <div key={idx} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm flex min-h-[180px] flex-col items-center justify-center group hover:shadow-md transition">
+                            {
+                                title: 'Amazon Wishlist',
+                                desc: 'Buy shelter supplies from our monthly Amazon wishlist.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/3SVPUK3KDW1AC?ref_=wl_share',
+                            },
+                        ].map((card, idx) => {
+                            const CardTag = card.href ? 'a' : 'div';
+                            const cardProps = card.href
+                                ? {
+                                      href: card.href,
+                                      target: '_blank',
+                                      rel: 'noopener noreferrer',
+                                  }
+                                : {};
+
+                            return (
+                            <CardTag key={idx} {...cardProps} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm flex min-h-[180px] flex-col items-center justify-center group hover:shadow-md transition">
                                 <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] flex items-center justify-center text-[#f08063] mb-5 group-hover:scale-110 transition"><img src="images/donate-solid.svg" alt="" /></div>
                                 <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">{card.title}</h4>
                                 <p className="text-gray-500 text-sm leading-relaxed">{card.desc}</p>
-                                <ul className="hidden">
-                                    {(card.points || []).map((p, i) => (
-                                        <li key={i} className="flex gap-3"><span className="text-[#8bcbbd]">✓</span> {p}</li>
-                                    ))}
-                                </ul>
-                                {card.button ? <button className="mt-auto bg-[#8bcbbd]/20 text-[#1f453c] font-bold px-8 py-3 rounded-full text-sm hover:bg-[#8bcbbd] hover:text-white transition w-full">{card.button}</button> : null}
-                            </div>
-                        ))}
+                            </CardTag>
+                            );
+                        })}
                     </div>
                 </div>
             </section>

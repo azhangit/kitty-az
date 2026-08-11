@@ -522,7 +522,19 @@ export default function AppLayout({ children, currentPath }) {
                                 </li>
                                 <li>
                                     <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/3SVPUK3KDW1AC?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Amazon Wishlist
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="https://www.fitnesswithdina.com/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="text-gray-500 transition hover:text-[#f07b61]"
                                     >
                                         Fitness With Dina
