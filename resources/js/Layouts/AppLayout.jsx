@@ -532,6 +532,66 @@ export default function AppLayout({ children, currentPath }) {
                                 </li>
                                 <li>
                                     <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/259L0ITBNEW6L?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Cat Food Wishlist
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/R15754YKDSZS?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Medicine & Supplements
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/1E7DQ8FUST0E2?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Sanctuary Supplies
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/MQB7RTHTLJGI?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Feed Stray Cats
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.amazon.ae/hz/wishlist/ls/3JWFL1XWG4QNF?ref_=wl_share"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        Cat Beds & Cat Trees
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="https://www.mcpet.ae/product/dubai-street-kitties-wishlist/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 transition hover:text-[#f07b61]"
+                                    >
+                                        MC Pet Wishlist
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="https://www.fitnesswithdina.com/"
                                         target="_blank"
                                         rel="noopener noreferrer"

@@ -95,6 +95,36 @@ export default function Support() {
                                 desc: 'Buy shelter supplies from our monthly Amazon wishlist.',
                                 href: 'https://www.amazon.ae/hz/wishlist/ls/3SVPUK3KDW1AC?ref_=wl_share',
                             },
+                            {
+                                title: 'Cat Food for our Sanctuary',
+                                desc: 'Help feed our sanctuary of 650 cats.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/259L0ITBNEW6L?ref_=wl_share',
+                            },
+                            {
+                                title: 'Medicine & Supplements',
+                                desc: 'Support medicine and supplements for 650 cats.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/R15754YKDSZS?ref_=wl_share',
+                            },
+                            {
+                                title: 'Sanctuary Supplies',
+                                desc: 'Supplies needed for our sanctuary.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/1E7DQ8FUST0E2?ref_=wl_share',
+                            },
+                            {
+                                title: 'Feed Stray Cats',
+                                desc: 'Help feed hundreds of stray cats.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/MQB7RTHTLJGI?ref_=wl_share',
+                            },
+                            {
+                                title: 'Cat Beds & Cat Trees',
+                                desc: 'Beds and trees for our sanctuary cats.',
+                                href: 'https://www.amazon.ae/hz/wishlist/ls/3JWFL1XWG4QNF?ref_=wl_share',
+                            },
+                            {
+                                title: 'MC Pet Wishlist',
+                                desc: 'Shop items from our MC Pet wishlist.',
+                                href: 'https://www.mcpet.ae/product/dubai-street-kitties-wishlist/',
+                            },
                         ].map((card, idx) => {
                             const CardTag = card.href ? 'a' : 'div';
                             const cardProps = card.href
