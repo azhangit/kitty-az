@@ -195,7 +195,7 @@ export default function Contact() {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-900 text-lg md:text-xl">
-                                            For Adoption
+                                            Adopt from us
                                         </h4>
                                         <a
                                             href="tel:+971557641252"
@@ -203,6 +203,9 @@ export default function Contact() {
                                         >
                                             +971 55 764 1252
                                         </a>
+                                        <p className="text-gray-400 text-xs mt-1">
+                                            We do not adopt or foster cats
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
@@ -389,7 +392,7 @@ export default function Contact() {
                                     strokeLinejoin="round"
                                 />
                             </svg>
-                            For Adoption: +971 55 764 1252
+                            Adopt from us: +971 55 764 1252
                         </a>
                     </div>
                 </div>

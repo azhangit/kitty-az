@@ -335,6 +335,7 @@ class CatController extends Controller
                 'Ragdoll',
                 'Maine Coon Mix',
                 'Unique',
+                'Fluffy',
             ],
             'gender' => ['Male', 'Female'],
             'age' => [

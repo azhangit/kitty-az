@@ -79,7 +79,7 @@ export default function Support() {
             {/* WAYS YOU CAN HELP */}
             <section className="py-16 md:py-24 bg-[#F6EDE5]">
                 <div className="max-w-[1240px] mx-auto px-6 lg:px-12 text-center">
-                    <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold text-gray-900 mb-4 leading-tight">3. Ways You Can Help</h2>
+                    <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold text-gray-900 mb-4 leading-tight">Ways You Can Help</h2>
                     <p className="text-gray-500 max-w-2xl mx-auto mb-10 md:mb-16 italic">There are many ways you can help us continue our mission to rescue and rehome Dubai's street cats.</p>
                     
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
@@ -121,9 +121,9 @@ export default function Support() {
                                 href: 'https://www.amazon.ae/hz/wishlist/ls/3JWFL1XWG4QNF?ref_=wl_share',
                             },
                             {
-                                title: 'MC Pet Wishlist',
-                                desc: 'Shop items from our MC Pet wishlist.',
-                                href: 'https://www.mcpet.ae/product/dubai-street-kitties-wishlist/',
+                                title: 'Order directly from the pet shop (wishlist)',
+                                desc: '⭐️ Anything ordered from the pet shop will be automatically delivered to our sanctuary, even if you add your personal address.',
+                                href: 'https://www.mcpet.ae/product/dubai-street-kitties-wishlist/?fbclid=PAVERFWATw9CZwZG9mAmZkaWQWUMuHPN5KUp5RyJCybC71ylAAlw5PyWV4dG4DYWVtAjEwAHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABp__pSTvhqV8uE8_vMmkIQqW3UMbU0iMsSMpqTOkoEL4w1wjZuy4iPWix8Ts3_aem_YmKAK8-J-XMPtvFmQ8xxJg',
                             },
                         ].map((card, idx) => {
                             const CardTag = card.href ? 'a' : 'div';
