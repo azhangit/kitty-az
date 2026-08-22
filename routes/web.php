@@ -340,6 +340,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     Route::get('/admin/cats', [CatController::class, 'index'])->name('admin.cats.index');
     Route::post('/admin/cats', [CatController::class, 'store'])->name('admin.cats.store');
+    Route::post('/admin/cat-options', [CatController::class, 'storeOption'])->name('admin.cat-options.store');
+    Route::put('/admin/cat-options', [CatController::class, 'updateOption'])->name('admin.cat-options.update');
     Route::delete('/admin/cat-options', [CatController::class, 'destroyOption'])->name('admin.cat-options.destroy');
     Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
     Route::get('/admin/cats/{cat}', [CatController::class, 'show'])->name('admin.cats.show');

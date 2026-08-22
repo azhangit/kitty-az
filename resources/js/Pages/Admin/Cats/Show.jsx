@@ -1,4 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
+import ManageableOptionSelect from '@/Components/Admin/ManageableOptionSelect';
 import { router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -100,6 +101,57 @@ function SelectedImagePreviewGrid({ files = [], onRemove, onMove }) {
                     <div className="absolute inset-x-0 bottom-0 bg-black/45 px-2 py-1 text-[11px] text-white">
                         <p className="truncate">{preview.file.name}</p>
                     </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function ExistingImagePreviewGrid({ images = [], selectedIds = [], onRemove, onMove }) {
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const selectedImages = useMemo(
+        () => selectedIds
+            .map((id) => images.find((image) => String(image.id) === String(id)))
+            .filter(Boolean),
+        [images, selectedIds],
+    );
+
+    if (selectedImages.length === 0) return null;
+
+    return (
+        <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+            {selectedImages.map((image, index) => (
+                <div
+                    key={image.id}
+                    draggable
+                    onDragStart={() => setDraggedIndex(index)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => {
+                        if (draggedIndex !== null) {
+                            onMove(draggedIndex, index);
+                        }
+                        setDraggedIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    className={`relative cursor-grab overflow-hidden rounded-lg border-2 border-[#9cd2c8] active:cursor-grabbing ${draggedIndex === index ? 'opacity-60' : ''}`}
+                >
+                    <img src={image.path} alt="Cat photo" className="h-20 w-full object-cover" />
+                    <div className="absolute left-1.5 top-1.5 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-semibold text-[#4f3126] shadow-sm">
+                        Drag
+                    </div>
+                    <button
+                        type="button"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onRemove(image.id);
+                        }}
+                        className="absolute right-1.5 top-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-semibold leading-none text-[#4f3126] shadow-sm transition hover:bg-red-50 hover:text-red-600"
+                        aria-label="Remove photo"
+                    >
+                        x
+                    </button>
                 </div>
             ))}
         </div>
@@ -340,11 +392,16 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
     const [showEditModal, setShowEditModal] = useState(false);
     const [pendingOptionDelete, setPendingOptionDelete] = useState(null);
     const tags = cat.profile_tags || [];
-    const galleryImages = (cat.images?.length ? cat.images.map((img) => img.path) : [cat.photo_path || '/images/gallery-cat.png']).filter(Boolean);
+    const catImages = cat.images || [];
+    const galleryImages = (catImages.length ? catImages.map((img) => img.path) : [cat.photo_path || '/images/gallery-cat.png']).filter(Boolean);
     const mainImage = galleryImages[0] || '/images/gallery-cat.png';
     const editLocationOptions = useMemo(
-        () => Array.from(new Set([...catLocationOptions, cat.location].filter(Boolean))),
-        [cat.location],
+        () => Array.from(new Set([...(options.location || catLocationOptions), cat.location].filter(Boolean))),
+        [options.location, cat.location],
+    );
+    const currentImageIds = useMemo(
+        () => (cat.images || []).map((image) => image.id),
+        [cat.images],
     );
     const preselectedGalleryIds = useMemo(
         () => galleryLibrary.filter((image) => galleryImages.includes(image.path)).map((image) => image.id),
@@ -383,6 +440,7 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         profile_tags: cat.profile_tags || [],
         category_ids: (cat.categories || []).map((item) => item.id),
         photos: [],
+        existing_image_ids: currentImageIds,
         gallery_image_ids: preselectedGalleryIds,
         image_source: 'upload',
     });
@@ -412,12 +470,45 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
         setPendingOptionDelete({ group, field, value });
     };
 
+    const arrayOptionFields = ['special_medical_needs', 'personality_traits', 'profile_tags'];
+
+    const addManagedOption = (group, field, value) => {
+        router.post(route('admin.cat-options.store'), {
+            group,
+            value,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => editForm.setData(field, value),
+        });
+    };
+
+    const renameManagedOption = (group, field, oldValue, newValue) => {
+        router.put(route('admin.cat-options.update'), {
+            group,
+            old_value: oldValue,
+            new_value: newValue,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                if (editForm.data[field] === oldValue) {
+                    editForm.setData(field, newValue);
+                }
+            },
+        });
+    };
+
     const confirmDeleteOption = () => {
         if (!pendingOptionDelete) return;
 
         const { group, field, value } = pendingOptionDelete;
 
-        editForm.setData(field, (editForm.data[field] || []).filter((item) => item !== value));
+        if (arrayOptionFields.includes(field)) {
+            editForm.setData(field, (editForm.data[field] || []).filter((item) => item !== value));
+        } else if (editForm.data[field] === value) {
+            const nextValue = (options[group] || []).find((item) => item !== value) || '';
+            editForm.setData(field, nextValue);
+        }
+
         setPendingOptionDelete(null);
         router.delete(route('admin.cat-options.destroy'), {
             data: { group, value },
@@ -435,8 +526,26 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
     };
 
     const openEditModal = () => {
-        editForm.setData('gallery_image_ids', preselectedGalleryIds);
+        editForm.setData({
+            ...editForm.data,
+            photos: [],
+            existing_image_ids: currentImageIds,
+            gallery_image_ids: preselectedGalleryIds,
+            image_source: 'upload',
+            category_ids: (cat.categories || []).map((item) => item.id),
+        });
         setShowEditModal(true);
+    };
+
+    const removeExistingImage = (imageId) => {
+        editForm.setData(
+            'existing_image_ids',
+            (editForm.data.existing_image_ids || []).filter((id) => String(id) !== String(imageId)),
+        );
+    };
+
+    const moveExistingImage = (fromIndex, toIndex) => {
+        editForm.setData('existing_image_ids', moveArrayItem(editForm.data.existing_image_ids || [], fromIndex, toIndex));
     };
 
     const deleteDuplicateListing = () => {
@@ -599,20 +708,46 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <FieldError message={editForm.errors.name} />
                                 </div>
                                 <div>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.age_label} onChange={(e) => editForm.setData('age_label', e.target.value)}>
-                                        <option value="">Age Group</option>
-                                        {(options.age || []).map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.age_label}
+                                        items={options.age || []}
+                                        onChange={(nextValue) => editForm.setData('age_label', nextValue)}
+                                        onAdd={(value) => addManagedOption('age', 'age_label', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('age', 'age_label', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('age', 'age_label', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        error={editForm.errors.age_label}
+                                        placeholder="Age Group"
+                                        addPlaceholder="Add age group"
+                                    />
                                 </div>
                                 <div>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.gender} onChange={(e) => editForm.setData('gender', e.target.value)}>
-                                        {(options.gender || []).map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.gender}
+                                        items={options.gender || []}
+                                        onChange={(nextValue) => editForm.setData('gender', nextValue)}
+                                        onAdd={(value) => addManagedOption('gender', 'gender', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('gender', 'gender', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('gender', 'gender', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        error={editForm.errors.gender}
+                                        placeholder="Gender"
+                                        addPlaceholder="Add gender"
+                                    />
                                 </div>
                                 <div>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.breed} onChange={(e) => editForm.setData('breed', e.target.value)}>
-                                        {(options.breed || []).map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.breed}
+                                        items={options.breed || []}
+                                        onChange={(nextValue) => editForm.setData('breed', nextValue)}
+                                        onAdd={(value) => addManagedOption('breed', 'breed', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('breed', 'breed', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('breed', 'breed', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        error={editForm.errors.breed}
+                                        placeholder="Breed"
+                                        addPlaceholder="Add breed"
+                                    />
                                 </div>
                                 <div>
                                     <input
@@ -623,14 +758,33 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     />
                                 </div>
                                 <div>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.status} onChange={(e) => editForm.setData('status', e.target.value)}>
-                                        {(options.status || []).map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}
-                                    </select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.status}
+                                        items={options.status || []}
+                                        onChange={(nextValue) => editForm.setData('status', nextValue)}
+                                        onAdd={(value) => addManagedOption('status', 'status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('status', 'status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('status', 'status', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        error={editForm.errors.status}
+                                        placeholder="Status"
+                                        addPlaceholder="Add status"
+                                        formatLabel={(item) => item.replaceAll('_', ' ')}
+                                    />
                                 </div>
                                 <div>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.location} onChange={(e) => editForm.setData('location', e.target.value)}>
-                                        {editLocationOptions.map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.location}
+                                        items={editLocationOptions}
+                                        onChange={(nextValue) => editForm.setData('location', nextValue)}
+                                        onAdd={(value) => addManagedOption('location', 'location', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('location', 'location', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('location', 'location', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        error={editForm.errors.location}
+                                        placeholder="Location"
+                                        addPlaceholder="Add location"
+                                    />
                                 </div>
                                 <div>
                                     <input className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" placeholder="Weight (kg)" value={editForm.data.weight_kg} onChange={(e) => editForm.setData('weight_kg', e.target.value)} />
@@ -639,8 +793,36 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
 
                             <div className="rounded-xl border border-[#e5d9d2] bg-white p-3">
                                 <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#6f5449]">
-                                    Add More Photos
+                                    Photos
                                 </label>
+
+                                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#8a807b]">
+                                    Current Photos
+                                </p>
+                                {(editForm.data.existing_image_ids || []).length > 0 ? (
+                                    <ExistingImagePreviewGrid
+                                        images={
+                                            catImages.length
+                                                ? catImages
+                                                : (cat.photo_path ? [{ id: 'photo_path', path: cat.photo_path }] : [])
+                                        }
+                                        selectedIds={editForm.data.existing_image_ids || []}
+                                        onRemove={(imageId) => {
+                                            if (imageId === 'photo_path') {
+                                                editForm.setData('existing_image_ids', []);
+                                                return;
+                                            }
+                                            removeExistingImage(imageId);
+                                        }}
+                                        onMove={moveExistingImage}
+                                    />
+                                ) : (
+                                    <p className="mb-3 text-xs text-[#8a807b]">No saved photos yet.</p>
+                                )}
+
+                                <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wider text-[#8a807b]">
+                                    Add More Photos
+                                </p>
                                 <div className="mb-3 flex gap-2">
                                     <button type="button" onClick={() => switchImageSource('upload')} className={`rounded-full px-3 py-1 text-xs ${editForm.data.image_source === 'upload' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Upload</button>
                                     <button type="button" onClick={() => switchImageSource('gallery')} className={`rounded-full px-3 py-1 text-xs ${editForm.data.image_source === 'gallery' ? 'bg-[#9cd2c8] text-[#18574a]' : 'bg-[#f1ece8] text-[#6f5449]'}`}>Select From Gallery</button>
@@ -686,19 +868,49 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FIV Status
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fiv_status} onChange={(e) => editForm.setData('fiv_status', e.target.value)}>{(options.fivStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.fiv_status}
+                                        items={options.fivStatus || []}
+                                        onChange={(nextValue) => editForm.setData('fiv_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('fivStatus', 'fiv_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('fivStatus', 'fiv_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('fivStatus', 'fiv_status', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="FIV Status"
+                                        addPlaceholder="Add FIV status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FeLV Status
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.felv_status} onChange={(e) => editForm.setData('felv_status', e.target.value)}>{(options.felvStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.felv_status}
+                                        items={options.felvStatus || []}
+                                        onChange={(nextValue) => editForm.setData('felv_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('felvStatus', 'felv_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('felvStatus', 'felv_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('felvStatus', 'felv_status', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="FeLV Status"
+                                        addPlaceholder="Add FeLV status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FIP History
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.fip_history} onChange={(e) => editForm.setData('fip_history', e.target.value)}>{(options.fipHistory || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.fip_history}
+                                        items={options.fipHistory || []}
+                                        onChange={(nextValue) => editForm.setData('fip_history', nextValue)}
+                                        onAdd={(value) => addManagedOption('fipHistory', 'fip_history', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('fipHistory', 'fip_history', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('fipHistory', 'fip_history', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="FIP History"
+                                        addPlaceholder="Add FIP history"
+                                    />
                                 </div>
                             </div>
 
@@ -707,7 +919,17 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Spay / Neuter Status
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.spay_neuter_status} onChange={(e) => editForm.setData('spay_neuter_status', e.target.value)}>{(options.spayNeuterStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.spay_neuter_status}
+                                        items={options.spayNeuterStatus || []}
+                                        onChange={(nextValue) => editForm.setData('spay_neuter_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('spayNeuterStatus', 'spay_neuter_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('spayNeuterStatus', 'spay_neuter_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('spayNeuterStatus', 'spay_neuter_status', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Spay / Neuter"
+                                        addPlaceholder="Add spay/neuter status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
@@ -719,7 +941,17 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Vaccination Status
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.vaccination_status} onChange={(e) => editForm.setData('vaccination_status', e.target.value)}>{(options.vaccinationStatus || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.vaccination_status}
+                                        items={options.vaccinationStatus || []}
+                                        onChange={(nextValue) => editForm.setData('vaccination_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('vaccinationStatus', 'vaccination_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('vaccinationStatus', 'vaccination_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('vaccinationStatus', 'vaccination_status', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Vaccination Status"
+                                        addPlaceholder="Add vaccination status"
+                                    />
                                 </div>
                             </div>
 
@@ -728,19 +960,49 @@ export default function CatShow({ cat, categories = [], options = {}, galleryIma
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Cats
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_cats} onChange={(e) => editForm.setData('good_with_cats', e.target.value)}>{(options.goodWithCats || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.good_with_cats}
+                                        items={options.goodWithCats || []}
+                                        onChange={(nextValue) => editForm.setData('good_with_cats', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithCats', 'good_with_cats', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithCats', 'good_with_cats', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithCats', 'good_with_cats', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Good with cats"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Dogs
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_dogs} onChange={(e) => editForm.setData('good_with_dogs', e.target.value)}>{(options.goodWithDogs || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.good_with_dogs}
+                                        items={options.goodWithDogs || []}
+                                        onChange={(nextValue) => editForm.setData('good_with_dogs', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithDogs', 'good_with_dogs', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithDogs', 'good_with_dogs', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithDogs', 'good_with_dogs', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Good with dogs"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Children
                                     </label>
-                                    <select className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" value={editForm.data.good_with_children} onChange={(e) => editForm.setData('good_with_children', e.target.value)}>{(options.goodWithChildren || []).map((item) => <option key={item}>{item}</option>)}</select>
+                                    <ManageableOptionSelect
+                                        value={editForm.data.good_with_children}
+                                        items={options.goodWithChildren || []}
+                                        onChange={(nextValue) => editForm.setData('good_with_children', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithChildren', 'good_with_children', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithChildren', 'good_with_children', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithChildren', 'good_with_children', item)}
+                                        className="w-full rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                        placeholder="Good with children"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                             </div>
 

@@ -149,9 +149,10 @@ class CatController extends Controller
     public function show(Cat $cat): Response
     {
         $cat->load(['categories', 'medicalRecords', 'images']);
+        $this->ensureCatHasImageRecords($cat);
 
         return Inertia::render('Admin/Cats/Show', [
-            'cat' => $cat,
+            'cat' => $cat->fresh(['categories', 'medicalRecords', 'images']),
             'categories' => Category::orderBy('name')->get(),
             'galleryImages' => GalleryImage::query()
                 ->latest('id')
@@ -163,6 +164,8 @@ class CatController extends Controller
 
     public function update(Request $request, Cat $cat): RedirectResponse
     {
+        $this->ensureCatHasImageRecords($cat);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'age_label' => ['nullable', 'string', 'max:255'],
@@ -179,6 +182,8 @@ class CatController extends Controller
             'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'gallery_image_ids' => ['nullable', 'array'],
             'gallery_image_ids.*' => ['integer', 'exists:gallery_images,id'],
+            'existing_image_ids' => ['nullable', 'array'],
+            'existing_image_ids.*' => ['integer'],
 
             'fiv_status' => ['nullable', 'string', 'max:255'],
             'felv_status' => ['nullable', 'string', 'max:255'],
@@ -212,29 +217,63 @@ class CatController extends Controller
         $categoryIds = $validated['category_ids'] ?? [];
         $photoFiles = $request->file('photos', []);
         $selectedGalleryPaths = $this->galleryPathsInRequestOrder($request->input('gallery_image_ids', []));
+        $existingImageIds = collect($request->input('existing_image_ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->values()
+            ->all();
+
+        // Only keep IDs that actually belong to this cat.
+        $ownedImageIds = $cat->images()->pluck('id')->all();
+        $existingImageIds = array_values(array_intersect($existingImageIds, $ownedImageIds));
         unset($validated['category_ids']);
         unset($validated['photos']);
         unset($validated['gallery_image_ids']);
+        unset($validated['existing_image_ids']);
 
         $cat->update($validated);
         $cat->categories()->sync($categoryIds);
 
-        if (! empty($photoFiles) || ! empty($selectedGalleryPaths)) {
-            $destination = public_path('images/cats');
-            if (! is_dir($destination)) {
-                mkdir($destination, 0755, true);
-            }
+        // Keep only selected existing images and preserve their order.
+        $imagesToDelete = empty($existingImageIds)
+            ? $cat->images()->get()
+            : $cat->images()->whereNotIn('id', $existingImageIds)->get();
 
-            $nextSortOrder = (int) ($cat->images()->max('sort_order') ?? -1) + 1;
-            $uploadedPaths = [];
+        foreach ($imagesToDelete as $image) {
+            $this->deleteCatImageFileIfOwned($image->path);
+            $image->delete();
+        }
 
-            foreach ($photoFiles as $photoFile) {
-                $filename = Str::uuid()->toString() . '.' . $photoFile->getClientOriginalExtension();
-                $photoFile->move($destination, $filename);
-                $uploadedPaths[] = '/images/cats/' . $filename;
-            }
+        foreach ($existingImageIds as $index => $imageId) {
+            $cat->images()
+                ->where('id', $imageId)
+                ->update(['sort_order' => $index]);
+        }
 
-            $allNewPaths = array_values(array_unique(array_merge($selectedGalleryPaths, $uploadedPaths)));
+        $keptPaths = $cat->images()
+            ->orderBy('sort_order')
+            ->pluck('path')
+            ->all();
+
+        $destination = public_path('images/cats');
+        if (! is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $uploadedPaths = [];
+        foreach ($photoFiles as $photoFile) {
+            $filename = Str::uuid()->toString() . '.' . $photoFile->getClientOriginalExtension();
+            $photoFile->move($destination, $filename);
+            $uploadedPaths[] = '/images/cats/' . $filename;
+        }
+
+        $allNewPaths = array_values(array_unique(array_diff(
+            array_merge($selectedGalleryPaths, $uploadedPaths),
+            $keptPaths,
+        )));
+
+        $nextSortOrder = count($existingImageIds);
+        if (! empty($allNewPaths)) {
             $cat->images()->createMany(
                 collect($allNewPaths)
                     ->values()
@@ -244,11 +283,10 @@ class CatController extends Controller
                     ])
                     ->all(),
             );
-
-            if (empty($cat->photo_path) && ! empty($allNewPaths)) {
-                $cat->update(['photo_path' => $allNewPaths[0]]);
-            }
         }
+
+        $firstPath = $cat->images()->orderBy('sort_order')->value('path');
+        $cat->update(['photo_path' => $firstPath]);
 
         return back()->with('success', 'Cat updated successfully.');
     }
@@ -288,10 +326,123 @@ class CatController extends Controller
         return back()->with('success', 'Medical record removed.');
     }
 
+    public function storeOption(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'group' => ['required', 'string', 'in:'.$this->manageableOptionGroupsRule()],
+            'value' => ['required', 'string', 'max:255'],
+        ]);
+
+        $group = $validated['group'];
+        $value = trim($validated['value']);
+
+        if ($value === '') {
+            return back()->withErrors(['value' => 'Option value is required.']);
+        }
+
+        $currentOptions = collect($this->options()[$group] ?? []);
+        $exists = $currentOptions->contains(
+            fn (string $option) => strcasecmp($option, $value) === 0
+        );
+
+        if ($exists) {
+            return back()->withErrors(['value' => 'This option already exists.']);
+        }
+
+        $addedOptions = $this->addedOptions();
+        $groupAdditions = collect($addedOptions[$group] ?? [])
+            ->reject(fn (string $option) => strcasecmp($option, $value) === 0)
+            ->values()
+            ->all();
+        $groupAdditions[] = $value;
+        $addedOptions[$group] = $groupAdditions;
+
+        // If it was previously deleted, restore it by removing from deletions.
+        $deletedOptions = $this->deletedOptions();
+        if (! empty($deletedOptions[$group])) {
+            $deletedOptions[$group] = collect($deletedOptions[$group])
+                ->reject(fn (string $option) => strcasecmp($option, $value) === 0)
+                ->values()
+                ->all();
+            Storage::disk('local')->put('admin-option-deletions.json', json_encode($deletedOptions, JSON_PRETTY_PRINT));
+        }
+
+        Storage::disk('local')->put('admin-option-additions.json', json_encode($addedOptions, JSON_PRETTY_PRINT));
+
+        return back()->with('success', 'Option added successfully.');
+    }
+
+    public function updateOption(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'group' => ['required', 'string', 'in:'.$this->manageableOptionGroupsRule()],
+            'old_value' => ['required', 'string', 'max:255'],
+            'new_value' => ['required', 'string', 'max:255'],
+        ]);
+
+        $group = $validated['group'];
+        $oldValue = trim($validated['old_value']);
+        $newValue = trim($validated['new_value']);
+
+        if ($newValue === '') {
+            return back()->withErrors(['new_value' => 'Option value is required.']);
+        }
+
+        $currentOptions = collect($this->options()[$group] ?? []);
+        $oldExists = $currentOptions->contains(fn (string $option) => $option === $oldValue);
+
+        if (! $oldExists) {
+            return back()->withErrors(['old_value' => 'Option not found.']);
+        }
+
+        $duplicate = $currentOptions->contains(
+            fn (string $option) => $option !== $oldValue && strcasecmp($option, $newValue) === 0
+        );
+
+        if ($duplicate) {
+            return back()->withErrors(['new_value' => 'This option already exists.']);
+        }
+
+        if (strcasecmp($oldValue, $newValue) === 0 && $oldValue === $newValue) {
+            return back()->with('success', 'Option updated successfully.');
+        }
+
+        $addedOptions = $this->addedOptions();
+        $groupAdditions = collect($addedOptions[$group] ?? [])
+            ->map(fn (string $option) => $option === $oldValue ? $newValue : $option)
+            ->reject(fn (string $option) => strcasecmp($option, $oldValue) === 0 && $option !== $newValue)
+            ->unique(fn (string $option) => strtolower($option))
+            ->values()
+            ->all();
+
+        // Default options are not stored in additions; renaming them means
+        // delete the old default and add the new label.
+        $wasCustom = collect($addedOptions[$group] ?? [])->contains($oldValue);
+        if (! $wasCustom) {
+            $deletedOptions = $this->deletedOptions();
+            $deletedOptions[$group] = array_values(array_unique([
+                ...(array) ($deletedOptions[$group] ?? []),
+                $oldValue,
+            ]));
+            Storage::disk('local')->put('admin-option-deletions.json', json_encode($deletedOptions, JSON_PRETTY_PRINT));
+
+            if (! collect($groupAdditions)->contains(fn (string $option) => strcasecmp($option, $newValue) === 0)) {
+                $groupAdditions[] = $newValue;
+            }
+        }
+
+        $addedOptions[$group] = $groupAdditions;
+        Storage::disk('local')->put('admin-option-additions.json', json_encode($addedOptions, JSON_PRETTY_PRINT));
+
+        $this->syncOptionValueAcrossRecords($group, $oldValue, $newValue);
+
+        return back()->with('success', 'Option updated successfully.');
+    }
+
     public function destroyOption(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'group' => ['required', 'string', 'in:specialMedicalNeeds,personalityTraits,profileTags'],
+            'group' => ['required', 'string', 'in:'.$this->manageableOptionGroupsRule().',specialMedicalNeeds,personalityTraits,profileTags'],
             'value' => ['required', 'string', 'max:255'],
         ]);
 
@@ -302,25 +453,113 @@ class CatController extends Controller
 
         Storage::disk('local')->put('admin-option-deletions.json', json_encode($deletedOptions, JSON_PRETTY_PRINT));
 
-        $field = [
+        // Also remove from custom additions if present.
+        $addedOptions = $this->addedOptions();
+        if (! empty($addedOptions[$group])) {
+            $addedOptions[$group] = collect($addedOptions[$group])
+                ->reject(fn (string $option) => $option === $value)
+                ->values()
+                ->all();
+            Storage::disk('local')->put('admin-option-additions.json', json_encode($addedOptions, JSON_PRETTY_PRINT));
+        }
+
+        $jsonField = [
             'specialMedicalNeeds' => 'special_medical_needs',
             'personalityTraits' => 'personality_traits',
             'profileTags' => 'profile_tags',
-        ][$group];
+        ][$group] ?? null;
 
-        Cat::query()
-            ->whereJsonContains($field, $value)
-            ->get([$field, 'id'])
-            ->each(function (Cat $cat) use ($field, $value): void {
-                $cat->update([
-                    $field => collect($cat->{$field} ?: [])
-                        ->reject(fn ($item) => $item === $value)
-                        ->values()
-                        ->all(),
-                ]);
-            });
+        if ($jsonField) {
+            Cat::query()
+                ->whereJsonContains($jsonField, $value)
+                ->get([$jsonField, 'id'])
+                ->each(function (Cat $cat) use ($jsonField, $value): void {
+                    $cat->update([
+                        $jsonField => collect($cat->{$jsonField} ?: [])
+                            ->reject(fn ($item) => $item === $value)
+                            ->values()
+                            ->all(),
+                    ]);
+                });
+
+            return back()->with('success', 'Option deleted successfully.');
+        }
+
+        $this->syncOptionValueAcrossRecords($group, $value, null);
 
         return back()->with('success', 'Option deleted successfully.');
+    }
+
+    private function manageableOptionGroups(): array
+    {
+        return [
+            'status',
+            'breed',
+            'gender',
+            'age',
+            'location',
+            'size',
+            'fivStatus',
+            'felvStatus',
+            'fipHistory',
+            'vaccinationStatus',
+            'spayNeuterStatus',
+            'goodWithCats',
+            'goodWithDogs',
+            'goodWithChildren',
+            'homeType',
+            'dietType',
+            'groomingNeeds',
+            'medicalRecordTypes',
+        ];
+    }
+
+    private function manageableOptionGroupsRule(): string
+    {
+        return implode(',', $this->manageableOptionGroups());
+    }
+
+    private function optionColumnMap(): array
+    {
+        return [
+            'breed' => 'breed',
+            'age' => 'age_label',
+            'gender' => 'gender',
+            'status' => 'status',
+            'location' => 'location',
+            'size' => 'size',
+            'fivStatus' => 'fiv_status',
+            'felvStatus' => 'felv_status',
+            'fipHistory' => 'fip_history',
+            'vaccinationStatus' => 'vaccination_status',
+            'spayNeuterStatus' => 'spay_neuter_status',
+            'goodWithCats' => 'good_with_cats',
+            'goodWithDogs' => 'good_with_dogs',
+            'goodWithChildren' => 'good_with_children',
+            'homeType' => 'ideal_home_type',
+            'dietType' => 'diet_type',
+            'groomingNeeds' => 'grooming_needs',
+        ];
+    }
+
+    private function syncOptionValueAcrossRecords(string $group, string $oldValue, ?string $newValue): void
+    {
+        if ($group === 'medicalRecordTypes') {
+            MedicalRecord::query()
+                ->where('type', $oldValue)
+                ->update(['type' => $newValue]);
+
+            return;
+        }
+
+        $column = $this->optionColumnMap()[$group] ?? null;
+        if (! $column) {
+            return;
+        }
+
+        Cat::query()
+            ->where($column, $oldValue)
+            ->update([$column => $newValue]);
     }
 
     private function options(): array
@@ -345,6 +584,7 @@ class CatController extends Controller
                 'Adult (3-7 years)',
                 'Senior (7+ years)',
             ],
+            'location' => ['Sanctuary resident', 'Foster care', 'Rehome'],
             'size' => ['Small', 'Medium', 'Large'],
             'fivStatus' => ['Negative', 'Positive', 'Pending Test'],
             'felvStatus' => ['Negative', 'Positive', 'Pending Test'],
@@ -491,6 +731,18 @@ class CatController extends Controller
             'medicalRecordTypes' => ['Vaccination', 'Procedure', 'Checkup', 'Medication', 'Lab Test', 'Other'],
         ];
 
+        foreach ($this->addedOptions() as $group => $addedValues) {
+            if (! array_key_exists($group, $options)) {
+                continue;
+            }
+
+            $options[$group] = collect($options[$group])
+                ->merge((array) $addedValues)
+                ->unique(fn ($option) => strtolower((string) $option))
+                ->values()
+                ->all();
+        }
+
         foreach ($this->deletedOptions() as $group => $deletedValues) {
             if (! array_key_exists($group, $options)) {
                 continue;
@@ -503,6 +755,17 @@ class CatController extends Controller
         }
 
         return $options;
+    }
+
+    private function addedOptions(): array
+    {
+        if (! Storage::disk('local')->exists('admin-option-additions.json')) {
+            return [];
+        }
+
+        $decoded = json_decode(Storage::disk('local')->get('admin-option-additions.json'), true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     private function deletedOptions(): array
@@ -519,6 +782,34 @@ class CatController extends Controller
     private function colorOptions(): array
     {
         return ['#9cd2c8', '#f2c79a', '#f2d0ce', '#e8d4b5', '#e9bfd5', '#d9d9d9'];
+    }
+
+    private function ensureCatHasImageRecords(Cat $cat): void
+    {
+        if ($cat->images()->exists()) {
+            return;
+        }
+
+        if (! $cat->photo_path) {
+            return;
+        }
+
+        $cat->images()->create([
+            'path' => $cat->photo_path,
+            'sort_order' => 0,
+        ]);
+    }
+
+    private function deleteCatImageFileIfOwned(?string $path): void
+    {
+        if (! $path || ! str_starts_with($path, '/images/cats/')) {
+            return;
+        }
+
+        $absolutePath = public_path(ltrim($path, '/'));
+        if (is_file($absolutePath)) {
+            @unlink($absolutePath);
+        }
     }
 
     private function galleryPathsInRequestOrder(array $galleryImageIds): array

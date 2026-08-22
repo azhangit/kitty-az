@@ -1,4 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
+import ManageableOptionSelect from '@/Components/Admin/ManageableOptionSelect';
 import { Link, router, useForm, usePage, useRemember } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -434,12 +435,50 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
         setPendingOptionDelete({ group, field, value });
     };
 
+    const arrayOptionFields = ['special_medical_needs', 'personality_traits', 'profile_tags'];
+
+    const addManagedOption = (group, field, value, form = addForm) => {
+        router.post(route('admin.cat-options.store'), {
+            group,
+            value,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => form.setData(field, value),
+        });
+    };
+
+    const renameManagedOption = (group, field, oldValue, newValue, form = addForm) => {
+        router.put(route('admin.cat-options.update'), {
+            group,
+            old_value: oldValue,
+            new_value: newValue,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                if (form.data[field] === oldValue) {
+                    form.setData(field, newValue);
+                }
+            },
+        });
+    };
+
     const confirmDeleteOption = () => {
         if (!pendingOptionDelete) return;
 
         const { group, field, value } = pendingOptionDelete;
 
-        addForm.setData(field, (addForm.data[field] || []).filter((item) => item !== value));
+        if (arrayOptionFields.includes(field)) {
+            addForm.setData(field, (addForm.data[field] || []).filter((item) => item !== value));
+        } else if (field === 'medical_type') {
+            if (medicalForm.data.type === value) {
+                const nextType = (options.medicalRecordTypes || []).find((item) => item !== value) || '';
+                medicalForm.setData('type', nextType);
+            }
+        } else if (addForm.data[field] === value) {
+            const nextValue = (options[group] || []).find((item) => item !== value) || '';
+            addForm.setData(field, nextValue);
+        }
+
         setPendingOptionDelete(null);
         router.delete(route('admin.cat-options.destroy'), {
             data: { group, value },
@@ -658,23 +697,46 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <FieldError message={addForm.errors.name} />
                                 </div>
                                 <div>
-                                    <select className={inputClass(addForm.errors.age_label)} value={addForm.data.age_label} onChange={(e) => addForm.setData('age_label', e.target.value)}>
-                                        <option value="">Age Group</option>
-                                        {options.age.map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
-                                    <FieldError message={addForm.errors.age_label} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.age_label}
+                                        items={options.age || []}
+                                        onChange={(nextValue) => addForm.setData('age_label', nextValue)}
+                                        onAdd={(value) => addManagedOption('age', 'age_label', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('age', 'age_label', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('age', 'age_label', item)}
+                                        className={inputClass(addForm.errors.age_label)}
+                                        error={addForm.errors.age_label}
+                                        placeholder="Age Group"
+                                        addPlaceholder="Add age group"
+                                    />
                                 </div>
                                 <div>
-                                    <select className={inputClass(addForm.errors.gender)} value={addForm.data.gender} onChange={(e) => addForm.setData('gender', e.target.value)}>
-                                        {options.gender.map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
-                                    <FieldError message={addForm.errors.gender} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.gender}
+                                        items={options.gender || []}
+                                        onChange={(nextValue) => addForm.setData('gender', nextValue)}
+                                        onAdd={(value) => addManagedOption('gender', 'gender', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('gender', 'gender', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('gender', 'gender', item)}
+                                        className={inputClass(addForm.errors.gender)}
+                                        error={addForm.errors.gender}
+                                        placeholder="Gender"
+                                        addPlaceholder="Add gender"
+                                    />
                                 </div>
                                 <div>
-                                    <select className={inputClass(addForm.errors.breed)} value={addForm.data.breed} onChange={(e) => addForm.setData('breed', e.target.value)}>
-                                        {options.breed.map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
-                                    <FieldError message={addForm.errors.breed} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.breed}
+                                        items={options.breed || []}
+                                        onChange={(nextValue) => addForm.setData('breed', nextValue)}
+                                        onAdd={(value) => addManagedOption('breed', 'breed', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('breed', 'breed', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('breed', 'breed', item)}
+                                        className={inputClass(addForm.errors.breed)}
+                                        error={addForm.errors.breed}
+                                        placeholder="Breed"
+                                        addPlaceholder="Add breed"
+                                    />
                                 </div>
                                 <div>
                                     <input
@@ -686,16 +748,33 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <FieldError message={addForm.errors.color} />
                                 </div>
                                 <div>
-                                    <select className={inputClass(addForm.errors.status)} value={addForm.data.status} onChange={(e) => addForm.setData('status', e.target.value)}>
-                                        {options.status.map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}
-                                    </select>
-                                    <FieldError message={addForm.errors.status} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.status}
+                                        items={options.status || []}
+                                        onChange={(nextValue) => addForm.setData('status', nextValue)}
+                                        onAdd={(value) => addManagedOption('status', 'status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('status', 'status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('status', 'status', item)}
+                                        className={inputClass(addForm.errors.status)}
+                                        error={addForm.errors.status}
+                                        placeholder="Status"
+                                        addPlaceholder="Add status"
+                                        formatLabel={(item) => item.replaceAll('_', ' ')}
+                                    />
                                 </div>
                                 <div>
-                                    <select className={inputClass(addForm.errors.location)} value={addForm.data.location} onChange={(e) => addForm.setData('location', e.target.value)}>
-                                        {catLocationOptions.map((item) => <option key={item} value={item}>{item}</option>)}
-                                    </select>
-                                    <FieldError message={addForm.errors.location} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.location}
+                                        items={options.location || catLocationOptions}
+                                        onChange={(nextValue) => addForm.setData('location', nextValue)}
+                                        onAdd={(value) => addManagedOption('location', 'location', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('location', 'location', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('location', 'location', item)}
+                                        className={inputClass(addForm.errors.location)}
+                                        error={addForm.errors.location}
+                                        placeholder="Location"
+                                        addPlaceholder="Add location"
+                                    />
                                 </div>
                                 <div>
                                     <input className={inputClass(addForm.errors.weight_kg)} placeholder="Weight (kg)" value={addForm.data.weight_kg} onChange={(e) => addForm.setData('weight_kg', e.target.value)} />
@@ -759,22 +838,52 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FIV Status
                                     </label>
-                                    <select className={inputClass(addForm.errors.fiv_status)} value={addForm.data.fiv_status} onChange={(e) => addForm.setData('fiv_status', e.target.value)}>{options.fivStatus.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.fiv_status} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.fiv_status}
+                                        items={options.fivStatus || []}
+                                        onChange={(nextValue) => addForm.setData('fiv_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('fivStatus', 'fiv_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('fivStatus', 'fiv_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('fivStatus', 'fiv_status', item)}
+                                        className={inputClass(addForm.errors.fiv_status)}
+                                        error={addForm.errors.fiv_status}
+                                        placeholder="FIV Status"
+                                        addPlaceholder="Add FIV status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FeLV Status
                                     </label>
-                                    <select className={inputClass(addForm.errors.felv_status)} value={addForm.data.felv_status} onChange={(e) => addForm.setData('felv_status', e.target.value)}>{options.felvStatus.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.felv_status} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.felv_status}
+                                        items={options.felvStatus || []}
+                                        onChange={(nextValue) => addForm.setData('felv_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('felvStatus', 'felv_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('felvStatus', 'felv_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('felvStatus', 'felv_status', item)}
+                                        className={inputClass(addForm.errors.felv_status)}
+                                        error={addForm.errors.felv_status}
+                                        placeholder="FeLV Status"
+                                        addPlaceholder="Add FeLV status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         FIP History
                                     </label>
-                                    <select className={inputClass(addForm.errors.fip_history)} value={addForm.data.fip_history} onChange={(e) => addForm.setData('fip_history', e.target.value)}>{options.fipHistory.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.fip_history} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.fip_history}
+                                        items={options.fipHistory || []}
+                                        onChange={(nextValue) => addForm.setData('fip_history', nextValue)}
+                                        onAdd={(value) => addManagedOption('fipHistory', 'fip_history', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('fipHistory', 'fip_history', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('fipHistory', 'fip_history', item)}
+                                        className={inputClass(addForm.errors.fip_history)}
+                                        error={addForm.errors.fip_history}
+                                        placeholder="FIP History"
+                                        addPlaceholder="Add FIP history"
+                                    />
                                 </div>
                             </div>
 
@@ -783,8 +892,18 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Spay / Neuter Status
                                     </label>
-                                    <select className={inputClass(addForm.errors.spay_neuter_status)} value={addForm.data.spay_neuter_status} onChange={(e) => addForm.setData('spay_neuter_status', e.target.value)}>{options.spayNeuterStatus.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.spay_neuter_status} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.spay_neuter_status}
+                                        items={options.spayNeuterStatus || []}
+                                        onChange={(nextValue) => addForm.setData('spay_neuter_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('spayNeuterStatus', 'spay_neuter_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('spayNeuterStatus', 'spay_neuter_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('spayNeuterStatus', 'spay_neuter_status', item)}
+                                        className={inputClass(addForm.errors.spay_neuter_status)}
+                                        error={addForm.errors.spay_neuter_status}
+                                        placeholder="Spay / Neuter"
+                                        addPlaceholder="Add spay/neuter status"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
@@ -797,8 +916,18 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Vaccination Status
                                     </label>
-                                    <select className={inputClass(addForm.errors.vaccination_status)} value={addForm.data.vaccination_status} onChange={(e) => addForm.setData('vaccination_status', e.target.value)}>{options.vaccinationStatus.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.vaccination_status} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.vaccination_status}
+                                        items={options.vaccinationStatus || []}
+                                        onChange={(nextValue) => addForm.setData('vaccination_status', nextValue)}
+                                        onAdd={(value) => addManagedOption('vaccinationStatus', 'vaccination_status', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('vaccinationStatus', 'vaccination_status', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('vaccinationStatus', 'vaccination_status', item)}
+                                        className={inputClass(addForm.errors.vaccination_status)}
+                                        error={addForm.errors.vaccination_status}
+                                        placeholder="Vaccination Status"
+                                        addPlaceholder="Add vaccination status"
+                                    />
                                 </div>
                             </div>
 
@@ -807,22 +936,52 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Cats
                                     </label>
-                                    <select className={inputClass(addForm.errors.good_with_cats)} value={addForm.data.good_with_cats} onChange={(e) => addForm.setData('good_with_cats', e.target.value)}>{options.goodWithCats.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.good_with_cats} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.good_with_cats}
+                                        items={options.goodWithCats || []}
+                                        onChange={(nextValue) => addForm.setData('good_with_cats', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithCats', 'good_with_cats', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithCats', 'good_with_cats', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithCats', 'good_with_cats', item)}
+                                        className={inputClass(addForm.errors.good_with_cats)}
+                                        error={addForm.errors.good_with_cats}
+                                        placeholder="Good with cats"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Dogs
                                     </label>
-                                    <select className={inputClass(addForm.errors.good_with_dogs)} value={addForm.data.good_with_dogs} onChange={(e) => addForm.setData('good_with_dogs', e.target.value)}>{options.goodWithDogs.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.good_with_dogs} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.good_with_dogs}
+                                        items={options.goodWithDogs || []}
+                                        onChange={(nextValue) => addForm.setData('good_with_dogs', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithDogs', 'good_with_dogs', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithDogs', 'good_with_dogs', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithDogs', 'good_with_dogs', item)}
+                                        className={inputClass(addForm.errors.good_with_dogs)}
+                                        error={addForm.errors.good_with_dogs}
+                                        placeholder="Good with dogs"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                                 <div>
                                     <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-[#6f5449]">
                                         Good With Children
                                     </label>
-                                    <select className={inputClass(addForm.errors.good_with_children)} value={addForm.data.good_with_children} onChange={(e) => addForm.setData('good_with_children', e.target.value)}>{options.goodWithChildren.map((item) => <option key={item}>{item}</option>)}</select>
-                                    <FieldError message={addForm.errors.good_with_children} />
+                                    <ManageableOptionSelect
+                                        value={addForm.data.good_with_children}
+                                        items={options.goodWithChildren || []}
+                                        onChange={(nextValue) => addForm.setData('good_with_children', nextValue)}
+                                        onAdd={(value) => addManagedOption('goodWithChildren', 'good_with_children', value)}
+                                        onRename={(oldValue, newValue) => renameManagedOption('goodWithChildren', 'good_with_children', oldValue, newValue)}
+                                        onDelete={(item) => deleteOption('goodWithChildren', 'good_with_children', item)}
+                                        className={inputClass(addForm.errors.good_with_children)}
+                                        error={addForm.errors.good_with_children}
+                                        placeholder="Good with children"
+                                        addPlaceholder="Add option"
+                                    />
                                 </div>
                             </div>
 
@@ -886,7 +1045,17 @@ export default function CatsIndex({ cats, categories, filters, options, galleryI
                         <form onSubmit={submitMedicalRecord} className="space-y-4 p-6">
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <input type="date" value={medicalForm.data.record_date} onChange={(e) => medicalForm.setData('record_date', e.target.value)} className="rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" />
-                                <select value={medicalForm.data.type} onChange={(e) => medicalForm.setData('type', e.target.value)} className="rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm">{options.medicalRecordTypes.map((item) => <option key={item}>{item}</option>)}</select>
+                                <ManageableOptionSelect
+                                    value={medicalForm.data.type}
+                                    items={options.medicalRecordTypes || []}
+                                    onChange={(nextValue) => medicalForm.setData('type', nextValue)}
+                                    onAdd={(value) => addManagedOption('medicalRecordTypes', 'type', value, medicalForm)}
+                                    onRename={(oldValue, newValue) => renameManagedOption('medicalRecordTypes', 'type', oldValue, newValue, medicalForm)}
+                                    onDelete={(item) => deleteOption('medicalRecordTypes', 'medical_type', item)}
+                                    className="rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm"
+                                    placeholder="Record type"
+                                    addPlaceholder="Add record type"
+                                />
                                 <input value={medicalForm.data.vet_name} onChange={(e) => medicalForm.setData('vet_name', e.target.value)} placeholder="Vet name" className="rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" />
                                 <input value={medicalForm.data.cost_aed} onChange={(e) => medicalForm.setData('cost_aed', e.target.value)} placeholder="Cost (AED)" className="rounded-xl border border-[#e5d9d2] bg-white px-3 py-2.5 text-sm" />
                             </div>
