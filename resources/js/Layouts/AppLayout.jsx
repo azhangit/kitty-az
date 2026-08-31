@@ -48,7 +48,7 @@ export default function AppLayout({ children, currentPath }) {
     };
 
     return (
-        <div className="min-h-screen bg-white font-sans text-gray-900">
+        <div className="min-h-screen max-w-full overflow-x-hidden bg-white font-sans text-gray-900">
             <FlashToasts />
             <header className="sticky top-0 z-50 bg-white px-4 py-3 sm:px-6 lg:px-6 lg:py-4">
                 <div className="mx-auto flex max-w-[1200px] items-center justify-between">

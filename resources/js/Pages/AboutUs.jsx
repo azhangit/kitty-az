@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 const stats = [
     { 
         icon: <img src="images/Heart.svg" alt="" />,
-        value: '2,500', 
+        value: '3,000', 
         label: 'Cats Rescued', 
         valueColor: 'text-[#f07b61]', 
         iconColor: 'text-[#f07b61]', 
@@ -12,7 +12,7 @@ const stats = [
     },
     { 
         icon: <img src="images/home-solid.svg" alt="" />,
-        value: '550+', 
+        value: '1,000+', 
         label: 'Cats in Care', 
         valueColor: 'text-[#7abaac]', 
         iconColor: 'text-[#7abaac]', 
@@ -20,7 +20,7 @@ const stats = [
     },
     { 
         icon: <img src="images/cut.svg" alt="" />,
-        value: '200+', 
+        value: '1,000+', 
         label: 'TNR Efforts', 
         valueColor: 'text-[#f07b61]', 
         iconColor: 'text-[#f07b61]', 
@@ -28,8 +28,8 @@ const stats = [
     },
     { 
         icon: <img src="images/user.svg" alt="" />,
-        value: '5', 
-        label: 'Years Active', 
+        value: '3', 
+        label: 'Sanactuary Active', 
         valueColor: 'text-black', 
         iconColor: 'text-gray-700', 
         bgCircle: 'bg-white border border-gray-200' 
@@ -38,7 +38,7 @@ const stats = [
 
 const openingParagraphs = [
     'At Dubai Street Kitties, our mission is rooted in compassion, responsibility, and community. What began as two people rescuing injured and abandoned cats from the streets of the UAE has grown into a larger vision built on love, structure, and hope for a better future for animals.',
-    'Over the past two years, we have rescued more than 2,500 cats, and today we continue caring for over 550 cats in our sanctuary and foster network. Every rescue represents a life that deserved another chance - a kitten abandoned in the heat, an injured cat found on the roadside, a mother struggling to protect her babies, or a sick animal left without care. Behind every rescue is a story of survival, rehabilitation, and healing.',
+    'Over the past two years, we have rescued more than 3,000 cats, and today we continue caring for over 550 cats in our sanctuary and foster network. Every rescue represents a life that deserved another chance - a kitten abandoned in the heat, an injured cat found on the roadside, a mother struggling to protect her babies, or a sick animal left without care. Behind every rescue is a story of survival, rehabilitation, and healing.',
 ];
 
 const missionParagraphs = [

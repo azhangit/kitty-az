@@ -10,11 +10,11 @@ export default function Adopt() {
             <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 overflow-visible flex flex-col items-center justify-center">
                 {/* Peeking Cats Placeholders */}
                 <div className="absolute bottom-0 left-0 w-[200px] md:w-[350px]"><img src="images/adopt-left.png" alt="Cat left" className="w-full h-auto object-contain" /></div>
-                <div className="absolute -bottom-16 right-0 w-[200px] md:w-[350px]"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
+                <div className="absolute -bottom-7 right-0 w-[200px] md:-bottom-[3.25rem] md:w-[350px]"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
 
                 <div className="relative z-10 max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6">Adopt a Cat</h1>
-                    <p className="text-lg md:text-xl text-gray-700 font-medium">
+                    <p className="hidden text-lg font-medium text-gray-700 sm:block md:text-xl">
                         Find your perfect feline companion. Each cat has been vaccinated, sterilized, and microchipped.
                     </p>
                 </div>
@@ -53,13 +53,15 @@ export default function Adopt() {
             </section>
 
             {/* FINAL CTA SECTION */}
-            <section className="relative py-24 bg-[#FAC8AE] overflow-visible">
+            <section className="relative overflow-visible bg-[#FAC8AE] py-24">
                 {/* Background Doodles Placeholder */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none"><svg className="w-full h-full"></svg></div>
 
                 {/* Corner Cats */}
-                <div className="absolute bottom-0 -left-10 w-[200px] md:w-[350px] "><img src="images/black-cat.png" alt="Peeking black cat" className="w-full h-auto" /></div>
-                <div className="absolute -top-20 -right-20 w-[250px]  md:w-[369px]"><img src="images/adult-gray-cat.png" alt="Jumping cat" className=" max-h-[676px]" /></div>
+                <div className="absolute bottom-0 left-0 w-[140px] md:-left-10 md:w-[350px]"><img src="images/black-cat.png" alt="Peeking black cat" className="w-full h-auto" /></div>
+                <div className="pointer-events-none absolute -top-16 right-0 w-[180px] md:-top-20 md:-right-20 md:w-[369px]">
+                    <img src="images/adult-gray-cat.png" alt="Jumping cat" className="w-full max-h-[676px] object-contain object-top" />
+                </div>
 
                 <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
                     <div className="space-y-6 text-gray-700 leading-relaxed text-sm md:text-base font-medium mb-10">

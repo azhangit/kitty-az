@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 const storyParagraphs = [
     'Dubai Street Kitties was created from a shared belief that compassion has the power to transform lives - not only for animals, but for the communities around them.',
     'Founded by Dina Taji and her local Emirati partner, our sanctuary began with two women simply trying to help injured and abandoned cats found on the streets of the UAE. What started as individual rescues soon grew into a much larger mission built on responsibility, structure, education, and community support.',
-    'Over the past two years alone, we have rescued more than 2,500 cats, and today we continue caring for over 550 rescued cats who rely on us daily for medical treatment, rehabilitation, recovery, and safe shelter.',
+    'Over the past two years alone, we have rescued more than 3,000 cats, and today we continue caring for over 550 rescued cats who rely on us daily for medical treatment, rehabilitation, recovery, and safe shelter.',
     'Every cat we rescue represents a story that many people never see - kittens abandoned in boxes, injured cats found on highways, mothers struggling to protect their babies, and animals left sick, starving, or suffering alone. Behind every recovery is an enormous amount of teamwork, veterinary care, emotional dedication, and community involvement.',
     'Having lived in the UAE for more than 20 years, Dina considers this country home. Dubai Street Kitties was built from a desire to contribute positively to the society and community that has given us so much. We believe the UAE represents innovation, compassion, progress, and unity, and we are proud to support that vision through animal welfare, education, and responsible rescue efforts.',
     'Our mission is not driven by judgment or criticism. Stray animal overpopulation and abandonment are global challenges faced by cities around the world. Shelters everywhere struggle to keep up with the growing numbers of animals needing help. Real change cannot happen through one person or one organization alone - it happens when communities come together.',
@@ -59,11 +59,11 @@ export default function OurStory() {
                         />
                         <div className="mt-6 grid grid-cols-2 gap-4">
                             <div className="rounded-2xl bg-[#ffede9] p-5 text-center">
-                                <p className="text-3xl font-bold text-[#f07b61]">2,500+</p>
+                                <p className="text-3xl font-bold text-[#f07b61]">3,000+</p>
                                 <p className="mt-1 text-sm font-medium text-gray-600">Cats Rescued</p>
                             </div>
                             <div className="rounded-2xl bg-[#eef8f6] p-5 text-center">
-                                <p className="text-3xl font-bold text-[#7abaac]">550+</p>
+                                <p className="text-3xl font-bold text-[#7abaac]">1,000+</p>
                                 <p className="mt-1 text-sm font-medium text-gray-600">Cats in Care</p>
                             </div>
                         </div>

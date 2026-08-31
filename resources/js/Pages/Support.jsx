@@ -1,5 +1,70 @@
 import { Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
+
+const fitnessSlides = Array.from({ length: 8 }, (_, index) => `/images/support/slide_${index + 1}.jpeg`);
+
+function FitnessImageSlider() {
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const showPrevious = () => {
+        setActiveIndex((current) => (current === 0 ? fitnessSlides.length - 1 : current - 1));
+    };
+
+    const showNext = () => {
+        setActiveIndex((current) => (current + 1) % fitnessSlides.length);
+    };
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveIndex((current) => (current + 1) % fitnessSlides.length);
+        }, 5000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="relative w-full overflow-hidden rounded-[40px] bg-[#FCEBEE]">
+            <img
+                src={fitnessSlides[activeIndex]}
+                alt={`Fitness with Dina ${activeIndex + 1}`}
+                className="mx-auto block h-auto w-full max-h-[420px] object-contain sm:max-h-[500px] md:max-h-[750px]"
+            />
+            <button
+                type="button"
+                onClick={showPrevious}
+                className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl leading-none text-[#4f3126] shadow-sm transition hover:bg-white"
+                aria-label="Show previous image"
+            >
+                &lsaquo;
+            </button>
+            <button
+                type="button"
+                onClick={showNext}
+                className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl leading-none text-[#4f3126] shadow-sm transition hover:bg-white"
+                aria-label="Show next image"
+            >
+                &rsaquo;
+            </button>
+            <div className="absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-semibold text-white">
+                {activeIndex + 1} / {fitnessSlides.length}
+            </div>
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                {fitnessSlides.map((_, index) => (
+                    <button
+                        key={index}
+                        type="button"
+                        onClick={() => setActiveIndex(index)}
+                        className={`h-2 rounded-full transition-all ${
+                            activeIndex === index ? 'w-5 bg-white' : 'w-2 bg-white/60 hover:bg-white/80'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
 
 export default function Support() {
     return (
@@ -24,19 +89,13 @@ export default function Support() {
                 <div className="max-w-[1240px] mx-auto px-6 lg:px-12">
                     <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
                         <div className="w-full md:w-1/2 relative">
-                            <div className="rounded-[40px] overflow-hidden aspect-square /20">
-                                <img 
-                                    src="/images/orange-bg.png" 
-                                    alt="Fitness with Dina" 
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
+                            <FitnessImageSlider />
                         </div>
                         <div className="w-full md:w-1/2">
                             <span className="bg-[#FFB5A0] text-[15px]  px-3 py-1 rounded-full tracking-wider">Primary Funding Source</span>
                             <h2 className="text-4xl md:text-[48px] font-bold text-gray-900 mt-6 mb-8 leading-tight">Get Fit, Save Cats</h2>
                             <p className="text-gray-500 mb-10 leading-relaxed">
-                                Fitness With Dina is more than just a fitness app—it's a movement that directly supports Dubai Street Kitties. All profits from the app go towards sustaining our sanctuary, covering medical expenses, food, and shelter for rescued cats.
+                                Fitness With Dina is more than just a fitness app—it's a movement that directly supports Dubai Street Kitties. All profits from the app go towards sustaining our sanctuary, covering medical expenses, food, and shelter for rescued cats.
                             </p>
                             
                             <ul className="space-y-6 mb-12">
@@ -248,9 +307,9 @@ export default function Support() {
                     
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { value: '500+', label: 'Lives Saved', color: 'text-[#f07b61]' },
-                            { value: '350+', label: 'Successful Adoptions', color: 'text-[#8bcbbd]' },
-                            { value: '200+', label: 'TNR Efforts', color: 'text-[#f07b61]' },
+                            { value: '3,000+', label: 'Lives Saved', color: 'text-[#f07b61]' },
+                            { value: '1,000+', label: 'Successful Adoptions', color: 'text-[#8bcbbd]' },
+                            { value: '1,000+', label: 'TNR Efforts', color: 'text-[#f07b61]' },
                             { value: '100%', label: 'Transparency', color: 'text-gray-900' },
                         ].map((stat, idx) => (
                             <div key={idx}>
