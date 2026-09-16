@@ -63,7 +63,7 @@ export default function OurStory() {
                                 <p className="mt-1 text-sm font-medium text-gray-600">Cats Rescued</p>
                             </div>
                             <div className="rounded-2xl bg-[#eef8f6] p-5 text-center">
-                                <p className="text-3xl font-bold text-[#7abaac]">1,000+</p>
+                                <p className="text-3xl font-bold text-[#7abaac]">550+</p>
                                 <p className="mt-1 text-sm font-medium text-gray-600">Cats in Care</p>
                             </div>
                         </div>

@@ -41,8 +41,8 @@ const stats = [
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
             </svg>
         ),
-        value: '3', 
-        label: 'Sanactuary Active', 
+        value: '1', 
+        label: 'Sanctuary Active', 
         valueColor: 'text-black', 
         iconColor: 'text-gray-700', 
         bgCircle: 'bg-white border border-gray-200' 
@@ -53,8 +53,8 @@ export default function Home({ availableCats = [] }) {
     return (
         <AppLayout currentPath="/">
             <SeoHead
-                title="Cat Rescue & Adoption in Dubai"
-                description="Rescuing, rehabilitating, and rehoming Dubai's street cats with compassion and care. Browse cats for adoption or support our mission."
+                title="The Biggest Adoption Centre in the UAE with 600 Cats"
+                description="Dubai Street Kitties — the biggest adoption centre in the UAE with 600 cats. Rescuing, rehabilitating, and rehoming Dubai's street cats. Browse cats for adoption, book pet sitting when you travel, or support our mission."
             />
 
             {/* HERO SECTION */}
@@ -92,6 +92,18 @@ export default function Home({ availableCats = [] }) {
                             </Link>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            {/* ADOPTION CENTRE TITLE */}
+            <section className="bg-gradient-to-b from-[#ECF2EE] to-[#FAF1EC] py-14 md:py-20">
+                <div className="max-w-[1000px] mx-auto px-6 lg:px-12 text-center">
+                    <h2 className="text-[28px] sm:text-[36px] md:text-[44px] font-semibold text-gray-900 leading-tight">
+                        The Biggest Adoption Centre in the UAE with 600 Cats
+                    </h2>
+                    <p className="mt-4 text-[15px] md:text-[17px] text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                        Dubai Street Kitties is home to hundreds of rescued cats waiting for forever homes — one of the largest cat adoption centres in the UAE.
+                    </p>
                 </div>
             </section>
 
@@ -169,6 +181,52 @@ export default function Home({ availableCats = [] }) {
                         <Link href={route('cats.available')} className="inline-flex items-center justify-center rounded-full bg-[#8bcbbd] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#1f453c] transition hover:bg-[#7abeaf]">
                             See All Available Cats
                         </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* PET SITTING FOR TRAVELLERS */}
+            <section className="bg-white py-20 md:py-28">
+                <div className="max-w-[1100px] mx-auto px-6 lg:px-12">
+                    <div className="flex flex-col md:flex-row items-center gap-10 lg:gap-16">
+                        <div className="w-full md:w-1/2 text-center md:text-left">
+                            <span className="inline-flex items-center rounded-full bg-[#ffefe9] px-4 py-1.5 text-[13px] font-semibold text-[#f08063]">
+                                For Travellers
+                            </span>
+                            <h2 className="mt-5 text-[30px] sm:text-[36px] md:text-[42px] font-semibold text-gray-900 leading-tight">
+                                Pet Sitting When You Travel
+                            </h2>
+                            <p className="mt-5 text-[15px] md:text-[16px] text-gray-600 leading-relaxed">
+                                Going away? Our trusted pet sitters can visit your home to care for your cats while you travel.
+                                Our pet sitter is also a rescuer, experienced in feline care — so your cats are in safe, loving hands.
+                            </p>
+                            <div className="mt-8">
+                                <Link
+                                    href="/contact"
+                                    className="inline-flex items-center justify-center rounded-full bg-[#fac2ac] px-8 py-3.5 text-[14px] md:text-[15px] font-semibold text-[#30160d] transition hover:bg-[#efa68a]"
+                                >
+                                    Enquire About Pet Sitting
+                                </Link>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-1/2">
+                            <div className="rounded-[28px] bg-gradient-to-br from-[#ECF2EE] to-[#FAF1EC] p-8 sm:p-10">
+                                <ul className="space-y-5 text-left">
+                                    {[
+                                        'In-home visits while you are away',
+                                        'Experienced feline care from a rescuer',
+                                        'Peace of mind for you and your cats',
+                                    ].map((item) => (
+                                        <li key={item} className="flex items-start gap-3">
+                                            <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#8bcbbd] text-white text-sm">
+                                                ✓
+                                            </span>
+                                            <span className="text-[15px] text-gray-700 font-medium leading-relaxed">{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

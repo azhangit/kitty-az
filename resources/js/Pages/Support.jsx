@@ -156,12 +156,12 @@ export default function Support() {
                             },
                             {
                                 title: 'Cat Food for our Sanctuary',
-                                desc: 'Help feed our sanctuary of 650 cats.',
+                                desc: 'Help feed our sanctuary of 550 cats.',
                                 href: 'https://www.amazon.ae/hz/wishlist/ls/259L0ITBNEW6L?ref_=wl_share',
                             },
                             {
                                 title: 'Medicine & Supplements',
-                                desc: 'Support medicine and supplements for 650 cats.',
+                                desc: 'Support medicine and supplements for 550 cats.',
                                 href: 'https://www.amazon.ae/hz/wishlist/ls/R15754YKDSZS?ref_=wl_share',
                             },
                             {

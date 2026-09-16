@@ -12,7 +12,7 @@ const stats = [
     },
     { 
         icon: <img src="images/home-solid.svg" alt="" />,
-        value: '1,000+', 
+        value: '550+', 
         label: 'Cats in Care', 
         valueColor: 'text-[#7abaac]', 
         iconColor: 'text-[#7abaac]', 
@@ -28,8 +28,8 @@ const stats = [
     },
     { 
         icon: <img src="images/user.svg" alt="" />,
-        value: '3', 
-        label: 'Sanactuary Active', 
+        value: '1', 
+        label: 'Sanctuary Active', 
         valueColor: 'text-black', 
         iconColor: 'text-gray-700', 
         bgCircle: 'bg-white border border-gray-200' 
