@@ -1,21 +1,64 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/Components/SeoHead';
 import AppLayout from '@/Layouts/AppLayout';
+
+const afterAdoptionSupport = [
+    {
+        title: 'Personal guidance',
+        desc: 'Tell us about your home, lifestyle, and the kitty you’re hoping to find. We’ll send you suitable matches and help you choose.',
+    },
+    {
+        title: 'Trial adoption',
+        desc: 'Get to know your cat at home before making a permanent commitment. If the match isn’t right, we’ll help you meet another suitable companion.',
+    },
+    {
+        title: 'Free sanctuary check-ins',
+        desc: 'Contact us to arrange a complimentary wellbeing check at the sanctuary. If your cat needs veterinary attention, we’ll guide you on the next steps.',
+    },
+    {
+        title: 'A lifelong return commitment',
+        desc: 'If an emergency means you can no longer care for your adopted cat, contact us. We always welcome our rescues back.',
+    },
+    {
+        title: 'Free temporary care while you travel',
+        desc: 'We can arrange for your adopted cat to stay with us while you’re away, with advance booking and available space.',
+    },
+    {
+        title: 'Pet-sitting support',
+        desc: 'We can arrange home visits for feeding, litter cleaning, cleaning your cat’s living area, wellbeing checks, playtime, and cuddles. Ask us about availability and fees.',
+    },
+    {
+        title: 'Delivery and pickup',
+        desc: 'If you live farther away or don’t have transport, we can arrange a driver to bring your adopted cat home or collect them when needed.',
+    },
+    {
+        title: 'Ongoing advice',
+        desc: 'You’re welcome to contact us with questions about settling in, behaviour, or caring for your cat.',
+    },
+    {
+        title: 'Careful adoption screening',
+        desc: 'Our adoption process helps ensure every rescue goes to a safe, suitable home with a plan for lifelong care.',
+    },
+];
 
 export default function Adopt() {
     return (
         <AppLayout currentPath="/adopt">
-            <Head title="Adopt a Cat" />
+            <SeoHead
+                title="Cat Adoption in Dubai & Across the UAE"
+                description="Find your perfect rescue companion in Dubai and across the UAE — with ongoing support, trial adoption, and a lifelong safety net from Dubai Street Kitties."
+            />
 
             {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 overflow-visible flex flex-col items-center justify-center">
+            <section className="relative bg-gradient-to-b from-[#f2b7a7] to-[#9fcfc5] py-16 sm:py-20 lg:h-[400px] lg:py-0 text-center px-6 overflow-visible flex flex-col items-center justify-start lg:justify-center pt-10 sm:pt-12 lg:pt-0 pb-28 sm:pb-32 lg:pb-0">
                 {/* Peeking Cats Placeholders */}
                 <div className="absolute bottom-0 left-0 w-[200px] md:w-[350px]"><img src="images/adopt-left.png" alt="Cat left" className="w-full h-auto object-contain" /></div>
                 <div className="absolute -bottom-7 right-0 w-[200px] md:-bottom-[3.25rem] md:w-[350px]"><img src="images/adopt-right.png" alt="Cat right" className="w-full h-auto object-contain" /></div>
 
-                <div className="relative z-10 max-w-2xl mx-auto">
-                    <h1 className="text-4xl md:text-[64px] font-bold text-gray-900 mb-6">Adopt a Cat</h1>
+                <div className="relative z-10 max-w-2xl mx-auto -translate-y-2 sm:-translate-y-4 lg:translate-y-0">
+                    <h1 className="text-4xl md:text-[48px] lg:text-[56px] font-bold text-gray-900 mb-6 leading-tight">Cat Adoption in Dubai & Across the UAE</h1>
                     <p className="hidden text-lg font-medium text-gray-700 sm:block md:text-xl">
-                        Find your perfect feline companion. Each cat has been vaccinated, sterilized, and microchipped.
+                        Find your perfect rescue companion—with ongoing support, trial adoption, and a lifelong safety net.
                     </p>
                 </div>
             </section>
@@ -39,14 +82,14 @@ export default function Adopt() {
                     <div className="w-full text-center md:w-1/2">
                         <div className=" mb-8"><img src="images/sanctuary.png" alt="" className='mx-auto max-h-[139px]' /></div>
                         <h2 className="text-4xl md:text-[40px] font-bold text-gray-900 leading-tight">
-                            Give a Cat a Second Chance
+                            Find Your Perfect Rescue Companion
                         </h2>
                         <h3 className="text-3xl md:text-[40px] font-bold text-[#8bcbbd] leading-tight mb-8">
-                            Behind every cat on this page is a story.
+                            With ongoing support and a lifelong safety net.
                         </h3>
                         <div className="space-y-6 text-gray-600 leading-relaxed text-sm md:text-base">
-                            <p>Many of them were found hungry, injured, abandoned, or struggling to survive on the streets. Some were rescued as tiny kittens, others spent years outside before someone finally stepped in to help. Each one arrived frightened, tired, and uncertain of the world – but with patience, care, and love, they have been given a chance to feel safe again.</p>
-                            <p>Today, more than 500 rescued cats are being cared for in our sanctuary. While they are safe and protected here, a sanctuary is only meant to be a temporary refuge, not a lifelong home. What these cats truly need is something much more important: a family, stability, and a place where they can belong.</p>
+                            <p>At Dubai Street Kitties, hundreds of rescued cats with different personalities, ages, and appearances are waiting for loving homes. Whether you’re looking for a playful kitten, a cuddly companion, or a calm older cat, we’ll help you find the right match.</p>
+                            <p>Our adoption-ready cats are neutered, microchipped, vaccinated, and health-screened. We share each cat’s medical history and test results so you can adopt with confidence.</p>
                         </div>
                     </div>
                 </div>
@@ -64,29 +107,53 @@ export default function Adopt() {
                 </div>
 
                 <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
-                    <div className="space-y-6 text-gray-700 leading-relaxed text-sm md:text-base font-medium mb-10">
-                        <p>Every adoption opens a door. When one cat finds a loving home, it allows another vulnerable cat from the streets to be rescued and given the same chance at safety.</p>
-                        <p>Right now, we are at full capacity, and our ability to help new cats depends on how quickly we can find homes for those who are ready for adoption. This means that every adoption – and even every share of this page – can directly help change a life.</p>
-                        <p>If you cannot adopt, simply sharing these cats with your friends, family, or community may be the moment that connects them with the person meant to love them forever.</p>
-                        <p>By adopting, fostering, or sharing their stories, you are not just helping one cat – you are helping create space for many more lives to be saved.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">Support that continues after adoption</h2>
+                    <div className="space-y-5 text-gray-700 leading-relaxed text-sm md:text-base font-medium mb-10 text-left sm:text-center">
+                        {afterAdoptionSupport.map((item) => (
+                            <p key={item.title}>
+                                <span className="font-bold text-gray-900">{item.title}:</span> {item.desc}
+                            </p>
+                        ))}
                     </div>
 
-                    <Link 
-                        href="/available-cats"
-                        className="inline-block bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] text-gray-800 font-bold px-12 py-4 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105"
-                    >
-                        Adopt our Cats
-                    </Link>
+                    <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
+                        <Link 
+                            href="/available-cats"
+                            className="inline-block bg-gradient-to-r from-[#fac2ac] to-[#8bcbbd] text-gray-800 font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105"
+                        >
+                            Adopt a Cat
+                        </Link>
+                        <Link 
+                            href="/contact"
+                            className="inline-block bg-white text-gray-800 font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105"
+                        >
+                            Become a Foster
+                        </Link>
+                        <Link 
+                            href="/contact"
+                            className="inline-block bg-white/80 text-gray-800 font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105"
+                        >
+                            Arrange a Visit
+                        </Link>
+                    </div>
                 </div>
             </section>
 
             {/* JOIN OUR MISSION */}
             <section className="py-24 bg-white text-center px-6">
                 <div className="w-16 h-16 mx-auto text-[#f2b7a7] mb-8 opacity-90"><img src="images/2-User.svg" alt="" /></div>
-                <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Join Our Mission</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
-                    Whether you adopt, donate, volunteer, or simply spread the word, every contribution makes a difference. Together, we can create a better future for Dubai's cats.
-                </p>
+                <h2 className="text-4xl md:text-[52px] font-bold text-gray-900 mb-8 leading-tight">Let’s find your kitty</h2>
+                <div className="text-gray-500 max-w-2xl mx-auto leading-relaxed text-sm md:text-base space-y-5">
+                    <p>
+                        Not ready to adopt? Foster a rescue cat. Fostering gives a rescued cat a loving temporary home while we search for their forever family. It can suit people who cannot yet make a lifelong commitment, are unsure about adoption, or have limited finances.
+                    </p>
+                    <p>
+                        If you travel frequently, we’ll discuss your schedule and agree on a suitable fostering period and care arrangements before placement.
+                    </p>
+                    <p>
+                        Send us a message or email with a little about yourself and the cat you’re hoping to welcome. We’ll share suitable options and answer your questions. You’re also welcome to arrange a visit to the sanctuary and meet our rescues in person.
+                    </p>
+                </div>
             </section>
         </AppLayout>
     );
